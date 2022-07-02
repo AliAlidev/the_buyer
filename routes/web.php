@@ -14,4 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('home', [HomeController::class, 'index'])->name('home');
+Route::get('homeadmin', [HomeController::class, 'adminIndex'])->name('home-admin');
+Route::get('homebuyer', [HomeController::class, 'buyerIndex'])->name('home-buyer');
+Route::post('webcam', [HomeController::class, 'store'])->name('webcam.capture');
+
+Route::group(['prefix' => 'admin'], function(){
+});
+
+Route::group(['prefix' => 'buyer'], function(){
+});
+
