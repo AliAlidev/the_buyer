@@ -82,14 +82,15 @@
 
     <script>
         $('#open_camera').click(function() {
-            Webcam.set({
-                width: 490,
-                height: 350,
-                image_format: 'jpeg',
-                jpeg_quality: 90
-            });
-
-            Webcam.attach('#my_camera');
+            function onScanSuccess(decodedText, decodedResult) {
+                console.log(`Code scanned = ${decodedText}`, decodedResult);
+            }
+            var html5QrcodeScanner = new Html5QrcodeScanner(
+                "my_camera", {
+                    fps: 10,
+                    qrbox: 250
+                });
+            html5QrcodeScanner.render(onScanSuccess);
         });
     </script>
 
