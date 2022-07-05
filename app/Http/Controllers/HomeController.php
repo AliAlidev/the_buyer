@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Data;
+use App\Models\Home;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,19 +21,22 @@ class HomeController extends Controller
 
     public function store(Request $request)
     {
-        $img = $request->image;
-        $folderPath = "uploads/";
+        $request->validate([
+            'code' => 'required',
+            'quantity' => 'required',
+            'price' => 'required'
+        ]);
 
-        $image_parts = explode(";base64,", $img);
-        $image_type_aux = explode("image/", $image_parts[0]);
-        $image_type = $image_type_aux[1];
-
-        $image_base64 = base64_decode($image_parts[1]);
-        $fileName = uniqid() . '.png';
-
-        $file = $folderPath . $fileName;
-        Storage::put($file, $image_base64);
-
-        dd('Image uploaded successfully: ' . $fileName);
+        $data = Data::firstOrCreate(['code' => $request->code], [
+            'quantity' => $request->quantity,
+            'price' => $request->price,
+            'expiry_date' => $request->expiry_date,
+            'description' => $request->description
+        ]);
+        if ($data->wasRecentlyCreated) {
+            return back()->with('success', 'Data addedd successfully');
+        } else {
+            return back()->withErrors('This code already found!')->withInput();
+        }
     }
 }

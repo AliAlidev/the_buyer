@@ -39,23 +39,55 @@
                             <!-- Demo purpose only -->
                             <div style="min-height: 300px;">
                                 <p>Main</p>
-                                <input id="open_camera" type="button" class="btn btn-primary" value="Open Cam">
-                                <input id="close_camera" type="button" class="btn btn-primary" value="Close Cam">
-                                <form method="POST" action="{{ route('webcam.capture') }}">
+                                <form method="POST" action="{{ route('add-data') }}">
                                     @csrf
+                                    @if ($errors->any())
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+                                    @if (session()->has('success'))
+                                        <div class="alert alert-success">
+                                            {{ session()->get('success') }}
+                                        </div>
+                                    @endif
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div id="my_camera"></div>
                                             <br />
-                                            <input type=button value="Take Snapshot" onClick="take_snapshot()">
-                                            <input type="hidden" name="image" class="image-tag">
                                         </div>
                                         <div class="col-md-6">
-                                            <div id="results">Your captured image will appear here...</div>
+                                            <div class="row">
+                                            </div>
+                                            <label for="result">Code</label>
+                                            <input class="form-control" id="result" type="text" name="code"
+                                                value="{{ old('code') }}" placeholder="SCAN CODE">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label class="mt-3" for="">Quantity</label>
+                                                    <input class="form-control" type="number"
+                                                        value="{{ old('quantity') }}" name="quantity">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="mt-3" for="">Price</label>
+                                                    <input class="form-control" type="number" value="{{ old('price') }}"
+                                                        name="price">
+                                                </div>
+                                            </div>
+                                            <label class="mt-3" for="">Expiry Date</label>
+                                            <input class="form-control" type="date" value="{{ old('expiry_date') }}"
+                                                name="expiry_date">
+                                            <label class="mt-3" for="">Description</label>
+                                            <textarea class="form-control" name="description" id="" cols="30" rows="10">{{ old('description') }}</textarea>
                                         </div>
+
                                         <div class="col-md-12 text-center">
                                             <br />
-                                            <button class="btn btn-success">Submit</button>
+                                            <button class="btn btn-success">Add</button>
                                         </div>
                                     </div>
                                 </form>
@@ -71,32 +103,29 @@
 @endsection
 
 @push('scripts')
-    <script language="JavaScript">
-        function take_snapshot() {
-            Webcam.snap(function(data_uri) {
-                $(".image-tag").val(data_uri);
-                document.getElementById('results').innerHTML = '<img src="' + data_uri + '"/>';
-            });
+    <script>
+        function onScanSuccess(decodedText, decodedResult) {
+            $('#result').empty();
+            $('#result').val(decodedResult.decodedText);
+            console.log(decodedResult);
         }
-    </script>
 
-    <script>
-        $('#open_camera').click(function() {
-            function onScanSuccess(decodedText, decodedResult) {
-                console.log(`Code scanned = ${decodedText}`, decodedResult);
-            }
-            var html5QrcodeScanner = new Html5QrcodeScanner(
-                "my_camera", {
-                    fps: 10,
-                    qrbox: 250
-                });
-            html5QrcodeScanner.render(onScanSuccess);
-        });
-    </script>
+        function onScanFailure(error) {
+            // handle scan failure, usually better to ignore and keep scanning.
+            // for example:
+            console.warn(`Code scan error = ${error}`);
+        }
 
-    <script>
-        $('#close_camera').click(function() {
-            Webcam.reset();
-        });
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "my_camera", {
+                fps: 10,
+                qrbox: {
+                    width: 250,
+                    height: 250
+                }
+            },
+            /* verbose= */
+            false);
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     </script>
 @endpush

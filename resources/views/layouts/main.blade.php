@@ -19,6 +19,8 @@
     <!-- App Css-->
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 
+    @stack('styles')
+
 </head>
 
 <body data-topbar="colored" data-sidebar-user="true">
@@ -522,7 +524,6 @@
 
             <div class="page-content">
                 <div class="container-fluid">
-
                     @yield('content')
 
                 </div>
@@ -619,7 +620,7 @@
     <!-- Peity JS -->
     <script src="{{ asset('assets/libs/peity/jquery.peity.min.js') }}"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.min.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.min.js"></script> --}}
     <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
 
     <script src="{{ asset('assets/libs/morris.js/morris.min.js') }}"></script>
