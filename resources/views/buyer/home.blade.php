@@ -119,10 +119,7 @@
         let html5QrcodeScanner = new Html5QrcodeScanner(
             "my_camera", {
                 fps: 10,
-                qrbox: {
-                    width: 250,
-                    height: 250
-                }
+                qrbox: 250
             },
             /* verbose= */
             false);
