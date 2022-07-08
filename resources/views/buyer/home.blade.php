@@ -35,10 +35,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
+                        <div class="card-header">
+                            <h4>Main</h4>
+                        </div>
                         <div class="card-body">
                             <!-- Demo purpose only -->
                             <div style="min-height: 300px;">
-                                <p>Main</p>
                                 <form method="POST" action="{{ route('add-data') }}">
                                     @csrf
                                     @if ($errors->any())
@@ -56,37 +58,59 @@
                                         </div>
                                     @endif
                                     <div class="row">
-                                        <div style="width: 10%">
-                                            <input id="start_cam" type="button" value="Start Cam" data-id="1"
-                                                onclick="startCam()" class="btn btn-primary">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div id="my_camera"></div>
-                                            <br />
-                                        </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-2"></div>
+                                        <div class="col-md-8 mt-3">
                                             <div class="row">
+                                                <div class="col-md-2">
+                                                    <input id="start_cam" type="button" value="Start Cam" data-id="1"
+                                                        onclick="startCam()" class="btn btn-primary">
+                                                </div>
                                             </div>
-                                            <label for="result">Code</label>
-                                            <input class="form-control" id="result" type="text" name="code"
-                                                value="{{ old('code') }}" placeholder="SCAN CODE">
+                                            <div class="row mb-4">
+                                                <div class="col-md-2"></div>
+                                                <div class="col-md-8">
+                                                    <div id="my_camera"></div>
+                                                </div>
+                                            </div>
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-12">
+                                                    <label for="result">Code</label>
+                                                    <input class="form-control" id="result" type="text" name="code"
+                                                        value="{{ old('code') }}" placeholder="SCAN CODE" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 mt-3">
+                                                    <label for="name"> Element Name</label>
+                                                    <input id="name" name="name" value="{{ old('name') }}"
+                                                        type="text" class="form-control"
+                                                        placeholder="ENTER ELEMENT NAME">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
                                                     <label class="mt-3" for="">Quantity</label>
                                                     <input class="form-control" type="number"
-                                                        value="{{ old('quantity') }}" name="quantity">
+                                                        value="{{ old('quantity') }}" name="quantity"
+                                                        placeholder="QUANTITY">
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <label class="mt-3" for="">Price</label>
                                                     <input class="form-control" type="number" value="{{ old('price') }}"
-                                                        name="price">
+                                                        name="price" placeholder="PRICE">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="mt-3" for="">Expiry Date</label>
+                                                    <input class="form-control" type="date"
+                                                        value="{{ old('expiry_date') }}" name="expiry_date">
                                                 </div>
                                             </div>
-                                            <label class="mt-3" for="">Expiry Date</label>
-                                            <input class="form-control" type="date" value="{{ old('expiry_date') }}"
-                                                name="expiry_date">
-                                            <label class="mt-3" for="">Description</label>
-                                            <textarea class="form-control" name="description" id="" cols="30" rows="10">{{ old('description') }}</textarea>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label class="mt-3" for="">Description</label>
+                                                    <textarea class="form-control" name="description" id="" cols="30" rows="10">{{ old('description') }}</textarea>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-12 text-center">
