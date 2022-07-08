@@ -152,7 +152,7 @@
                 };
 
                 const config = {
-                    fps: 15,
+                    fps: 10,
                     qrbox: 250
                 };
 
