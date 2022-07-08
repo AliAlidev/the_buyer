@@ -152,8 +152,8 @@
                 };
 
                 const config = {
-                    fps: 20,
-                    qrbox: 200
+                    fps: 15,
+                    qrbox: 250
                 };
 
                 // Start back camera and if not found start front cam
