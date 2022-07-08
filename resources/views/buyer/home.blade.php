@@ -65,6 +65,10 @@
                                                     <input id="start_cam" type="button" value="Start Cam" data-id="1"
                                                         onclick="startCam()" class="btn btn-primary">
                                                 </div>
+                                                <div class="col-md-2">
+                                                    <input type="button" value="Start Flash" onclick="powerTorch(true)"
+                                                        class="btn btn-primary">
+                                                </div>
                                             </div>
                                             <div class="row mb-4">
                                                 <div class="col-md-2"></div>
@@ -153,7 +157,8 @@
 
                 const config = {
                     fps: 10,
-                    qrbox: 250
+                    qrbox: 250,
+                    torch: true
                 };
 
                 // Start back camera and if not found start front cam
@@ -176,6 +181,18 @@
                 $('#start_cam').val("Start Cam");
                 $('#start_cam').data('id', 1);
                 $('#my_camera').empty();
+            }
+        }
+
+        function powerTorch(powerOn) {
+            if (html5QrCode.getState() === Html5QrcodeScannerState.SCANNING ||
+                html5QrCode.getState() === Html5QrcodeScannerState.PAUSED
+            ) {
+                html5QrCode.applyVideoConstraints({
+                    advanced: [{
+                        torch: powerOn
+                    }]
+                });
             }
         }
     </script>
