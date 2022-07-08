@@ -157,16 +157,15 @@
                 var config = null;
                 if (s_width > 500) {
                     config = {
-                        fps: 10,
+                        fps: 15,
                         qrbox: 250
                     };
                 } else {
                     config = {
-                        fps: 10,
-                        qrbox: 100
+                        fps: 15,
+                        qrbox: 140
                     };
                 }
-                console.log(config);
 
                 // Start back camera and if not found start front cam
                 html5QrCode.start({
