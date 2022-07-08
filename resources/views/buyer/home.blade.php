@@ -155,7 +155,7 @@
                     fps: 10,
                     qrbox: 250,
                     {
-                        torch: powerOn
+                        torch: true
                     }
                 };
 
