@@ -16,10 +16,9 @@ class HomeController extends Controller
 
     public function buyerIndex()
     {
-        return view('buyer.home');
     }
 
-    public function store(Request $request)
+    public function createitem(Request $request)
     {
         $request->validate([
             'code' => 'required',
@@ -28,6 +27,7 @@ class HomeController extends Controller
         ]);
 
         $data = Data::firstOrCreate(['code' => $request->code], [
+            'name' => $request->name,
             'quantity' => $request->quantity,
             'price' => $request->price,
             'expiry_date' => $request->expiry_date,
@@ -38,5 +38,26 @@ class HomeController extends Controller
         } else {
             return back()->withErrors('This code already found!')->withInput();
         }
+    }
+
+    public function createitemindex()
+    {
+        return view('buyer.home');
+    }
+
+    public function findBySerialCode(Request $request)
+    {
+        $data = Data::where('code', $request->code)->first();
+        if ($data) {
+            return response()->json(['success' => true, 'data' => $data], 200);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Data not found'], 400);
+        }
+    }
+
+    public function listitems()
+    {
+        $items = Data::all();
+        return view('buyer.list_inventory_items', ['items' => $items]);
     }
 }

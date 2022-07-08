@@ -16,6 +16,7 @@ class CreateDataTable extends Migration
         Schema::create('data', function (Blueprint $table) {
             $table->id();
             $table->string('code')->nullable(false);
+            $table->string('name')->nullable(true);
             $table->float('quantity')->default(0);
             $table->float('price')->default(0);
             $table->string('expiry_date')->nullable(true);
