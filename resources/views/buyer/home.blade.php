@@ -153,7 +153,10 @@
 
                 const config = {
                     fps: 10,
-                    qrbox: 250
+                    qrbox: 250,
+                    {
+                        torch: powerOn
+                    }
                 };
 
                 // Start back camera and if not found start front cam
