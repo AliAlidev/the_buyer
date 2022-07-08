@@ -142,21 +142,14 @@
                     $('#result').empty();
                     $('#result').val(decodedResult.decodedText);
                     // stop
+                    var audio = new Audio('/sounds/alert.wav');
+                    audio.play();
+
                     html5QrCode.stop();
                     $('#start_cam').val("Start Cam");
                     $('#start_cam').data('id', 1);
                     $('#my_camera').empty();
                 };
-
-                let qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
-                    let minEdgePercentage = 0.7; // 70%
-                    let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
-                    let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
-                    return {
-                        width: qrboxSize,
-                        height: qrboxSize
-                    };
-                }
 
                 const config = {
                     fps: 20,
