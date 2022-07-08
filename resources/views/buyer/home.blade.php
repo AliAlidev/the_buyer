@@ -154,19 +154,19 @@
                 const s_height = $(window).height();
                 const s_width = $(window).width();
 
-                if(s_width > 500)
-                {
-                    const config = {
+                var config = null;
+                if (s_width > 500) {
+                    config = {
                         fps: 10,
                         qrbox: 250
                     };
-                }
-                else{
-                    const config = {
+                } else {
+                    config = {
                         fps: 10,
-                        qrbox: 150
+                        qrbox: 100
                     };
                 }
+                console.log(config);
 
                 // Start back camera and if not found start front cam
                 html5QrCode.start({
