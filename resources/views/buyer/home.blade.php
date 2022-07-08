@@ -148,9 +148,19 @@
                     $('#my_camera').empty();
                 };
 
+                let qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
+                    let minEdgePercentage = 0.7; // 70%
+                    let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+                    let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+                    return {
+                        width: qrboxSize,
+                        height: qrboxSize
+                    };
+                }
+
                 const config = {
                     fps: 20,
-                    qrbox: 250
+                    qrbox: 200
                 };
 
                 // Start back camera and if not found start front cam
