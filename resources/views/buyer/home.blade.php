@@ -56,6 +56,10 @@
                                         </div>
                                     @endif
                                     <div class="row">
+                                        <div style="width: 10%">
+                                            <input id="start_cam" type="button" value="Start Cam" data-id="1"
+                                                onclick="startCam()" class="btn btn-primary">
+                                        </div>
                                         <div class="col-md-4">
                                             <div id="my_camera"></div>
                                             <br />
@@ -104,25 +108,48 @@
 
 @push('scripts')
     <script>
-        function onScanSuccess(decodedText, decodedResult) {
-            $('#result').empty();
-            $('#result').val(decodedResult.decodedText);
-            console.log(decodedResult);
-        }
+        var html5QrCode;
 
-        function onScanFailure(error) {
-            // handle scan failure, usually better to ignore and keep scanning.
-            // for example:
-            console.warn(`Code scan error = ${error}`);
-        }
+        function startCam() {
+            var curr_status = $('#start_cam').data('id');
+            if (curr_status == 1) {
+                html5QrCode = new Html5Qrcode("my_camera", true);
+                const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                    $('#result').empty();
+                    $('#result').val(decodedResult.decodedText);
+                    // stop
+                    html5QrCode.stop();
+                    $('#start_cam').val("Start Cam");
+                    $('#start_cam').data('id', 1);
+                    $('#my_camera').empty();
+                };
 
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "my_camera", {
-                fps: 10,
-                qrbox: 250
-            },
-            /* verbose= */
-            false);
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+                const config = {
+                    fps: 20,
+                    qrbox: 250
+                };
+
+                // Start back camera and if not found start front cam
+                html5QrCode.start({
+                    facingMode: {
+                        exact: "environment"
+                    }
+                }, config, qrCodeSuccessCallback).catch((err) => {
+                    html5QrCode.start({
+                        facingMode: {
+                            exact: "user"
+                        }
+                    }, config, qrCodeSuccessCallback)
+                });
+
+                $('#start_cam').val("Stop Cam");
+                $('#start_cam').data('id', 2);
+            } else if (curr_status == 2) {
+                html5QrCode.stop();
+                $('#start_cam').val("Start Cam");
+                $('#start_cam').data('id', 1);
+                $('#my_camera').empty();
+            }
+        }
     </script>
 @endpush
