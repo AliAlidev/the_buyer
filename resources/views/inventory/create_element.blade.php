@@ -1,5 +1,18 @@
 @extends('layouts.main')
 
+@push('styles')
+    <style>
+        .ui-autocomplete {
+            max-height: 200px;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+            /* add padding to account for vertical scrollbar */
+            padding-right: 20px;
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="container-fluid">
 
@@ -27,12 +40,12 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Inventory</h4>
+                            <h4>Create Element</h4>
                         </div>
                         <div class="card-body">
                             <!-- Demo purpose only -->
                             <div style="min-height: 300px;">
-                                <form method="POST" action="{{ route('add-data') }}">
+                                <form method="POST" action="{{ route('create-item') }}">
                                     @csrf
                                     @if ($errors->any())
                                         <div class="alert alert-danger">
@@ -68,9 +81,6 @@
                                                 <div class="col-md-10">
                                                     <input class="form-control" id="result" type="text" name="code"
                                                         value="{{ old('code') }}" placeholder="SCAN CODE">
-                                                    <div class="valid-feedback">
-                                                        Looks good!
-                                                    </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <input id="getdata" type="button" class="btn btn-primary"
@@ -131,7 +141,108 @@
 
 @push('scripts')
     <script>
+        $("#name").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "{{ route('get-items-name') }}",
+                    dataType: "json",
+                    data: {
+                        searchText: request.term
+                    },
+                    success: function(data) {
+                        response($.map(data, function(item) {
+                            return {
+                                label: item.name,
+                                value: item.name
+                            };
+                        }));
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script>
+        $('#name').keyup(function(e) {
+            if (e.keyCode == 13) {
+                // clear old
+                $('#code').val('');
+                $('#quantity').val('');
+                $('#price').val('');
+                $('#expiry_date').val('');
+                $('#description').val('');
+                var elementName = $(this).val();
+                $.ajax({
+                    type: 'post',
+                    dataType: "JSON",
+                    url: "{{ route('get-data-by-name') }}",
+                    data: {
+                        '_token': '{{ csrf_token() }}',
+                        name: elementName
+                    },
+                    complete: function(data) {
+                        data = data.responseJSON;
+                        if (data.success) {
+                            data = data.data;
+                            $('#name').removeClass(
+                                'is-invalid  was-validated form-control:invalid');
+                            $('#name').removeClass(
+                                'is-valid  was-validated form-control:valid');
+
+                            $('#result').val(data.code);
+                            $('#result').removeClass(
+                                'form-control is-invalid  was-validated form-control:invalid');
+                            $('#result').addClass(
+                                'form-control is-valid  was-validated form-control:valid');
+                            $('#quantity').val(data.quantity);
+                            $('#quantity').removeClass(
+                                'form-control is-invalid  was-validated form-control:invalid');
+                            $('#quantity').addClass(
+                                'form-control is-valid  was-validated form-control:valid');
+                            $('#price').val(data.price);
+                            $('#price').removeClass(
+                                'form-control is-invalid  was-validated form-control:invalid');
+                            $('#price').addClass(
+                                'form-control is-valid  was-validated form-control:valid');
+                            $('#expiry_date').val(data.expiry_date);
+                            $('#expiry_date').removeClass(
+                                'form-control is-invalid  was-validated form-control:invalid');
+                            $('#expiry_date').addClass(
+                                'form-control is-valid  was-validated form-control:valid');
+                            $('#description').text(data.description);
+                            $('#description').removeClass(
+                                'form-control is-invalid  was-validated form-control:invalid');
+                            $('#description').addClass(
+                                'form-control is-valid  was-validated form-control:valid');
+                        } else {
+                            $('#code').addClass(
+                                'form-control is-invalid  was-validated form-control:invalid');
+                            $('#quantity').addClass(
+                                'form-control is-invalid  was-validated form-control:invalid');
+                            $('#price').addClass(
+                                'form-control is-invalid  was-validated form-control:invalid');
+                            $('#expiry_date').addClass(
+                                'form-control is-invalid  was-validated form-control:invalid');
+                            $('#description').addClass(
+                                'form-control is-invalid  was-validated form-control:invalid');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script>
         $('#getdata').click(function() {
+
+            // clear old
+            $('#name').val('');
+            $('#quantity').val('');
+            $('#price').val('');
+            $('#expiry_date').val('');
+            $('#description').val('');
+
+
             // get code details
             var serialCode = $('#result').val();
             $.ajax({
@@ -146,32 +257,51 @@
                     data = data.responseJSON;
                     if (data.success) {
                         data = data.data;
+                        $('#result').removeClass(
+                            'is-invalid  was-validated form-control:invalid');
+                        $('#result').removeClass(
+                            'is-valid  was-validated form-control:valid');
+
                         $('#name').val(data.name);
-                        $('#name').removeClass('form-control is-invalid  was-validated form-control:invalid');
+                        $('#name').removeClass(
+                            'form-control is-invalid  was-validated form-control:invalid');
                         $('#name').addClass('form-control is-valid  was-validated form-control:valid');
                         $('#quantity').val(data.quantity);
-                        $('#quantity').removeClass('form-control is-invalid  was-validated form-control:invalid');
-                        $('#quantity').addClass('form-control is-valid  was-validated form-control:valid');
+                        $('#quantity').removeClass(
+                            'form-control is-invalid  was-validated form-control:invalid');
+                        $('#quantity').addClass(
+                            'form-control is-valid  was-validated form-control:valid');
                         $('#price').val(data.price);
-                        $('#price').removeClass('form-control is-invalid  was-validated form-control:invalid');
+                        $('#price').removeClass(
+                            'form-control is-invalid  was-validated form-control:invalid');
                         $('#price').addClass('form-control is-valid  was-validated form-control:valid');
                         $('#expiry_date').val(data.expiry_date);
-                        $('#expiry_date').removeClass('form-control is-invalid  was-validated form-control:invalid');
-                        $('#expiry_date').addClass('form-control is-valid  was-validated form-control:valid');
+                        $('#expiry_date').removeClass(
+                            'form-control is-invalid  was-validated form-control:invalid');
+                        $('#expiry_date').addClass(
+                            'form-control is-valid  was-validated form-control:valid');
                         $('#description').text(data.description);
-                        $('#description').removeClass('form-control is-invalid  was-validated form-control:invalid');
-                        $('#description').addClass('form-control is-valid  was-validated form-control:valid');
+                        $('#description').removeClass(
+                            'form-control is-invalid  was-validated form-control:invalid');
+                        $('#description').addClass(
+                            'form-control is-valid  was-validated form-control:valid');
                     } else {
-                        $('#name').addClass('form-control is-invalid  was-validated form-control:invalid');
-                        $('#quantity').addClass('form-control is-invalid  was-validated form-control:invalid');
-                        $('#price').addClass('form-control is-invalid  was-validated form-control:invalid');
-                        $('#expiry_date').addClass('form-control is-invalid  was-validated form-control:invalid');
-                        $('#description').addClass('form-control is-invalid  was-validated form-control:invalid');
+                        $('#name').addClass(
+                            'form-control is-invalid  was-validated form-control:invalid');
+                        $('#quantity').addClass(
+                            'form-control is-invalid  was-validated form-control:invalid');
+                        $('#price').addClass(
+                            'form-control is-invalid  was-validated form-control:invalid');
+                        $('#expiry_date').addClass(
+                            'form-control is-invalid  was-validated form-control:invalid');
+                        $('#description').addClass(
+                            'form-control is-invalid  was-validated form-control:invalid');
                     }
                 }
             });
         })
     </script>
+
     <script>
         var html5QrCode;
 

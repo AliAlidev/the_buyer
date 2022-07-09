@@ -4,7 +4,7 @@
 <head>
 
     <meta charset="utf-8" />
-    <title>Sidebar with User | Agroxa - Responsive Bootstrap 5 Admin Dashboard</title>
+    <title>Buyer Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
@@ -19,6 +19,12 @@
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- App Css-->
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
+
+
 
     @stack('styles')
 
@@ -137,12 +143,6 @@
                                             Profile<div class="ripple-wrapper me-2"></div>
                                         </a></li>
                                     <li><a href="javascript:void(0)" class="dropdown-item"><i
-                                                class="mdi mdi-cog text-muted me-2"></i>
-                                            Settings</a></li>
-                                    <li><a href="javascript:void(0)" class="dropdown-item"><i
-                                                class="mdi mdi-lock-open-outline text-muted me-2"></i>
-                                            Lock screen</a></li>
-                                    <li><a href="javascript:void(0)" class="dropdown-item"><i
                                                 class="mdi mdi-power text-muted me-2"></i>
                                             Logout</a></li>
                                 </ul>
@@ -162,25 +162,50 @@
 
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="mdi mdi-email"></i>
+                                <i class="mdi mdi-home"></i>
                                 <span>Inventory</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
                                 <li>
                                     <a href="{{ route('list-items') }}" class="waves-effect">
-                                        <i class="mdi mdi-home"></i><span class="badge bg-primary float-end">3</span>
+                                        <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
                                         <span>List Items</span>
 
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{{ route('create-item') }}" class="waves-effect">
-                                        <i class="mdi mdi-home"></i><span class="badge bg-primary float-end">3</span>
+                                        <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
                                         <span>Create Item</span>
 
                                     </a>
                                 </li>
-                
+
+                            </ul>
+                        </li>
+
+                        
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="mdi mdi-home"></i>
+                                <span>Invoices</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li>
+                                    <a href="{{ route('create-buy-invoice') }}" class="waves-effect">
+                                        <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
+                                        <span>Buy Invoice</span>
+
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('create-sell-invoice') }}" class="waves-effect">
+                                        <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
+                                        <span>Sell Invoice</span>
+
+                                    </a>
+                                </li>
+
                             </ul>
                         </li>
 
@@ -216,9 +241,7 @@
                         <div class="col-sm-12 text-center">
                             <script>
                                 document.write(new Date().getFullYear())
-                            </script> © Buyer <span class="d-none d-sm-inline-block">- Crafted with <i
-                                    class="mdi mdi-heart text-primary"></i> by
-                                Themesbrand.</span>
+                            </script> © Buyer <span class="d-none d-sm-inline-block">
                         </div>
 
                     </div>
@@ -235,6 +258,10 @@
 
     <!-- JAVASCRIPT -->
     <script src="{{ asset('assets/libs/jquery/jquery.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"
+        integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/libs/metismenu/metisMenu.min.js') }}"></script>
     <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
@@ -245,7 +272,6 @@
     <!-- Peity JS -->
     <script src="{{ asset('assets/libs/peity/jquery.peity.min.js') }}"></script>
 
-    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.min.js"></script> --}}
     <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
 
     <script src="{{ asset('assets/libs/morris.js/morris.min.js') }}"></script>
@@ -255,6 +281,14 @@
 
     <!-- App js -->
     <script src="{{ asset('assets/js/app.js') }}"></script>
+
+
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    {{-- swal alert --}}
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     @stack('scripts')
 

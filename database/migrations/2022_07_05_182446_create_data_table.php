@@ -21,6 +21,8 @@ class CreateDataTable extends Migration
             $table->float('price')->default(0);
             $table->string('expiry_date')->nullable(true);
             $table->string('description')->nullable(true);
+            $table->integer("merchant_id")->default(0);
+            $table->integer("user_id")->default(0);
             $table->timestamps();
         });
     }
