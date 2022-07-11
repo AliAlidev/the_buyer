@@ -325,6 +325,9 @@
                         qrbox: {
                             width: 250,
                             height: 100
+                        },
+                        experimentalFeatures: {
+                            useBarCodeDetectorIfSupported: true
                         }
                     };
                 } else {
@@ -333,6 +336,9 @@
                         qrbox: {
                             width: 100,
                             height: 50
+                        },
+                        experimentalFeatures: {
+                            useBarCodeDetectorIfSupported: true
                         }
                     };
                 }
@@ -357,7 +363,7 @@
                 $('#start_cam').val("Start Cam");
                 $('#start_cam').data('id', 1);
                 $('#my_camera').empty();
-                
+
                 $('#start_flash').data('id', 0);
                 $('#start_flash').text("Flash OFF");
                 powerTorch(false);
