@@ -45,7 +45,7 @@ class User extends Authenticatable
 
     public function data()
     {
-        return $this->belongsToMany(Data::class, UserData::class, "user_id", "data_id", "id", "id");
+        return $this->belongsToMany(Data::class, UserData::class, "merchant_id", "data_id", "id", "id");
     }
 
 }

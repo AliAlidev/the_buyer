@@ -45,22 +45,12 @@
                         <div class="card-body">
                             <!-- Demo purpose only -->
                             <div style="min-height: 300px;">
-                                <form method="POST" action="{{ route('create-item') }}">
+                                <div id="alertdanger" class="alert alert-danger" hidden>
+                                </div>
+                                <div id="alertsuccess" class="alert alert-success" hidden>
+                                </div>
+                                <form id="form1" method="POST">
                                     @csrf
-                                    @if ($errors->any())
-                                        <div class="alert alert-danger">
-                                            <ul>
-                                                @foreach ($errors->all() as $error)
-                                                    <li>{{ $error }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
-                                    @if (session()->has('success'))
-                                        <div class="alert alert-success">
-                                            {{ session()->get('success') }}
-                                        </div>
-                                    @endif
                                     <div class="row">
                                         <div class="col-md-2"></div>
                                         <div class="col-md-8 mt-3">
@@ -96,17 +86,36 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="mt-3" for="">Quantity</label>
                                                     <input id="quantity" class="form-control" type="number"
-                                                        value="{{ old('quantity') }}" name="quantity"
-                                                        placeholder="QUANTITY" required>
+                                                        value="{{ old('quantity') != null ? old('quantity') : 0 }}"
+                                                        name="quantity" required placeholder="QUANTITY">
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="mt-3" for="">Price</label>
                                                     <input id="price" class="form-control" type="number"
-                                                        value="{{ old('price') }}" name="price" placeholder="PRICE"
-                                                        required>
+                                                        value="{{ old('price') != null ? old('price') : 0 }}"
+                                                        name="price" placeholder="PRICE" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="mt-3" for="">Quantity Parts</label>
+                                                    <input id="quantityparts" class="form-control" type="number"
+                                                        value="{{ old('quantityparts') != null ? old('quantityparts') : 0 }}"
+                                                        name="quantityparts" required placeholder="QUANTITY PARTS">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="mt-3" for="">Part Price</label>
+                                                    <input id="partprice" class="form-control" type="number"
+                                                        value="{{ old('partprice') != null ? old('partprice') : 0 }}"
+                                                        name="partprice" required placeholder="PART PRICE">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label class="mt-3" for="">Start Date</label>
+                                                    <input id="start_date" class="form-control" type="date"
+                                                        value="{{ old('start_date') }}" name="start_date">
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="mt-3" for="">Expiry Date</label>
@@ -124,7 +133,7 @@
 
                                         <div class="col-md-12 text-center">
                                             <br />
-                                            <button class="btn btn-primary">Add</button>
+                                            <button class="btn btn-primary" type="button" id="submitForm">Add</button>
                                         </div>
                                     </div>
                                 </form>
@@ -167,8 +176,10 @@
             if (e.keyCode == 13) {
                 // clear old
                 $('#code').val('');
-                $('#quantity').val('');
-                $('#price').val('');
+                $('#quantity').val('0');
+                $('#quantityparts').val('0');
+                $('#price').val('0');
+                $('#partprice').val('0');
                 $('#expiry_date').val('');
                 $('#description').val('');
                 var elementName = $(this).val();
@@ -181,50 +192,20 @@
                         name: elementName
                     },
                     complete: function(data) {
+                        $('#alertdanger').attr('hidden', true);
+                        $('#alertsuccess').attr('hidden', true);
+                        $('#name').removeClass(
+                            'is-invalid  was-validated form-control:invalid');
+                        $('#name').removeClass(
+                            'is-valid  was-validated form-control:valid');
                         data = data.responseJSON;
                         if (data.success) {
                             data = data.data;
-                            $('#name').removeClass(
+                            $('#name').addClass(
                                 'is-invalid  was-validated form-control:invalid');
-                            $('#name').removeClass(
-                                'is-valid  was-validated form-control:valid');
-
-                            $('#result').val(data.code);
-                            $('#result').removeClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#result').addClass(
-                                'form-control is-valid  was-validated form-control:valid');
-                            $('#quantity').val(data.quantity);
-                            $('#quantity').removeClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#quantity').addClass(
-                                'form-control is-valid  was-validated form-control:valid');
-                            $('#price').val(data.price);
-                            $('#price').removeClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#price').addClass(
-                                'form-control is-valid  was-validated form-control:valid');
-                            $('#expiry_date').val(data.expiry_date);
-                            $('#expiry_date').removeClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#expiry_date').addClass(
-                                'form-control is-valid  was-validated form-control:valid');
-                            $('#description').text(data.description);
-                            $('#description').removeClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#description').addClass(
-                                'form-control is-valid  was-validated form-control:valid');
                         } else {
-                            $('#code').addClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#quantity').addClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#price').addClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#expiry_date').addClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#description').addClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
+                            $('#name').addClass(
+                                'is-valid  was-validated form-control:valid');
                         }
                     }
                 });
@@ -236,12 +217,13 @@
         $('#getdata').click(function() {
 
             // clear old
-            $('#name').val('');
-            $('#quantity').val('');
-            $('#price').val('');
+            $('#code').val('');
+            $('#quantity').val('0');
+            $('#quantityparts').val('0');
+            $('#price').val('0');
+            $('#partprice').val('0');
             $('#expiry_date').val('');
             $('#description').val('');
-
 
             // get code details
             var serialCode = $('#result').val();
@@ -254,48 +236,20 @@
                     code: serialCode
                 },
                 complete: function(data) {
+                    $('#alertdanger').attr('hidden', true);
+                    $('#alertsuccess').attr('hidden', true);
+                    $('#result').removeClass(
+                        'is-valid  was-validated form-control:valid');
+                    $('#result').removeClass(
+                        'is-invalid  was-validated form-control:invalid');
                     data = data.responseJSON;
                     if (data.success) {
                         data = data.data;
-                        $('#result').removeClass(
+                        $('#result').addClass(
                             'is-invalid  was-validated form-control:invalid');
-                        $('#result').removeClass(
-                            'is-valid  was-validated form-control:valid');
-
-                        $('#name').val(data.name);
-                        $('#name').removeClass(
-                            'form-control is-invalid  was-validated form-control:invalid');
-                        $('#name').addClass('form-control is-valid  was-validated form-control:valid');
-                        $('#quantity').val(data.quantity);
-                        $('#quantity').removeClass(
-                            'form-control is-invalid  was-validated form-control:invalid');
-                        $('#quantity').addClass(
-                            'form-control is-valid  was-validated form-control:valid');
-                        $('#price').val(data.price);
-                        $('#price').removeClass(
-                            'form-control is-invalid  was-validated form-control:invalid');
-                        $('#price').addClass('form-control is-valid  was-validated form-control:valid');
-                        $('#expiry_date').val(data.expiry_date);
-                        $('#expiry_date').removeClass(
-                            'form-control is-invalid  was-validated form-control:invalid');
-                        $('#expiry_date').addClass(
-                            'form-control is-valid  was-validated form-control:valid');
-                        $('#description').text(data.description);
-                        $('#description').removeClass(
-                            'form-control is-invalid  was-validated form-control:invalid');
-                        $('#description').addClass(
-                            'form-control is-valid  was-validated form-control:valid');
                     } else {
-                        $('#name').addClass(
-                            'form-control is-invalid  was-validated form-control:invalid');
-                        $('#quantity').addClass(
-                            'form-control is-invalid  was-validated form-control:invalid');
-                        $('#price').addClass(
-                            'form-control is-invalid  was-validated form-control:invalid');
-                        $('#expiry_date').addClass(
-                            'form-control is-invalid  was-validated form-control:invalid');
-                        $('#description').addClass(
-                            'form-control is-invalid  was-validated form-control:invalid');
+                        $('#result').addClass(
+                            'is-valid  was-validated form-control:valid');
                     }
                 }
             });
@@ -377,5 +331,40 @@
                 $('#my_camera').empty();
             }
         }
+    </script>
+
+    <script>
+        $('#submitForm').click(function(e) {
+            var data = $('form').serialize();
+            $.post("{{ route('create-item') }}", data).done(function(value) {
+                if (value.success) {
+                    $('#alertsuccess').attr('hidden', false);
+                    $('#alertsuccess').empty();
+                    $('#alertsuccess').append(value.message);
+                    $("#form1")[0].reset();
+                    $('#result').removeClass(
+                        'is-valid  was-validated form-control:valid');
+                    $('#result').removeClass(
+                        'is-invalid  was-validated form-control:invalid');
+                    $('#name').removeClass(
+                        'is-valid  was-validated form-control:valid');
+                    $('#name').removeClass(
+                        'is-invalid  was-validated form-control:invalid');
+                }
+            }).fail(function(xhr, status, error) {
+                $('#alertsuccess').attr('hidden', true);
+                $('#alertdanger').attr('hidden', false);
+                $('#alertdanger').empty();
+                $('#alertdanger').append("<ul>");
+                $.each(xhr.responseJSON.errors, function(index, value) {
+                    $('#alertdanger').append("<li>" + value + "</li>");
+                });
+                $('#alertdanger').append("</ul>");
+            });
+        });
+
+        $('#form1').submit(function() {
+            e.preventDefault();
+        });
     </script>
 @endpush

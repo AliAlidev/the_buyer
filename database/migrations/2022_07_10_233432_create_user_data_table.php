@@ -15,6 +15,7 @@ class CreateUserDataTable extends Migration
     {
         Schema::create('user_data', function (Blueprint $table) {
             $table->id();
+            $table->integer("merchant_id");
             $table->integer("user_id");
             $table->integer("data_id");
             $table->timestamps();

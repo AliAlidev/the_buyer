@@ -40,6 +40,7 @@ class MerhcantsSeeder extends Seeder
         ]);
         UserData::create([
             'user_id' => $user->id,
+            'merchant_id' => $user->merchant_id,
             'data_id' => $data->id,
         ]);
         Amount::create([
@@ -59,6 +60,7 @@ class MerhcantsSeeder extends Seeder
             'name' => 'item2'
         ]);
         UserData::create([
+            'merchant_id' => $user->merchant_id,
             'user_id' => $user->id,
             'data_id' => $data->id,
         ]);
@@ -85,6 +87,7 @@ class MerhcantsSeeder extends Seeder
             'name' => 'item3'
         ]);
         UserData::create([
+            'merchant_id' => $user->merchant_id,
             'user_id' => $user->id,
             'data_id' => $data->id,
         ]);

@@ -24,6 +24,8 @@ Route::group(['prefix' => 'admin'], function () {
 
 Route::get('/', [HomeController::class, 'listitems'])->name('home');
 Route::group(['prefix' => 'inventory'], function () {
+    Route::get('getCurrentPrice/{id}/{merchantId}', [HomeController::class, 'getCurrentPriceForElement'])->name('get-current-price-for-element');
+    Route::get('getMaxPrice/{id}', [HomeController::class, 'getMaxPriceForElement'])->name('get-max-price-for-element');
     Route::get('get_itms_na', [HomeController::class, 'getItemsName'])->name('get-items-name');
     Route::get('list_itm', [HomeController::class, 'listitems'])->name('list-items');
     Route::get('create_itm', [HomeController::class, 'createitemindex'])->name('create-item-index');

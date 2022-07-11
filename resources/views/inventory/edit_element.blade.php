@@ -80,7 +80,7 @@
                                                 <label for="result">Code</label>
                                                 <div class="col-md-10">
                                                     <input class="form-control" id="result" type="text" name="code"
-                                                        value="{{ $element->code }}" placeholder="SCAN CODE" readonly>
+                                                        value="{{ $element->code }}" placeholder="SCAN CODE">
                                                 </div>
                                                 <div class="col-md-2">
                                                     <input id="getdata" type="button" class="btn btn-primary"
@@ -93,25 +93,6 @@
                                                     <input id="name" name="name" value="{{ $element->name }}"
                                                         type="text" class="form-control" placeholder="ENTER ELEMENT NAME"
                                                         required>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <label class="mt-3" for="">Quantity</label>
-                                                    <input id="quantity" class="form-control" type="number"
-                                                        value="{{ $element->quantity }}" name="quantity"
-                                                        placeholder="QUANTITY" required>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label class="mt-3" for="">Price</label>
-                                                    <input id="price" class="form-control" type="number"
-                                                        value="{{ $element->price }}" name="price" placeholder="PRICE"
-                                                        required>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label class="mt-3" for="">Expiry Date</label>
-                                                    <input id="expiry_date" class="form-control" type="date"
-                                                        value="{{ $element->expiry_date }}" name="expiry_date">
                                                 </div>
                                             </div>
                                             <div class="row">

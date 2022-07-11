@@ -16,8 +16,8 @@ class CreateItemDatesTable extends Migration
         Schema::create('item_dates', function (Blueprint $table) {
             $table->id();
             $table->integer("data_id")->default(0);
-            $table->string("start_date");
-            $table->string("expiry_date");
+            $table->string("start_date")->nullable(true);
+            $table->string("expiry_date")->nullable(true);
             $table->integer("merchant_id")->default(0);
             $table->integer("user_id")->default(0);
             $table->timestamps();
