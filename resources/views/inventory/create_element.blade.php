@@ -262,9 +262,7 @@
         function startCam() {
             var curr_status = $('#start_cam').data('id');
             if (curr_status == 1) {
-                html5QrCode = new Html5Qrcode("my_camera", experimentalFeatures: {
-                    useBarCodeDetectorIfSupported: true
-                }, false);
+                html5QrCode = new Html5Qrcode("my_camera", false);
                 const qrCodeSuccessCallback = (decodedText, decodedResult) => {
                     $('#result').empty();
                     $('#result').val(decodedResult.decodedText);
@@ -298,16 +296,45 @@
                 const s_height = $(window).height();
                 const s_width = $(window).width();
 
+                const formatsToSupport = [
+                    Html5QrcodeSupportedFormats.CODABAR,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.CODE_93,
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION,
+                    Html5QrcodeSupportedFormats.UPC_E,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.RSS_EXPANDED,
+                    Html5QrcodeSupportedFormats.RSS_14,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.ITF
+                ];
+
                 var config = null;
                 if (s_width > 500) {
                     config = {
-                        fps: 20,
-                        qrbox: 250
+                        fps: 10,
+                        qrbox: {
+                            width: 300,
+                            height: 100
+                        },
+                        // Only support camera scan type.
+                        supportedScanTypes: formatsToSupport,
+                        experimentalFeatures: {
+                            useBarCodeDetectorIfSupported: true
+                        },
+                        torch: true
                     };
                 } else {
                     config = {
                         fps: 20,
-                        qrbox: 140
+                        qrbox: 140,
+                        supportedScanTypes: formatsToSupport,
+                        experimentalFeatures: {
+                            useBarCodeDetectorIfSupported: true
+                        },
+                        torch: true
                     };
                 }
 
