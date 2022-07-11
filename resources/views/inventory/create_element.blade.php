@@ -364,6 +364,8 @@
                 $('#start_cam').data('id', 1);
                 $('#my_camera').empty();
                 powerTorch(false);
+                $('#start_flash').data('id', 0);
+                $('#start_flash').text("Flash OFF");
             }
         }
 
