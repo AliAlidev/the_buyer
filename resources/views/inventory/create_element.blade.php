@@ -321,7 +321,7 @@
                 var config = null;
                 if (s_width > 500) {
                     config = {
-                        fps: 100,
+                        fps: 10,
                         qrbox: {
                             width: 250,
                             height: 100
@@ -329,7 +329,7 @@
                     };
                 } else {
                     config = {
-                        fps: 100,
+                        fps: 10,
                         qrbox: {
                             width: 100,
                             height: 50
