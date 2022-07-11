@@ -293,8 +293,6 @@
                         complete: function(data) {
                             if (data.success) {
 
-                            } else {
-                                alert('not ok');
                             }
                         }
                     });
@@ -303,20 +301,6 @@
                 const s_height = $(window).height();
                 const s_width = $(window).width();
 
-                const formatsToSupport = [
-                    Html5QrcodeSupportedFormats.CODABAR,
-                    Html5QrcodeSupportedFormats.CODE_39,
-                    Html5QrcodeSupportedFormats.CODE_93,
-                    Html5QrcodeSupportedFormats.CODE_128,
-                    Html5QrcodeSupportedFormats.UPC_EAN_EXTENSION,
-                    Html5QrcodeSupportedFormats.UPC_E,
-                    Html5QrcodeSupportedFormats.UPC_A,
-                    Html5QrcodeSupportedFormats.RSS_EXPANDED,
-                    Html5QrcodeSupportedFormats.RSS_14,
-                    Html5QrcodeSupportedFormats.EAN_8,
-                    Html5QrcodeSupportedFormats.EAN_13,
-                    Html5QrcodeSupportedFormats.ITF
-                ];
 
                 var config = null;
                 if (s_width > 500) {
@@ -342,7 +326,6 @@
                         }
                     };
                 }
-
                 // Start back camera and if not found start front cam
                 html5QrCode.start({
                     facingMode: {
@@ -358,6 +341,11 @@
 
                 $('#start_cam').val("Stop Cam");
                 $('#start_cam').data('id', 2);
+
+                $('#start_flash').data('id', 1);
+                $('#start_flash').text("Flash ON");
+                powerTorch(true);
+
             } else if (curr_status == 2) {
                 html5QrCode.stop();
                 $('#start_cam').val("Start Cam");
