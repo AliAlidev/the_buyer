@@ -42,21 +42,25 @@
                             </div>
                         @endif
                         <div class="card-body">
-                            <div id="alertdiv" class="alert"></div>
-                            <table class="table table-bordered data-table" style="width: 100%">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Code</th>
-                                        <th>Name</th>
-                                        <th>quantity</th>
-                                        <th>quantity Parts</th>
-                                        <th width="100px">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
+                            <div class="col-md-12">
+                                <table class="table table-bordered data-table" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center">No</th>
+                                            <th style="text-align: center">Code</th>
+                                            <th style="text-align: center">Name</th>
+                                            <th style="text-align: center">Quantity</th>
+                                            <th style="text-align: center">Price</th>
+                                            <th style="text-align: center">Quantity Parts</th>
+                                            <th style="text-align: center">Part Price</th>
+                                            <th style="text-align: center">Date</th>
+                                            <th style="text-align: center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="text-align: center">
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -70,18 +74,30 @@
 @push('scripts')
     <script type="text/javascript">
         $(function() {
-
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            var dataId = urlParams.get('dataId');
+            var merchantId = urlParams.get('merchId');
             var table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
                 "deferRender": true,
                 scrollY: 500,
                 scrollX: true,
-                ajax: "{{ route('list-items') }}",
+                "ajax": {
+                    url: "{{ route('list-inventory-item-amounts') }}",
+                    type: "get",
+                    data: {
+                        dataId: dataId,
+                        merchantId: merchantId,
+                    }
+                },
 
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'code',
@@ -96,8 +112,20 @@
                         name: 'quantity',
                     },
                     {
+                        data: 'price',
+                        name: 'price',
+                    },
+                    {
                         data: 'quantity_parts',
                         name: 'quantity_parts',
+                    },
+                    {
+                        data: 'price_part',
+                        name: 'price_part',
+                    },
+                    {
+                        data: 'amount_date',
+                        name: 'amount_date',
                     },
                     {
                         data: 'action',
@@ -129,7 +157,7 @@
                     // ajax
                     $.ajax({
                         type: "POST",
-                        url: "{{ route('delete-item') }}",
+                        url: "{{ route('delete-item-amount') }}",
                         data: {
                             id: id
                         },

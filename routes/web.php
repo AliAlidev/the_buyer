@@ -28,10 +28,12 @@ Route::group(['prefix' => 'inventory'], function () {
     Route::get('getMaxPrice/{id}', [HomeController::class, 'getMaxPriceForElement'])->name('get-max-price-for-element');
     Route::get('get_itms_na', [HomeController::class, 'getItemsName'])->name('get-items-name');
     Route::get('list_itm', [HomeController::class, 'listitems'])->name('list-items');
+    Route::get('list_invitem_amnt', [HomeController::class, 'listinventoryitemamounts'])->name('list-inventory-item-amounts');
     Route::get('create_itm', [HomeController::class, 'createitemindex'])->name('create-item-index');
     Route::get('edit_itm/{id}', [HomeController::class, 'edititemindex'])->name('edit-item-index');
     Route::get('view_itm/{id}', [HomeController::class, 'viewitemindex'])->name('view-item-index');
     Route::post('delte_itm', [HomeController::class, 'deleteitem'])->name('delete-item');
+    Route::post('delte_itm_amnt', [HomeController::class, 'deleteitemamount'])->name('delete-item-amount');
     Route::post('edit_itm/{id}', [HomeController::class, 'edititem'])->name('edit-item');
     Route::post('create_itm', [HomeController::class, 'createitem'])->name('create-item');
     Route::post('add_dat', [HomeController::class, 'store'])->name('add-data');

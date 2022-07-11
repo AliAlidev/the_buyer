@@ -27,38 +27,38 @@
                         <div class="card-header">
                             <h4>List Items</h4>
                         </div>
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-                        @if (session()->has('success'))
-                            <div class="alert alert-success">
-                                {{ session()->get('success') }}
-                            </div>
-                        @endif
                         <div class="card-body">
-                            <div id="alertdiv" class="alert"></div>
-                            <table class="table table-bordered data-table" style="width: 100%">
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                            @if (session()->has('success'))
+                                <div class="alert alert-success">
+                                    {{ session()->get('success') }}
+                                </div>
+                            @endif
+                            <table class="table table-bordered data-table" style="width: 150%">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
-                                        <th>Code</th>
-                                        <th>Name</th>
-                                        <th>quantity</th>
-                                        <th>quantity Parts</th>
-                                        <th>price</th>
-                                        <th>start_date</th>
-                                        <th>expiry_date</th>
-                                        <th>description</th>
-                                        <th width="100px">Action</th>
+                                        <th style="text-align: center">No</th>
+                                        <th style="text-align: center">Code</th>
+                                        <th style="text-align: center">Name</th>
+                                        <th style="text-align: center">Quantity</th>
+                                        <th style="text-align: center">Price</th>
+                                        <th style="text-align: center">Quantity Parts</th>
+                                        <th style="text-align: center">Part Price</th>
+                                        <th style="text-align: center">Start_date</th>
+                                        <th style="text-align: center">Expiry_date</th>
+                                        <th style="text-align: center">Description</th>
+                                        <th style="text-align: center">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody style="text-align: center">
                                 </tbody>
                             </table>
                         </div>
@@ -86,6 +86,8 @@
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'code',
@@ -100,12 +102,16 @@
                         name: 'quantity',
                     },
                     {
+                        data: 'price',
+                        name: 'price',
+                    },
+                    {
                         data: 'quantity_parts',
                         name: 'quantity_parts',
                     },
                     {
-                        data: 'price',
-                        name: 'price',
+                        data: 'part_price',
+                        name: 'part_price',
                     },
                     {
                         data: 'start_date',
@@ -132,7 +138,7 @@
             var currBtn = $(this);
             /// get max price
             if (currBtn.text() == "Max Price") {
-                var td = $($(this).closest("tr")).find('td:eq(5)');
+                var td = $($(this).closest("tr")).find('td:eq(4)');
                 var elementId = $(this).attr('id');
                 var id = elementId.split("_")[0];
                 var url = "{{ route('get-max-price-for-element', '#id') }}";
@@ -147,7 +153,7 @@
                 });
             } else {
                 /////// get current price
-                var td = $($(this).closest("tr")).find('td:eq(5)');
+                var td = $($(this).closest("tr")).find('td:eq(4)');
                 var elementId = $(this).attr('id');
                 var id = elementId.split("_")[0];
                 var merchantId = elementId.split("_")[1];
@@ -167,7 +173,6 @@
         });
 
         $('body').on('click', '.delete', function() {
-            $('.alert').empty();
             var id = $(this).attr('id');
             swal({
                 title: 'Are you sure?',
@@ -193,19 +198,13 @@
                         dataType: 'json',
                         success: function(result) {
                             if (result.success) {
-                                $('.alert').append(
-                                    "<div class= 'alert alert-success'>" +
-                                    result
-                                    .message +
-                                    "</div>");
+                                $('.alert-success').empty();
+                                $('.alert-success').append(result.message);
                                 $('.data-table').DataTable().clear().draw();
                             } else {
-                                $('.alert').show();
-                                $('.alert').append(
-                                    "<div class= 'alert alert-danger'>" +
-                                    result
-                                    .message +
-                                    "</div>");
+                                $('.alert-danger').empty();
+                                $('.alert-danger').show();
+                                $('.alert-danger').append(result.message);
                             }
                         },
                         error: function(erorr) {

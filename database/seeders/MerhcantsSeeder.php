@@ -46,15 +46,11 @@ class MerhcantsSeeder extends Seeder
         Amount::create([
             'data_id' => $data->id,
             'amount' => 5,
-            'user_id' => $user->id,
-            'merchant_id' => $user->merchant_id
-        ]);
-        Price::create([
-            'data_id' => $data->id,
             'price' => 800,
             'user_id' => $user->id,
             'merchant_id' => $user->merchant_id
         ]);
+
 
         $data = Data::firstOrCreate(['name' => 'item2'], [
             'name' => 'item2'
@@ -67,11 +63,6 @@ class MerhcantsSeeder extends Seeder
         Amount::create([
             'data_id' => $data->id,
             'amount' => 10,
-            'user_id' => $user->id,
-            'merchant_id' => $user->merchant_id
-        ]);
-        Price::create([
-            'data_id' => $data->id,
             'price' => 500,
             'user_id' => $user->id,
             'merchant_id' => $user->merchant_id
@@ -94,16 +85,10 @@ class MerhcantsSeeder extends Seeder
         Amount::create([
             'data_id' => $data->id,
             'amount' => 20,
-            'user_id' => $user->id,
-            'merchant_id' => $user->merchant_id
-        ]);
-        Price::create([
-            'data_id' => $data->id,
             'price' => 1000,
             'user_id' => $user->id,
             'merchant_id' => $user->merchant_id
         ]);
-
 
         $merchant = Merchant::firstOrCreate(["email" => "ahmad@gmail.com"], [
             "name" => "ahmad",

@@ -9,6 +9,7 @@ use App\Models\ItemDate;
 use App\Models\Price;
 use App\Models\User;
 use App\Models\UserData;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use DataTables;
@@ -61,20 +62,8 @@ class HomeController extends Controller
                 'data_id' => $data->id,
                 'amount' => $request->quantity,
                 'amount_part' => $request->quantityparts,
-                'user_id' => $user->id,
-                'merchant_id' => $user->merchant_id,
-            ]);
-
-            $price = Price::create([
-                'data_id' => $data->id,
                 'price' => $request->price,
                 'price_part' => $request->partprice,
-                'user_id' => $user->id,
-                'merchant_id' => $user->merchant_id,
-            ]);
-
-            $itemDate = ItemDate::create([
-                'data_id' => $data->id,
                 'start_date' => $request->start_date,
                 'expiry_date' => $request->expiry_date,
                 'user_id' => $user->id,
@@ -97,10 +86,10 @@ class HomeController extends Controller
     public function hasGreaterPriceFromAnotherUser($dataId, $merchantId)
     {
         // get max price for product
-        $max_price = Price::where('data_id', $dataId)->orderBy('price', 'desc')->first();
+        $max_price = Amount::where('data_id', $dataId)->orderBy('price', 'desc')->where('merchant_id', '!=', $merchantId)->first();
 
         // get price for prouct for specifc user
-        $user_price = Price::where('data_id', $dataId)->where('merchant_id', $merchantId)->first();
+        $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->first();
 
         if ($max_price != null && $user_price != null) {
             if ($user_price->price < $max_price->price) {
@@ -115,7 +104,7 @@ class HomeController extends Controller
     public function getMaxPriceForElement($dataId)
     {
         // get max price for product
-        $max_price = Price::where('data_id', $dataId)->orderBy('price', 'desc')->first();
+        $max_price = Amount::where('data_id', $dataId)->orderBy('price', 'desc')->first();
 
         if ($max_price != null) {
             return $max_price->price;
@@ -127,7 +116,7 @@ class HomeController extends Controller
     public function getCurrentPriceForElement($dataId, $userId)
     {
         // get max price for product
-        $max_price = Price::where('data_id', $dataId)->where('merchant_id', $userId)->orderBy('price', 'desc')->first();
+        $max_price = Amount::where('data_id', $dataId)->where('merchant_id', $userId)->orderBy('price', 'desc')->first();
 
         if ($max_price != null) {
             return $max_price->price;
@@ -166,12 +155,13 @@ class HomeController extends Controller
                 foreach ($items as $key => $item) {
                     $temp_amount = $item->amounts()->sum('amount');
                     $temp_amount_parts = $item->amounts()->sum('amount_part');
-                    $temp_price = $item->pricesForUser($merchantId)->orderBy('price', 'desc')->first();
-                    $temp_date = $item->itemdates()->first();
+                    $temp_price = $item->amountsForUser($merchantId)->orderBy('price', 'desc')->first();
+                    $temp_date = $item->amounts()->first();
                     $data = $item->toArray();
                     $data['quantity'] = $temp_amount != null ? $temp_amount : 0;
                     $data['quantity_parts'] = $temp_amount_parts != null ? $temp_amount_parts : 0;
                     $data['price'] = $temp_price != null ? $temp_price->price : 0;
+                    $data['part_price'] = $temp_price != null ? $temp_price->price_part : 0;
                     $data['start_date'] = $temp_date != null ? $temp_date->start_date : '';
                     $data['expiry_date'] = $temp_date != null ? $temp_date->expiry_date : '';
                     $data['has_greater_price'] = $this->hasGreaterPriceFromAnotherUser($item->id, $merchantId);
@@ -194,6 +184,7 @@ class HomeController extends Controller
                         if ($row['has_greater_price']) {
                             $btn .= '<a id=' . $row['id'] . '_' . $merchantId . ' class="show_max_price btn btn-info btn-sm mt-2">Max Price</a>';
                         }
+                        $btn .= '<a href="' . route('list-inventory-item-amounts', ['dataId' => $row['id'], 'merchId' => $merchantId]) . '" class="listinventoryitemamounts btn btn-primary btn-sm mt-2">List Amounts</a> &nbsp';
 
                         return $btn;
                     })
@@ -219,12 +210,28 @@ class HomeController extends Controller
         return view('inventory.view_element', ['element' => $data]);
     }
 
+    public function deleteitemamount(Request $request)
+    {
+        try {
+            $data = Amount::find($request->id);
+            if ($data) {
+                $data->delete();
+                return response()->json(['success' => true, 'message' => 'Amount deleted successfully']);
+            }
+            return redirect()->route('list-items')->withErrors('Amount not found');
+        } catch (Exception $th) {
+            return $this->errors("HomeController@deleteitem", $th->getMessage());
+        }
+    }
+
     public function deleteitem(Request $request)
     {
         try {
             $data = Data::find($request->id);
             if ($data) {
                 $data->delete();
+                Amount::where('data_id', $data->id)->delete();
+                UserData::where('data_id', $data->id)->delete();
                 return response()->json(['success' => true, 'message' => 'Element deleted successfully']);
             }
             return redirect()->route('list-items')->withErrors('Element not found');
@@ -271,7 +278,32 @@ class HomeController extends Controller
 
     public function listinventoryitemamounts(Request $request)
     {
-        $amounts = Amount::where('data_id', $request->dataId)->where('data_id', $request->dataId)->find();
-        
+        if ($request->ajax()) {
+            $data = Data::find($request->query('dataId'));
+            $amounts = $data->amountsForUser($request->query('merchantId'))->get();
+            $final_data = [];
+            foreach ($amounts as $key => $item) {
+                $data_temp = [
+                    'id' => $item->id,
+                    'code' => $data->code,
+                    'name' => $data->name,
+                    'quantity' => $item->amount,
+                    'price' => $item->price,
+                    'quantity_parts' => $item->amount_part,
+                    'price_part' => $item->price_part,
+                    'amount_date' => Carbon::parse($item->created_at)->toDateString()
+                ];
+                $final_data[] = $data_temp;
+            }
+            return Datatables::of($final_data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '<a id=' . $row['id'] . ' class="delete btn btn-danger btn-sm mt-2">Delete</a>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('inventory.list_inventory_item_amounts');
     }
 }

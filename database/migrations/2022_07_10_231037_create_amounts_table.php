@@ -18,6 +18,10 @@ class CreateAmountsTable extends Migration
             $table->integer("data_id")->default(0);
             $table->integer("amount")->default(0);
             $table->integer("amount_part")->default(0);
+            $table->integer("price")->default(0);
+            $table->integer("price_part")->default(0);
+            $table->string("start_date")->nullable(true);
+            $table->string("expiry_date")->nullable(true);
             $table->integer("merchant_id")->default(0);
             $table->integer("user_id")->default(0);
             $table->timestamps();

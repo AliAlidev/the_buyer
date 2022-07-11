@@ -20,18 +20,4 @@ class Data extends Model
         return $this->hasMany(Amount::class, "data_id","id")->where('merchant_id', $user_id);
     }
 
-    public function prices()
-    {
-        return $this->hasMany(Price::class, "data_id","id");
-    }
-
-    public function pricesForUser($user_id)
-    {
-        return $this->hasMany(Price::class, "data_id","id")->where('merchant_id', $user_id);
-    }
-
-    public function itemdates()
-    {
-        return $this->hasMany(ItemDate::class, "data_id","id");
-    }
 }
