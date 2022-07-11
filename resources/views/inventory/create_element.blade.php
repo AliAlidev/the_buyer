@@ -52,6 +52,7 @@
                                 <form id="form1" method="POST">
                                     @csrf
                                     <div class="row">
+                                        <button id="start_flas" onclick="powerTorch(true)">flash on</button>
                                         <div class="col-md-2"></div>
                                         <div class="col-md-8 mt-3">
                                             <div class="row">
@@ -349,7 +350,6 @@
                         }
                     }, config, qrCodeSuccessCallback)
                 });
-                powerTorch(true);
 
                 $('#start_cam').val("Stop Cam");
                 $('#start_cam').data('id', 2);
