@@ -52,7 +52,12 @@
                                 <form id="form1" method="POST">
                                     @csrf
                                     <div class="row">
-                                        <button id="start_flas" onclick="powerTorch(true)">flash on</button>
+                                        <div class="col-md-12">
+                                            <div class="col-md-3">
+                                                <button id="start_flash" data-id="0" class="btn btn-warning">Flash
+                                                    OFF</button>
+                                            </div>
+                                        </div>
                                         <div class="col-md-2"></div>
                                         <div class="col-md-8 mt-3">
                                             <div class="row">
@@ -370,6 +375,18 @@
             });
         }
 
+        $('#start_flash').click(function(e) {
+            e.preventDefault();
+            if ($(this).data('id') == 0) {
+                powerTorch(true);
+                $(this).data('id', 1);
+                $(this).text("Flash ON");
+            } else {
+                powerTorch(false);
+                $(this).data('id', 0);
+                $(this).text("Flash OFF");
+            }
+        });
     </script>
 
 
