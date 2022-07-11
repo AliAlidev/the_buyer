@@ -321,9 +321,9 @@
                 var config = null;
                 if (s_width > 500) {
                     config = {
-                        fps: 60,
+                        fps: 100,
                         qrbox: {
-                            width: 300,
+                            width: 250,
                             height: 100
                         },
                         // Only support camera scan type.
@@ -334,8 +334,11 @@
                     };
                 } else {
                     config = {
-                        fps: 60,
-                        qrbox: 140,
+                        fps: 100,
+                        qrbox: {
+                            width: 100,
+                            height: 50
+                        },
                         supportedScanTypes: formatsToSupport,
                         experimentalFeatures: {
                             useBarCodeDetectorIfSupported: true
