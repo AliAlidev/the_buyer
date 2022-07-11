@@ -268,4 +268,10 @@ class HomeController extends Controller
         $data = Data::where('name', 'like', $request->get('searchText') . '%')->skip(0)->take(25)->get();
         return $data;
     }
+
+    public function listinventoryitemamounts(Request $request)
+    {
+        $amounts = Amount::where('data_id', $request->dataId)->where('data_id', $request->dataId)->find();
+        
+    }
 }

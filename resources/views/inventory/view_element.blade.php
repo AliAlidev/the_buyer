@@ -52,25 +52,6 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-4">
-                                                    <label class="mt-3" for="">Quantity</label>
-                                                    <input id="quantity" class="form-control" type="number"
-                                                        value="{{ $element->quantity }}" name="quantity"
-                                                        placeholder="QUANTITY" readonly>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label class="mt-3" for="">Price</label>
-                                                    <input id="price" class="form-control" type="number"
-                                                        value="{{ $element->price }}" name="price" placeholder="PRICE"
-                                                        readonly>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label class="mt-3" for="">Expiry Date</label>
-                                                    <input id="expiry_date" class="form-control" type="date"
-                                                        value="{{ $element->expiry_date }}" name="expiry_date" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="row">
                                                 <div class="col-md-12">
                                                     <label class="mt-3" for="">Description</label>
                                                     <textarea id="description" class="form-control" name="description" id="" cols="30" rows="10" readonly>{{ $element->description }}</textarea>
