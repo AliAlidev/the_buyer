@@ -262,7 +262,9 @@
         function startCam() {
             var curr_status = $('#start_cam').data('id');
             if (curr_status == 1) {
-                html5QrCode = new Html5Qrcode("my_camera", false);
+                html5QrCode = new Html5Qrcode("my_camera", experimentalFeatures: {
+                    useBarCodeDetectorIfSupported: true
+                }, false);
                 const qrCodeSuccessCallback = (decodedText, decodedResult) => {
                     $('#result').empty();
                     $('#result').val(decodedResult.decodedText);
