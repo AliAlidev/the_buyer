@@ -342,10 +342,6 @@
                 $('#start_cam').val("Stop Cam");
                 $('#start_cam').data('id', 2);
 
-                $('#start_flash').data('id', 1);
-                $('#start_flash').text("Flash ON");
-                powerTorch(true);
-
             } else if (curr_status == 2) {
                 html5QrCode.stop();
                 $('#start_cam').val("Start Cam");
