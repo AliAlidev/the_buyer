@@ -97,9 +97,11 @@ class HomeController extends Controller
                 foreach ($items as $key => $item) {
                     $temp_amount = $item->amounts()->first();
                     $temp_price = $item->prices()->orderBy('price', 'desc')->first();
+                    $temp_date = $item->itemdates()->first();
                     $data = $item->toArray();
                     $data['quantity'] = $temp_amount != null ? $temp_amount->amount : 0;
                     $data['price'] = $temp_price != null ? $temp_price->price : 0;
+                    $data['expiry_date'] = $temp_date != null ? $temp_date->expiry_date : '';
                     $data['has_greater_price'] = $this->hasGreaterPriceFromAnotherUser($item->id, User::find(1)->merchant_id);
                     $final[] = $data;
                 }
@@ -118,6 +120,7 @@ class HomeController extends Controller
             }
             return view('inventory.list_inventory_items');
         } catch (Exception $th) {
+            dd($th->getMessage());
             return $this->errors("HomeController@listitems", $th->getMessage());
         }
     }

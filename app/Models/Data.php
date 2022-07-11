@@ -29,4 +29,9 @@ class Data extends Model
     {
         return $this->hasMany(Price::class, "data_id","id")->where('user_id', $user_id);
     }
+
+    public function itemdates()
+    {
+        return $this->hasMany(ItemDate::class, "data_id","id");
+    }
 }
