@@ -15,14 +15,13 @@ class CreateDataTable extends Migration
     {
         Schema::create('data', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->nullable(false);
-            $table->string('name')->nullable(true);
-            $table->float('quantity')->default(0);
-            $table->float('price')->default(0);
-            $table->string('expiry_date')->nullable(true);
+            $table->string('code')->nullable(true);
+            $table->string('name')->nullable(false);
+            $table->string('dose')->nullable(true);
+            $table->string('has_parts')->nullable(true);
+            $table->string('side_effects')->nullable(true);
+            $table->string('treatements')->nullable(true);
             $table->string('description')->nullable(true);
-            $table->integer("merchant_id")->default(0);
-            $table->integer("user_id")->default(0);
             $table->timestamps();
         });
     }

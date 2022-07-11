@@ -25,6 +25,7 @@ class CreateBuyInvoicesTable extends Migration
             $table->float("total_final")->default(0);
             $table->integer("merchant_id")->default(0);
             $table->integer("user_id")->default(0);
+            $table->string("notes")->nullable(true);
             $table->timestamps();
         });
     }

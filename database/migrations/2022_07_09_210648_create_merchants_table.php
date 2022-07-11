@@ -23,6 +23,7 @@ class CreateMerchantsTable extends Migration
             $table->string("city")->nullable(true);
             $table->string("address")->nullable(true);
             $table->string("type")->nullable(true);
+            $table->string("notes")->nullable(true);
             $table->timestamps();
         });
     }

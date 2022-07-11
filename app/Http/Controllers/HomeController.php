@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Data;
 use App\Models\Home;
+use App\Models\Price;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use DataTables;
 use Exception;
+
+use function PHPUnit\Framework\returnSelf;
 
 class HomeController extends Controller
 {
@@ -46,6 +50,24 @@ class HomeController extends Controller
         return view('inventory.create_element');
     }
 
+    public function hasGreaterPriceFromAnotherUser($dataId, $merchantId)
+    {
+        // get max price for product
+        $max_price = Price::where('data_id', $dataId)->orderBy('price', 'desc')->first();
+
+        // get price for prouct for specifc user
+        $user_price = Price::where('data_id', $dataId)->where('merchant_id', $merchantId)->first();
+
+        if ($max_price != null && $user_price != null) {
+            if ($user_price->price < $max_price->price) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+        }
+    }
+
     public function findBySerialName(Request $request)
     {
         $data = Data::where('name', $request->name)->first();
@@ -70,13 +92,24 @@ class HomeController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $items = Data::all();
-                return Datatables::of($items)
+                $items = User::find(1)->data;
+                $final = [];
+                foreach ($items as $key => $item) {
+                    $temp_amount = $item->amounts()->first();
+                    $temp_price = $item->prices()->orderBy('price', 'desc')->first();
+                    $data = $item->toArray();
+                    $data['quantity'] = $temp_amount != null ? $temp_amount->amount : 0;
+                    $data['price'] = $temp_price != null ? $temp_price->price : 0;
+                    $data['has_greater_price'] = $this->hasGreaterPriceFromAnotherUser($item->id, User::find(1)->merchant_id);
+                    $final[] = $data;
+                }
+
+                return Datatables::of($final)
                     ->addIndexColumn()
                     ->addColumn('action', function ($row) {
-                        $btn = '<a href="' . route('view-item-index', $row->id) . '" class="view btn btn-info btn-sm">View</a> &nbsp';
-                        $btn .= '<a href="' . route('edit-item-index', $row->id) . '" class="edit btn btn-primary btn-sm">Edit</a> &nbsp';
-                        $btn .= '<a id=' . $row->id . ' class="delete btn btn-danger btn-sm mt-2">Delete</a>';
+                        $btn = '<a href="' . route('view-item-index', $row['id']) . '" class="view btn btn-info btn-sm">View</a> &nbsp';
+                        $btn .= '<a href="' . route('edit-item-index', $row['id']) . '" class="edit btn btn-primary btn-sm">Edit</a> &nbsp';
+                        $btn .= '<a id=' . $row['id'] . ' class="delete btn btn-danger btn-sm mt-2">Delete</a>';
 
                         return $btn;
                     })
