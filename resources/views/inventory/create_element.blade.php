@@ -363,15 +363,11 @@
         }
 
         function powerTorch(powerOn) {
-            if (html5QrCode.getState() === Html5QrcodeScannerState.SCANNING ||
-                html5QrCode.getState() === Html5QrcodeScannerState.PAUSED
-            ) {
-                html5QrCode.applyVideoConstraints({
-                    advanced: [{
-                        torch: powerOn
-                    }]
-                });
-            }
+            html5QrCode.applyVideoConstraints({
+                advanced: [{
+                    torch: powerOn
+                }]
+            });
         }
 
     </script>
