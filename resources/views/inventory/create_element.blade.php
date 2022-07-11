@@ -314,7 +314,7 @@
                 var config = null;
                 if (s_width > 500) {
                     config = {
-                        fps: 10,
+                        fps: 60,
                         qrbox: {
                             width: 300,
                             height: 100
@@ -328,7 +328,7 @@
                     };
                 } else {
                     config = {
-                        fps: 20,
+                        fps: 60,
                         qrbox: 140,
                         supportedScanTypes: formatsToSupport,
                         experimentalFeatures: {
