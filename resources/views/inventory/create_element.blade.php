@@ -325,11 +325,6 @@
                         qrbox: {
                             width: 250,
                             height: 100
-                        },
-                        // Only support camera scan type.
-                        supportedScanTypes: formatsToSupport,
-                        experimentalFeatures: {
-                            useBarCodeDetectorIfSupported: true
                         }
                     };
                 } else {
@@ -338,10 +333,6 @@
                         qrbox: {
                             width: 100,
                             height: 50
-                        },
-                        supportedScanTypes: formatsToSupport,
-                        experimentalFeatures: {
-                            useBarCodeDetectorIfSupported: true
                         }
                     };
                 }
