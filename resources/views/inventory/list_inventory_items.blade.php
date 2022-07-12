@@ -52,8 +52,6 @@
                                         <th style="text-align: center">Price</th>
                                         <th style="text-align: center">Quantity Parts</th>
                                         <th style="text-align: center">Part Price</th>
-                                        <th style="text-align: center">Start_date</th>
-                                        <th style="text-align: center">Expiry_date</th>
                                         <th style="text-align: center">Description</th>
                                         <th style="text-align: center">Action</th>
                                     </tr>
@@ -114,14 +112,6 @@
                         name: 'part_price',
                     },
                     {
-                        data: 'start_date',
-                        name: 'start_date',
-                    },
-                    {
-                        data: 'expiry_date',
-                        name: 'expiry_date',
-                    },
-                    {
                         data: 'description',
                         name: 'description',
                     },
@@ -132,6 +122,44 @@
                 ]
             });
 
+        });
+
+        $('body').on('click', '.show_max_part_price', function() {
+            var currBtn = $(this);
+            /// get max price
+            if (currBtn.text() == "Max Part Price") {
+                var td = $($(this).closest("tr")).find('td:eq(6)');
+                var elementId = $(this).attr('id');
+                var id = elementId.split("_")[0];
+                var url = "{{ route('get-max-part-price-for-element', '#id') }}";
+                url = url.replace('#id', id);
+                $.ajax({
+                    url: url,
+                    success: function(newValue) {
+                        td.html(newValue);
+                        td.css('color', 'black');
+                        currBtn.text("Current Part Price");
+                    }
+                });
+            } else {
+                /////// get current price
+                var td = $($(this).closest("tr")).find('td:eq(6)');
+                var elementId = $(this).attr('id');
+                var id = elementId.split("_")[0];
+                var merchantId = elementId.split("_")[1];
+                var url = "{{ route('get-current-part-price-for-element', ['#id', '#merchantId']) }}";
+                url = url.replace('#id', id);
+                url = url.replace('#merchantId', merchantId);
+                $.ajax({
+                    url: url,
+                    success: function(currValue) {
+                        td.html(currValue);
+                        td.css('color', 'red');
+                        currBtn.text("Max Part Price");
+                    }
+                });
+
+            }
         });
 
         $('body').on('click', '.show_max_price', function() {

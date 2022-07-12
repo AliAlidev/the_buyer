@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use DataTables;
 use Exception;
+use Illuminate\Validation\ValidationException;
 
 use function PHPUnit\Framework\returnSelf;
 
@@ -36,18 +37,48 @@ class HomeController extends Controller
                 'name' => 'required|unique:data,name'
             ]);
         }
+
+        if ($request->quantity != 0 && $request->price == 0)
+            throw ValidationException::withMessages(['amount' => 'You should enter price']);
+
+        if ($request->quantity == 0 && $request->price != 0)
+            throw ValidationException::withMessages(['amount' => 'You should enter amount']);
+
+        if ($request->quantityparts != 0 && $request->partprice == 0)
+            throw ValidationException::withMessages(['amount' => 'You should enter part price']);
+
+        if ($request->quantityparts == 0 && $request->partprice != 0)
+            throw ValidationException::withMessages(['amount' => 'You should enter part part amount']);
+
+        if ($request->start_date != null && $request->expiry_date != null) {
+            if (Carbon::parse($request->start_date)->greaterThan(Carbon::parse($request->expiry_date)))
+                throw ValidationException::withMessages(['price' => 'Expiry date should be greater than start date']);
+        }
+
+        if (isset($request->hasparts) && $request->numofparts == 0) {
+            throw ValidationException::withMessages(['amount' => 'You should enter the number of parts for this item']);
+        }
+
         try {
             $userId = 1;
             $user = User::find($userId);
             if ($request->code != null) {
+                $has_parts = isset($request->hasparts) ? 1 : 0;
+                $num_of_parts = $request->numofparts != null ? $request->numofparts : 0;
                 $data = Data::Create([
                     'code' => $request->code,
                     'name' => $request->name,
+                    'has_parts' => $has_parts,
+                    'num_of_parts' => $num_of_parts,
                     'description' => $request->description
                 ]);
             } else {
+                $has_parts = isset($request->hasparts) ? 1 : 0;
+                $num_of_parts = $request->numofparts != null ? $request->numofparts : 0;
                 $data = Data::Create([
                     'name' => $request->name,
+                    'has_parts' => $has_parts,
+                    'num_of_parts' => $num_of_parts,
                     'description' => $request->description
                 ]);
             }
@@ -74,6 +105,7 @@ class HomeController extends Controller
                 return response()->json(['success' => true, 'message' => 'Data addedd successfully']);
             }
         } catch (Exception $th) {
+            dd($th->getMessage());
             return $this->errors("HomeController@createitem", $th->getMessage());
         }
     }
@@ -83,13 +115,32 @@ class HomeController extends Controller
         return view('inventory.create_element');
     }
 
+    public function hasGreaterPartPriceFromAnotherUser($dataId, $merchantId)
+    {
+        // get max price for product
+        $max_price = Amount::where('data_id', $dataId)->orderBy('price_part', 'desc')->where('merchant_id', '!=', $merchantId)->first();
+
+        // get price for prouct for specifc user
+        $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->first();
+
+        if ($max_price != null && $user_price != null) {
+            if ($user_price->price_part < $max_price->price_part) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     public function hasGreaterPriceFromAnotherUser($dataId, $merchantId)
     {
         // get max price for product
         $max_price = Amount::where('data_id', $dataId)->orderBy('price', 'desc')->where('merchant_id', '!=', $merchantId)->first();
 
         // get price for prouct for specifc user
-        $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->first();
+        $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->orderBy('price', 'desc')->first();
 
         if ($max_price != null && $user_price != null) {
             if ($user_price->price < $max_price->price) {
@@ -98,6 +149,19 @@ class HomeController extends Controller
                 return false;
             }
         } else {
+            return false;
+        }
+    }
+
+    public function getMaxPartPriceForElement($dataId)
+    {
+        // get max price for product
+        $max_price = Amount::where('data_id', $dataId)->orderBy('price_part', 'desc')->first();
+
+        if ($max_price != null) {
+            return $max_price->price_part;
+        } else {
+            return 0;
         }
     }
 
@@ -120,6 +184,18 @@ class HomeController extends Controller
 
         if ($max_price != null) {
             return $max_price->price;
+        } else {
+            return 0;
+        }
+    }
+
+    public function getCurrentPartPriceForElement($dataId, $userId)
+    {
+        // get max price for product
+        $max_price = Amount::where('data_id', $dataId)->where('merchant_id', $userId)->orderBy('price_part', 'desc')->first();
+
+        if ($max_price != null) {
+            return $max_price->price_part;
         } else {
             return 0;
         }
@@ -150,21 +226,20 @@ class HomeController extends Controller
         try {
             if ($request->ajax()) {
                 $merchantId = 1;
-                $items = User::where('merchant_id', $merchantId)->first()->data;
+                $items = User::where('merchant_id', $merchantId)->first()->data()->select('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->groupBy('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->get();
                 $final = [];
                 foreach ($items as $key => $item) {
                     $temp_amount = $item->amounts()->sum('amount');
                     $temp_amount_parts = $item->amounts()->sum('amount_part');
                     $temp_price = $item->amountsForUser($merchantId)->orderBy('price', 'desc')->first();
-                    $temp_date = $item->amounts()->first();
+                    $temp_price_part = $item->amountsForUser($merchantId)->orderBy('price_part', 'desc')->first();
                     $data = $item->toArray();
                     $data['quantity'] = $temp_amount != null ? $temp_amount : 0;
                     $data['quantity_parts'] = $temp_amount_parts != null ? $temp_amount_parts : 0;
                     $data['price'] = $temp_price != null ? $temp_price->price : 0;
-                    $data['part_price'] = $temp_price != null ? $temp_price->price_part : 0;
-                    $data['start_date'] = $temp_date != null ? $temp_date->start_date : '';
-                    $data['expiry_date'] = $temp_date != null ? $temp_date->expiry_date : '';
+                    $data['part_price'] = $temp_price_part != null ? $temp_price_part->price_part : 0;
                     $data['has_greater_price'] = $this->hasGreaterPriceFromAnotherUser($item->id, $merchantId);
+                    $data['has_greater_part_price'] = $this->hasGreaterPartPriceFromAnotherUser($item->id, $merchantId);
                     $final[] = $data;
                 }
 
@@ -177,18 +252,29 @@ class HomeController extends Controller
                             return '<div style="color:black">' . $row['price'] . '<div>';
                         }
                     })
-                    ->addColumn('action', function ($row) use ($merchantId) {
-                        $btn = '<a href="' . route('view-item-index', $row['id']) . '" class="view btn btn-info btn-sm">View</a> &nbsp';
-                        $btn .= '<a href="' . route('edit-item-index', $row['id']) . '" class="edit btn btn-primary btn-sm">Edit</a> &nbsp';
-                        $btn .= '<a id=' . $row['id'] . ' class="delete btn btn-danger btn-sm mt-2">Delete</a>';
-                        if ($row['has_greater_price']) {
-                            $btn .= '<a id=' . $row['id'] . '_' . $merchantId . ' class="show_max_price btn btn-info btn-sm mt-2">Max Price</a>';
+                    ->editcolumn('part_price', function ($row) {
+                        if ($row['has_greater_part_price']) {
+                            return '<div style="color:red">' . $row['part_price'] . '<div>';
+                        } else {
+                            return '<div style="color:black">' . $row['part_price'] . '<div>';
                         }
-                        $btn .= '<a href="' . route('list-inventory-item-amounts', ['dataId' => $row['id'], 'merchId' => $merchantId]) . '" class="listinventoryitemamounts btn btn-primary btn-sm mt-2">List Amounts</a> &nbsp';
+                    })
+                    ->addColumn('action', function ($row) use ($merchantId) {
+                        $btn = '<a href="' . route('view-item-index', $row['id']) . '" class="view btn btn-info btn-sm mt-2">View</a> &nbsp';
+                        $btn .= ' <a href="' . route('edit-item-index', $row['id']) . '" class="edit btn btn-primary btn-sm mt-2">Edit</a> &nbsp';
+                        $btn .= ' <a id=' . $row['id'] . ' class="delete btn btn-danger btn-sm mt-2">Delete</a>';
+                        if ($row['has_greater_price']) {
+                            $btn .= ' <a id=' . $row['id'] . '_' . $merchantId . ' class="show_max_price btn btn-info btn-sm mt-2">Max Price</a>';
+                        }
+                        if ($row['has_greater_part_price']) {
+                            $btn .= ' <a id=' . $row['id'] . '_' . $merchantId . ' class="show_max_part_price btn btn-info btn-sm mt-2">Max Part Price</a>';
+                        }
+                        $btn .= '&nbsp&nbsp <a href="' . route('list-inventory-item-amounts', ['dataId' => $row['id'], 'merchId' => $merchantId]) . '" class="listinventoryitemamounts btn btn-primary btn-sm mt-2">List Amounts</a> &nbsp';
+                        $btn .= '&nbsp&nbsp <a href="' . route('create-inventory-item-amount-index', $row['id']) . '" class="createinventoryitemamount btn btn-primary btn-sm mt-2">Add Amounts</a> &nbsp';
 
                         return $btn;
                     })
-                    ->rawColumns(['action', 'price'])
+                    ->rawColumns(['action', 'price', 'part_price'])
                     ->make(true);
             }
             return view('inventory.list_inventory_items');
@@ -202,6 +288,68 @@ class HomeController extends Controller
     {
         $data = Data::find($itemId);
         return view('inventory.edit_element', ['element' => $data]);
+    }
+
+    public function createinventoryitemamountindex($itemId)
+    {
+        $data = Data::find($itemId);
+        return view('inventory.create_inventory_item_amount', ['element' => $data]);
+    }
+
+    public function createinventoryitemamount(Request $request)
+    {
+        if ($request->quantity == 0 && $request->quantityparts == 0)
+            throw ValidationException::withMessages(['amount' => 'You should enter amount']);
+
+        if ($request->quantity != 0 && $request->price == 0)
+            throw ValidationException::withMessages(['amount' => 'You should enter price']);
+
+        if ($request->quantity == 0 && $request->price != 0)
+            throw ValidationException::withMessages(['amount' => 'You should enter amount']);
+
+        if ($request->quantityparts != 0 && $request->partprice == 0)
+            throw ValidationException::withMessages(['amount' => 'You should enter part price']);
+
+        if ($request->quantityparts == 0 && $request->partprice != 0)
+            throw ValidationException::withMessages(['amount' => 'You should enter part part amount']);
+
+        if ($request->price == 0 && $request->partprice == 0)
+            throw ValidationException::withMessages(['price' => 'You should enter price']);
+
+        if ($request->start_date != null && $request->expiry_date != null) {
+            if (Carbon::parse($request->start_date)->greaterThan(Carbon::parse($request->expiry_date)))
+                throw ValidationException::withMessages(['price' => 'Expiry date should be greater than start date']);
+        }
+
+        try {
+            $userId = 1;
+            $user = User::find($userId);
+            $data = Data::find($request->dataId);
+
+            UserData::create([
+                'user_id' => $user->id,
+                'merchant_id' => $user->merchant_id,
+                'data_id' => $data->id,
+            ]);
+
+            $amount = Amount::create([
+                'data_id' => $data->id,
+                'amount' => $request->quantity,
+                'amount_part' => $request->quantityparts,
+                'price' => $request->price,
+                'price_part' => $request->partprice,
+                'start_date' => $request->start_date,
+                'expiry_date' => $request->expiry_date,
+                'user_id' => $user->id,
+                'merchant_id' => $user->merchant_id,
+            ]);
+
+            if ($amount) {
+                return response()->json(['success' => true, 'message' => 'Amount addedd successfully']);
+            }
+        } catch (Exception $th) {
+            return $this->errors("HomeController@createinventoryitemamount", $th->getMessage());
+        }
     }
 
     public function viewitemindex($itemId)
@@ -291,7 +439,8 @@ class HomeController extends Controller
                     'price' => $item->price,
                     'quantity_parts' => $item->amount_part,
                     'price_part' => $item->price_part,
-                    'amount_date' => Carbon::parse($item->created_at)->toDateString()
+                    'start_date' => $item->start_date,
+                    'expiry_date' => $item->expiry_date
                 ];
                 $final_data[] = $data_temp;
             }

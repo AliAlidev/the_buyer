@@ -53,7 +53,8 @@
                                             <th style="text-align: center">Price</th>
                                             <th style="text-align: center">Quantity Parts</th>
                                             <th style="text-align: center">Part Price</th>
-                                            <th style="text-align: center">Date</th>
+                                            <th style="text-align: center">Start Date</th>
+                                            <th style="text-align: center">Expiry Date</th>
                                             <th style="text-align: center">Action</th>
                                         </tr>
                                     </thead>
@@ -124,8 +125,12 @@
                         name: 'price_part',
                     },
                     {
-                        data: 'amount_date',
-                        name: 'amount_date',
+                        data: 'start_date',
+                        name: 'start_date',
+                    },
+                    {
+                        data: 'expiry_date',
+                        name: 'expiry_date',
                     },
                     {
                         data: 'action',

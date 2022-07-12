@@ -19,6 +19,7 @@ class CreateDataTable extends Migration
             $table->string('name')->nullable(false);
             $table->string('dose')->nullable(true);
             $table->string('has_parts')->nullable(true);
+            $table->float('num_of_parts')->default(0);
             $table->string('side_effects')->nullable(true);
             $table->string('treatements')->nullable(true);
             $table->string('description')->nullable(true);

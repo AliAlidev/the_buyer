@@ -12,12 +12,15 @@ class Data extends Model
 
     public function amounts()
     {
-        return $this->hasMany(Amount::class, "data_id","id");
+        $amounts = Amount::where('data_id', $this->id)->where('merchant_id', $this->merchant_id)->get();
+        return $amounts;
+        // return $this->hasMany(Amount::class, "id","data_id");
     }
 
     public function amountsForUser($user_id)
     {
-        return $this->hasMany(Amount::class, "data_id","id")->where('merchant_id', $user_id);
+        $amounts = Amount::where('data_id', $this->id)->where('merchant_id', $user_id);
+        return $amounts;
+        // return $this->hasMany(Amount::class, "id","data_id")->where('merchant_id', $user_id);
     }
-
 }

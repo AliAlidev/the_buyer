@@ -9,4 +9,9 @@ class UserData extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    public function data()
+    {
+        return $this->belongsTo(Data::class, 'id', 'data_id');
+    }
 }

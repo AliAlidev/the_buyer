@@ -62,6 +62,12 @@
                                         </div>
                                     @endif
                                     <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-3">
+                                                <button id="start_flash" data-id="0" class="btn btn-warning">Flash
+                                                    OFF</button>
+                                            </div>
+                                        </div>
                                         <div class="col-md-2"></div>
                                         <div class="col-md-8 mt-3">
                                             <div class="row">
@@ -94,6 +100,45 @@
                                                         type="text" class="form-control" placeholder="ENTER ELEMENT NAME"
                                                         required>
                                                 </div>
+                                            </div>
+                                            <div class="row">
+                                                @if ($element->has_parts)
+                                                    <div class="col-md-2">
+                                                        <label class="form-check-label mt-3"
+                                                            for="flexSwitchCheckDefault">Has
+                                                            Parts</label>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" id="hasparts" checked
+                                                                name="hasparts">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2" id="numofpartsdiv">
+                                                        <label class="form-check-label mt-3"
+                                                            for="flexSwitchCheckDefault">Parts
+                                                            Number</label>
+                                                        <input id="numofparts" type="number" class="form-control"
+                                                            value="{{ $element->num_of_parts }}"
+                                                            name="numofparts">
+                                                    </div>
+                                                @else
+                                                    <div class="col-md-2">
+                                                        <label class="form-check-label mt-3"
+                                                            for="flexSwitchCheckDefault">Has
+                                                            Parts</label>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" id="hasparts"
+                                                                name="hasparts">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2" id="numofpartsdiv" hidden>
+                                                        <label class="form-check-label mt-3"
+                                                            for="flexSwitchCheckDefault">Parts
+                                                            Number</label>
+                                                        <input id="numofparts" type="number" class="form-control"
+                                                            value="{{ old('numofparts') != null ? old('numofparts') : 0 }}"
+                                                            name="numofparts">
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12">
@@ -131,6 +176,16 @@
 @endsection
 
 @push('scripts')
+    <script>
+        $('#hasparts').change(function() {
+            if ($(this).is(':checked')) {
+                $('#numofpartsdiv').removeAttr('hidden');
+            } else {
+                $('#numofpartsdiv').attr('hidden', 'hidden');
+            }
+        });
+    </script>
+
     <script>
         $("#name").autocomplete({
             source: function(request, response) {
@@ -218,6 +273,7 @@
 
     <script>
         var html5QrCode;
+        var track;
 
         function startCam() {
             var curr_status = $('#start_cam').data('id');
@@ -246,8 +302,6 @@
                         complete: function(data) {
                             if (data.success) {
 
-                            } else {
-                                alert('not ok');
                             }
                         }
                     });
@@ -256,19 +310,31 @@
                 const s_height = $(window).height();
                 const s_width = $(window).width();
 
+
                 var config = null;
                 if (s_width > 500) {
                     config = {
-                        fps: 20,
-                        qrbox: 250
+                        fps: 60,
+                        qrbox: {
+                            width: 250,
+                            height: 100
+                        },
+                        experimentalFeatures: {
+                            useBarCodeDetectorIfSupported: true
+                        }
                     };
                 } else {
                     config = {
-                        fps: 20,
-                        qrbox: 140
+                        fps: 60,
+                        qrbox: {
+                            width: 100,
+                            height: 50
+                        },
+                        experimentalFeatures: {
+                            useBarCodeDetectorIfSupported: true
+                        }
                     };
                 }
-
                 // Start back camera and if not found start front cam
                 html5QrCode.start({
                     facingMode: {
@@ -284,12 +350,38 @@
 
                 $('#start_cam').val("Stop Cam");
                 $('#start_cam').data('id', 2);
+
             } else if (curr_status == 2) {
                 html5QrCode.stop();
                 $('#start_cam').val("Start Cam");
                 $('#start_cam').data('id', 1);
                 $('#my_camera').empty();
+
+                $('#start_flash').data('id', 0);
+                $('#start_flash').text("Flash OFF");
+                powerTorch(false);
             }
         }
+
+        function powerTorch(powerOn) {
+            html5QrCode.applyVideoConstraints({
+                advanced: [{
+                    torch: powerOn
+                }]
+            });
+        }
+
+        $('#start_flash').click(function(e) {
+            e.preventDefault();
+            if ($(this).data('id') == 0) {
+                powerTorch(true);
+                $(this).data('id', 1);
+                $(this).text("Flash ON");
+            } else {
+                powerTorch(false);
+                $(this).data('id', 0);
+                $(this).text("Flash OFF");
+            }
+        });
     </script>
 @endpush

@@ -118,12 +118,27 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-2">
+                                                    <label class="form-check-label mt-3" for="flexSwitchCheckDefault">Has
+                                                        Parts</label>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" id="hasparts"
+                                                            name="hasparts">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2" id="numofpartsdiv" hidden>
+                                                    <label class="form-check-label mt-3"
+                                                        for="flexSwitchCheckDefault">Parts Number</label>
+                                                    <input id="numofparts" type="number" class="form-control"
+                                                        value="{{ old('numofparts') != null ? old('numofparts') : 0 }}"
+                                                        name="numofparts">
+                                                </div>
+                                                <div class="col-md-3">
                                                     <label class="mt-3" for="">Start Date</label>
                                                     <input id="start_date" class="form-control" type="date"
                                                         value="{{ old('start_date') }}" name="start_date">
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="mt-3" for="">Expiry Date</label>
                                                     <input id="expiry_date" class="form-control" type="date"
                                                         value="{{ old('expiry_date') }}" name="expiry_date">
@@ -155,6 +170,16 @@
 @endsection
 
 @push('scripts')
+    <script>
+        $('#hasparts').change(function() {
+            if ($(this).is(':checked')) {
+                $('#numofpartsdiv').removeAttr('hidden');
+            } else {
+                $('#numofpartsdiv').attr('hidden', 'hidden');
+            }
+        });
+    </script>
+
     <script>
         $("#name").autocomplete({
             source: function(request, response) {
@@ -382,6 +407,7 @@
             var data = $('form').serialize();
             $.post("{{ route('create-item') }}", data).done(function(value) {
                 if (value.success) {
+                    $('#alertdanger').attr('hidden', true);
                     $('#alertsuccess').attr('hidden', false);
                     $('#alertsuccess').empty();
                     $('#alertsuccess').append(value.message);
@@ -394,6 +420,8 @@
                         'is-valid  was-validated form-control:valid');
                     $('#name').removeClass(
                         'is-invalid  was-validated form-control:invalid');
+
+                    $('#numofpartsdiv').attr('hidden', 'hidden');
                 }
             }).fail(function(xhr, status, error) {
                 $('#alertsuccess').attr('hidden', true);
