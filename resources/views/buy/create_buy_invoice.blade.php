@@ -291,57 +291,40 @@
             if (e.keyCode == 13) {
                 // clear old
                 $('#code').val('');
-                $('#quantity').val('');
-                $('#price').val('');
+                $('#quantity').val('0');
+                $('#quantityparts').val('0');
+                $('#price').val('0');
+                $('#partprice').val('0');
                 $('#expiry_date').val('');
                 $('#description').val('');
                 var elementName = $(this).val();
                 $.ajax({
                     type: 'post',
                     dataType: "JSON",
-                    url: "{{ route('get-data-by-name') }}",
+                    url: "{{ route('buy-get-data-by-name') }}",
                     data: {
                         '_token': '{{ csrf_token() }}',
                         name: elementName
                     },
                     complete: function(data) {
+                        $('#alertdanger').attr('hidden', true);
+                        $('#alertsuccess').attr('hidden', true);
+                        $('#name').removeClass(
+                            'is-invalid  was-validated form-control:invalid');
+                        $('#name').removeClass(
+                            'is-valid  was-validated form-control:valid');
                         data = data.responseJSON;
                         if (data.success) {
-                            data = data.data;
-                            $('#name').removeClass(
-                                'is-invalid  was-validated form-control:invalid');
-                            $('#name').removeClass(
+                            console.log(data);
+                            $('#quantity').val(data.amounts.amounts);
+                            $('#quantityparts').val(data.amounts.part_amounts);
+                            $('#price').val(data.prices.price);
+                            $('#partprice').val(data.prices.partprice);
+                            $('#name').addClass(
                                 'is-valid  was-validated form-control:valid');
-
-                            $('#result').val(data.code);
-                            $('#result').removeClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#result').addClass(
-                                'form-control is-valid  was-validated form-control:valid');
-                            $('#quantity').val(data.quantity);
-                            $('#quantity').removeClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#quantity').addClass(
-                                'form-control is-valid  was-validated form-control:valid');
-                            $('#price').val(data.price);
-                            $('#price').removeClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#price').addClass(
-                                'form-control is-valid  was-validated form-control:valid');
-                            $('#expiry_date').val(data.expiry_date);
-                            $('#expiry_date').removeClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#expiry_date').addClass(
-                                'form-control is-valid  was-validated form-control:valid');
                         } else {
-                            $('#code').addClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#quantity').addClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#price').addClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
-                            $('#expiry_date').addClass(
-                                'form-control is-invalid  was-validated form-control:invalid');
+                            $('#name').addClass(
+                                'is-invalid  was-validated form-control:invalid');
                         }
                     }
                 });
@@ -474,4 +457,6 @@
             }
         }
     </script>
+
+    <script></script>
 @endpush

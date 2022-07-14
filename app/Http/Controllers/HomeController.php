@@ -201,7 +201,7 @@ class HomeController extends Controller
         }
     }
 
-    public function findBySerialName(Request $request)
+    public function findByItemName(Request $request)
     {
         $data = Data::where('name', $request->name)->first();
         if ($data) {
@@ -410,6 +410,8 @@ class HomeController extends Controller
         try {
             $data->code = $request->code;
             $data->name = $request->name;
+            $data->has_parts = $request->hasparts;
+            $data->has_parts = $request->hasparts;
             $data->description = $request->description;
             $data->save();
             return redirect()->route('list-items')->with('success', 'Element updated successfully');
@@ -426,8 +428,8 @@ class HomeController extends Controller
 
     public function listinventoryitemamounts(Request $request)
     {
+        $data = Data::find($request->query('dataId'));
         if ($request->ajax()) {
-            $data = Data::find($request->query('dataId'));
             $amounts = $data->amountsForUser($request->query('merchantId'))->get();
             $final_data = [];
             foreach ($amounts as $key => $item) {
@@ -453,6 +455,6 @@ class HomeController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('inventory.list_inventory_item_amounts');
+        return view('inventory.list_inventory_item_amounts', ['data' => $data]);
     }
 }

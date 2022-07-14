@@ -42,13 +42,14 @@ Route::group(['prefix' => 'inventory'], function () {
     Route::post('create_itm', [HomeController::class, 'createitem'])->name('create-item');
     Route::post('add_dat', [HomeController::class, 'store'])->name('add-data');
     Route::post('get_dat_ser', [HomeController::class, 'findBySerialCode'])->name('get-data-by-serial');
-    Route::post('get_dat_name', [HomeController::class, 'findBySerialName'])->name('get-data-by-name');
+    Route::post('get_dat_name', [HomeController::class, 'findByItemName'])->name('get-data-by-name');
 });
 
 ////////////////////////////////////////// buy invoices
 Route::group(['prefix' => 'buy'], function () {
     Route::get('create_buy_inv', [BuyController::class, 'index'])->name('create-buy-invoice');
     Route::post('create_buy_inv', [BuyController::class, 'store'])->name('store-buy-invoice');
+    Route::post('buy_get_dat_name', [BuyController::class, 'findByItemName'])->name('buy-get-data-by-name');
 });
 
 ////////////////////////////////////////// sell invoices

@@ -20,8 +20,6 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-flex align-items-center justify-content-between">
-
-
                     <div class="state-information d-none d-sm-block">
                         <div class="state-graph">
                             <div id="header-chart-1"></div>
@@ -40,7 +38,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Add Amounts For: {{ $element->name }}</h4>
+                            <h4>Add _ {{ $element->name }} _ Amounts</h4>
                         </div>
                         <div class="card-body">
                             <!-- Demo purpose only -->
