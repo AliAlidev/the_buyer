@@ -22,6 +22,10 @@ Route::get('homebuyer', [HomeController::class, 'buyerIndex'])->name('home-buyer
 Route::group(['prefix' => 'admin'], function () {
 });
 
+Route::get('import_data', [HomeController::class,'importData']);
+Route::get('import_companies', [HomeController::class,'importCompanies']);
+Route::get('import_shapes', [HomeController::class,'importShapes']);
+
 Route::get('/', [HomeController::class, 'listitems'])->name('home');
 Route::group(['prefix' => 'inventory'], function () {
     Route::get('getCurrentPrice/{id}/{merchantId}', [HomeController::class, 'getCurrentPriceForElement'])->name('get-current-price-for-element');

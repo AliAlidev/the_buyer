@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\CompaniesImport;
+use App\Imports\DataImport;
+use App\Imports\ShapesImport;
 use App\Models\Amount;
 use App\Models\Data;
 use App\Models\Home;
@@ -15,11 +18,40 @@ use Illuminate\Support\Facades\Storage;
 use DataTables;
 use Exception;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 
 use function PHPUnit\Framework\returnSelf;
 
 class HomeController extends Controller
 {
+    
+    public function importCompanies()
+    {
+        try {
+            (new CompaniesImport)->import('companies.csv');
+        } catch (\Exception $th) {
+            dd($th->getMessage());
+        }
+    }
+
+    public function importShapes()
+    {
+        try {
+            (new ShapesImport)->import('shapes.csv');
+        } catch (\Exception $th) {
+            dd($th->getMessage());
+        }
+    }
+
+    public function importData()
+    {
+        try {
+            (new DataImport)->import('drugs_with_arabic.csv');
+        } catch (\Exception $th) {
+            dd($th->getMessage());
+        }
+    }
+
     public function adminIndex()
     {
         return view('admin.home');
