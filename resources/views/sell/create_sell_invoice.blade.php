@@ -206,8 +206,7 @@
                                                     </div>
                                                     <div id="discount_value_div" class="col-md-3">
                                                         <label class="mt-3" for=""
-                                                            style="font-size: 110%; font-weight: 600">Discount Value
-                                                            %</label>
+                                                            style="font-size: 110%; font-weight: 600">Percentage%</label>
                                                         <input id="discount" class="form-control" type="number"
                                                             value="0" name="discount" style="text-align: center"
                                                             step="0.1" min="0" max="100">
