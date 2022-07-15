@@ -196,7 +196,7 @@
                                                         <div id="total_price" style="font-weight: 500;">0
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-2">
+                                                    <div class="col-md-3">
                                                         <label for="" class="mt-3"
                                                             style="font-size: 110%; font-weight: 600">Discount Type</label>
                                                         <select name="" id="discount_type" class="form-control">
