@@ -148,7 +148,7 @@
                                                         value="0" name="quantity" placeholder="" required
                                                         style="text-align: center" min="0" max="0">
                                                 </div>
-                                                <div class="col-md-2">
+                                                <div class="col-md-3">
                                                     <label class="mt-3" for="">Quantity Parts</label>
                                                     <input id="selected_quantityparts" class="form-control"
                                                         type="number" value="0" name="quantityparts"
@@ -177,8 +177,8 @@
                                                                 <th>Name</th>
                                                                 <th>Quantity</th>
                                                                 <th>Price</th>
-                                                                <th>Quantity P</th>
-                                                                <th>Price P</th>
+                                                                <th>QuantityP</th>
+                                                                <th>PriceP</th>
                                                                 <th>Total</th>
                                                                 <th>Action</th>
                                                             </div>
@@ -464,6 +464,7 @@
                             $('#partprice').val(data.prices.partprice);
                             $('#expiry_date').val(data.expiry_date);
                             $('#data_id').val(data.data.id);
+                            $('#resutl').val(data.data.code);
                             if (data.hasMultipleExpiryDate) {
                                 $('#expiry_date').css('color', 'red');
                             } else {
