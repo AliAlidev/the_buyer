@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\BuyController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SellController;
 use Illuminate\Support\Facades\Route;
@@ -22,9 +22,7 @@ Route::get('homebuyer', [HomeController::class, 'buyerIndex'])->name('home-buyer
 Route::group(['prefix' => 'admin'], function () {
 });
 
-Route::get('import_data', [HomeController::class,'importData']);
-Route::get('import_companies', [HomeController::class,'importCompanies']);
-Route::get('import_shapes', [HomeController::class,'importShapes']);
+Route::get('import_data', [HomeController::class,'importDataWithShapesAndCompanies']);
 
 Route::get('/', [HomeController::class, 'listitems'])->name('home');
 Route::group(['prefix' => 'inventory'], function () {
@@ -49,14 +47,16 @@ Route::group(['prefix' => 'inventory'], function () {
     Route::post('get_dat_name', [HomeController::class, 'findByItemName'])->name('get-data-by-name');
 });
 
-////////////////////////////////////////// buy invoices
-Route::group(['prefix' => 'buy'], function () {
-    Route::get('create_buy_inv', [BuyController::class, 'index'])->name('create-buy-invoice');
-    Route::post('create_buy_inv', [BuyController::class, 'store'])->name('store-buy-invoice');
-    Route::post('buy_get_dat_name', [BuyController::class, 'findByItemName'])->name('buy-get-data-by-name');
-});
-
 ////////////////////////////////////////// sell invoices
 Route::group(['prefix' => 'sell'], function () {
-    Route::get('create_sell_inv', [SellController::class, 'index'])->name('create-sell-invoice');
+    Route::get('create_sell_inv', [InvoiceController::class, 'sell_index'])->name('create-sell-invoice');
+    Route::post('create_sell_inv', [InvoiceController::class, 'store'])->name('store-sell-invoice');
+    Route::post('sell_get_dat_name', [InvoiceController::class, 'findByItemName'])->name('sell-get-data-by-name');
+    Route::post('sell_get_dat_code', [InvoiceController::class, 'findByItemCode'])->name('sell-get-data-by-code');
 });
+
+////////////////////////////////////////// buy invoices
+Route::group(['prefix' => 'buy'], function () {
+    Route::get('create_buy_inv', [InvoiceController::class, 'buy_index'])->name('create-buy-invoice');
+});
+

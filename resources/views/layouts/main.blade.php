@@ -192,16 +192,16 @@
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
                                 <li>
-                                    <a href="{{ route('create-buy-invoice') }}" class="waves-effect">
+                                    <a href="{{ route('create-sell-invoice') }}" class="waves-effect">
                                         <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
-                                        <span>Buy Invoice</span>
+                                        <span>Sell Invoice</span>
 
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('create-sell-invoice') }}" class="waves-effect">
+                                    <a href="{{ route('create-buy-invoice') }}" class="waves-effect">
                                         <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
-                                        <span>Sell Invoice</span>
+                                        <span>Buy Invoice</span>
 
                                     </a>
                                 </li>

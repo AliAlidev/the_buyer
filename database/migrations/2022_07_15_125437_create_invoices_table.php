@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBuyInvoicesTable extends Migration
+class CreateInvoicesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,14 @@ class CreateBuyInvoicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('buy_invoices', function (Blueprint $table) {
+        Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->integer("data_id");
-            $table->float("quantity")->default(0);
-            $table->float("quantity_parts")->default(0);
-            $table->float("price")->default(0);
-            $table->float("price_part")->default(0);
-            $table->float("total")->default(0);
-            $table->float("total_parts")->default(0);
-            $table->float("total_final")->default(0);
             $table->integer("merchant_id")->default(0);
             $table->integer("user_id")->default(0);
+            $table->float("total_amount")->default(0);
+            $table->float("discount")->default(0);
+            $table->float("paid_amount")->default(0);
+            $table->integer("invoice_type")->default(0);
             $table->string("notes")->nullable(true);
             $table->timestamps();
         });
@@ -37,6 +33,6 @@ class CreateBuyInvoicesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('buy_invoices');
+        Schema::dropIfExists('invoices');
     }
 }

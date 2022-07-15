@@ -35,82 +35,83 @@ class MerhcantsSeeder extends Seeder
             "email" => 'ali1@gmail.com',
             "merchant_id" => $merchant->id
         ]);
-        $data = Data::firstOrCreate(['name' => 'item1'], [
-            'name' => 'item1'
-        ]);
-        UserData::create([
-            'user_id' => $user->id,
-            'merchant_id' => $user->merchant_id,
-            'data_id' => $data->id,
-        ]);
-        Amount::create([
-            'data_id' => $data->id,
-            'amount' => 5,
-            'price' => 800,
-            'user_id' => $user->id,
-            'merchant_id' => $user->merchant_id
-        ]);
+
+        // $data = Data::firstOrCreate(['name' => 'item1'], [
+        //     'name' => 'item1'
+        // ]);
+        // UserData::create([
+        //     'user_id' => $user->id,
+        //     'merchant_id' => $user->merchant_id,
+        //     'data_id' => $data->id,
+        // ]);
+        // Amount::create([
+        //     'data_id' => $data->id,
+        //     'amount' => 5,
+        //     'price' => 800,
+        //     'user_id' => $user->id,
+        //     'merchant_id' => $user->merchant_id
+        // ]);
 
 
-        $data = Data::firstOrCreate(['name' => 'item2'], [
-            'name' => 'item2'
-        ]);
-        UserData::create([
-            'merchant_id' => $user->merchant_id,
-            'user_id' => $user->id,
-            'data_id' => $data->id,
-        ]);
-        Amount::create([
-            'data_id' => $data->id,
-            'amount' => 10,
-            'price' => 500,
-            'user_id' => $user->id,
-            'merchant_id' => $user->merchant_id
-        ]);
+        // $data = Data::firstOrCreate(['name' => 'item2'], [
+        //     'name' => 'item2'
+        // ]);
+        // UserData::create([
+        //     'merchant_id' => $user->merchant_id,
+        //     'user_id' => $user->id,
+        //     'data_id' => $data->id,
+        // ]);
+        // Amount::create([
+        //     'data_id' => $data->id,
+        //     'amount' => 10,
+        //     'price' => 500,
+        //     'user_id' => $user->id,
+        //     'merchant_id' => $user->merchant_id
+        // ]);
 
 
-        $user =User::firstOrCreate(["email" => 'ali2@gmail.com'], [
-            "name" => 'ali2',
-            "email" => 'ali2@gmail.com',
-            "merchant_id" => $merchant->id
-        ]);
-        $data = Data::firstOrCreate(['name' => 'item3'], [
-            'name' => 'item3'
-        ]);
-        UserData::create([
-            'merchant_id' => $user->merchant_id,
-            'user_id' => $user->id,
-            'data_id' => $data->id,
-        ]);
-        Amount::create([
-            'data_id' => $data->id,
-            'amount' => 20,
-            'price' => 1000,
-            'user_id' => $user->id,
-            'merchant_id' => $user->merchant_id
-        ]);
+        // $user =User::firstOrCreate(["email" => 'ali2@gmail.com'], [
+        //     "name" => 'ali2',
+        //     "email" => 'ali2@gmail.com',
+        //     "merchant_id" => $merchant->id
+        // ]);
+        // $data = Data::firstOrCreate(['name' => 'item3'], [
+        //     'name' => 'item3'
+        // ]);
+        // UserData::create([
+        //     'merchant_id' => $user->merchant_id,
+        //     'user_id' => $user->id,
+        //     'data_id' => $data->id,
+        // ]);
+        // Amount::create([
+        //     'data_id' => $data->id,
+        //     'amount' => 20,
+        //     'price' => 1000,
+        //     'user_id' => $user->id,
+        //     'merchant_id' => $user->merchant_id
+        // ]);
 
-        $merchant = Merchant::firstOrCreate(["email" => "ahmad@gmail.com"], [
-            "name" => "ahmad",
-            "email" => "ahmad@gmail.com",
-            "phone" => "+9639321234567",
-            "tel_phone" => "0431234567",
-            "country" => "syria",
-            "city" => "tartous",
-            "address" => "share3 al3areed",
-            "type" => "Market"
-        ]);
+        // $merchant = Merchant::firstOrCreate(["email" => "ahmad@gmail.com"], [
+        //     "name" => "ahmad",
+        //     "email" => "ahmad@gmail.com",
+        //     "phone" => "+9639321234567",
+        //     "tel_phone" => "0431234567",
+        //     "country" => "syria",
+        //     "city" => "tartous",
+        //     "address" => "share3 al3areed",
+        //     "type" => "Market"
+        // ]);
 
-        User::firstOrCreate(["email" => 'ahmad1@gmail.com'], [
-            "name" => 'ahmad1',
-            "email" => 'ahmad1@gmail.com',
-            "merchant_id" => $merchant->id
-        ]);
+        // User::firstOrCreate(["email" => 'ahmad1@gmail.com'], [
+        //     "name" => 'ahmad1',
+        //     "email" => 'ahmad1@gmail.com',
+        //     "merchant_id" => $merchant->id
+        // ]);
 
-        User::firstOrCreate(["email" => 'ahmad2@gmail.com'], [
-            "name" => 'ahmad2',
-            "email" => 'ahmad2@gmail.com',
-            "merchant_id" => $merchant->id
-        ]);
+        // User::firstOrCreate(["email" => 'ahmad2@gmail.com'], [
+        //     "name" => 'ahmad2',
+        //     "email" => 'ahmad2@gmail.com',
+        //     "merchant_id" => $merchant->id
+        // ]);
     }
 }

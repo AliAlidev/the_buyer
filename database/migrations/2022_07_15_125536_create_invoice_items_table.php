@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAmountsTable extends Migration
+class CreateInvoiceItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,17 @@ class CreateAmountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('amounts', function (Blueprint $table) {
+        Schema::create('invoice_items', function (Blueprint $table) {
             $table->id();
-            $table->integer("data_id")->default(0);
-            $table->float("amount")->default(0);
-            $table->float("amount_part")->default(0);
+            $table->integer("invoice_id");
+            $table->integer("data_id");
+            $table->float("quantity")->default(0);
+            $table->float("quantity_parts")->default(0);
             $table->float("price")->default(0);
             $table->float("price_part")->default(0);
-            $table->string("start_date")->nullable(true);
-            $table->string("expiry_date")->nullable(true);
-            $table->integer("merchant_id")->default(0);
-            $table->integer("user_id")->default(0);
+            $table->float("total_quantity_price")->default(0);
+            $table->float("total_parts_price")->default(0);
+            $table->float("total_price")->default(0);
             $table->timestamps();
         });
     }
@@ -35,6 +35,6 @@ class CreateAmountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('amounts');
+        Schema::dropIfExists('invoice_items');
     }
 }

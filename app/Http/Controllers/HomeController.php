@@ -25,6 +25,13 @@ use function PHPUnit\Framework\returnSelf;
 class HomeController extends Controller
 {
     
+    public function importDataWithShapesAndCompanies()
+    {
+        $this->importData();
+        $this->importCompanies();
+        $this->importShapes();
+    }
+
     public function importCompanies()
     {
         try {
