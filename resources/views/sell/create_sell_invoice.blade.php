@@ -309,7 +309,7 @@
                 $('#table_items').append(tableitem);
 
                 $('#data_id').val('');
-                $('#code').val('');
+                $('#result').val('');
                 $('#name').val('');
                 $('#quantity').val('0');
                 $('#selected_quantity').val('0');
@@ -421,7 +421,7 @@
             },
             select: function(event, ui) {
                 $('#data_id').val('');
-                $('#code').val('');
+                $('#result').val('');
                 $('#quantity').val('0');
                 $('#quantityparts').val('0');
                 $('#price').val('0');
@@ -464,7 +464,7 @@
                             $('#partprice').val(data.prices.partprice);
                             $('#expiry_date').val(data.expiry_date);
                             $('#data_id').val(data.data.id);
-                            $('#resutl').val(data.data.code);
+                            $('#result').val(data.data.code);
                             if (data.hasMultipleExpiryDate) {
                                 $('#expiry_date').css('color', 'red');
                             } else {
