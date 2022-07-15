@@ -118,13 +118,13 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <label class="mt-3" for="">Quantity Parts</label>
+                                                    <label class="mt-3" for="">Quantity P</label>
                                                     <input id="quantityparts" class="form-control" type="number"
                                                         value="0" name="quantityparts" placeholder="" readonly
                                                         style="text-align: center">
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <label class="mt-3" for="">Part Price</label>
+                                                    <label class="mt-3" for="">Price P</label>
                                                     <input id="partprice" class="form-control" type="number" value="0"
                                                         name="partprice" placeholder="" readonly
                                                         style="text-align: center">
@@ -188,15 +188,13 @@
                                                     </table>
                                                 </div>
                                                 <div class="row mt-3">
-                                                    <div class="col-md-2 mt-4" style="font-weight: 800; font-size: 200%">
+                                                    <div class="col-md-3 mt-4" style="font-weight: 800; font-size: 200%">
                                                         Total:
                                                     </div>
                                                     <div class="col-md-3 mt-4"
                                                         style="font-weight: bolder; font-size: 200%">
                                                         <div id="total_price" style="font-weight: 500;">0
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-1">
                                                     </div>
                                                     <div class="col-md-2">
                                                         <label for="" class="mt-3"
@@ -421,16 +419,8 @@
                         }));
                     }
                 });
-            }
-        });
-    </script>
-
-    {{-- get element details from name --}}
-    <script>
-        $('#name').keyup(function(e) {
-            e.preventDefault();
-            if (e.keyCode == 13) {
-                // clear old
+            },
+            select: function(event, ui) {
                 $('#data_id').val('');
                 $('#code').val('');
                 $('#quantity').val('0');
@@ -439,7 +429,7 @@
                 $('#partprice').val('0');
                 $('#expiry_date').val('');
                 $('#description').val('');
-                var elementName = $(this).val();
+                var elementName = ui.item.value;
                 $.ajax({
                     type: 'post',
                     dataType: "JSON",
@@ -458,7 +448,8 @@
                         data = data.responseJSON;
                         if (data.success) {
                             var itemQuantityInCurrInvoice = getItemAmountsInInvoice(data.data.id);
-                            var itemPartQuantityInCurrInvoice = getItemPartAmountsInInvoice(data.data
+                            var itemPartQuantityInCurrInvoice = getItemPartAmountsInInvoice(data
+                                .data
                                 .id);
 
                             $('#selected_quantity').val('0');
@@ -491,7 +482,8 @@
                             if (data.has_greater_part_price) {
                                 $('#partprice').css('color', 'red');
                                 $('#max_part_price_from_another_merchants').attr('hidden', false);
-                                $('#max_part_price_from_another_merchants').text(data.max_part_price);
+                                $('#max_part_price_from_another_merchants').text(data
+                                    .max_part_price);
                             } else {
                                 $('#partprice').css('color', 'black');
                                 $('#max_part_price_from_another_merchants').attr('hidden', true);
