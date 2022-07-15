@@ -150,7 +150,7 @@ class HomeController extends Controller
     public function hasGreaterPartPriceFromAnotherUser($dataId, $merchantId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->orderBy('price_part', 'desc')->where('merchant_id', '!=', $merchantId)->first();
+        $max_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->where('merchant_id', '!=', $merchantId)->first();
 
         // get price for prouct for specifc user
         $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->first();
@@ -169,10 +169,10 @@ class HomeController extends Controller
     public function hasGreaterPriceFromAnotherUser($dataId, $merchantId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->orderBy('price', 'desc')->where('merchant_id', '!=', $merchantId)->first();
+        $max_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->where('merchant_id', '!=', $merchantId)->first();
 
         // get price for prouct for specifc user
-        $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->orderBy('price', 'desc')->first();
+        $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->orderBy('created_at', 'desc')->first();
 
         if ($max_price != null && $user_price != null) {
             if ($user_price->price < $max_price->price) {
@@ -188,7 +188,7 @@ class HomeController extends Controller
     public function getMaxPartPriceForElement($dataId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->orderBy('price_part', 'desc')->first();
+        $max_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->first();
 
         if ($max_price != null) {
             return $max_price->price_part;
@@ -200,7 +200,7 @@ class HomeController extends Controller
     public function getMaxPriceForElement($dataId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->orderBy('price', 'desc')->first();
+        $max_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->first();
 
         if ($max_price != null) {
             return $max_price->price;
@@ -212,7 +212,7 @@ class HomeController extends Controller
     public function getCurrentPriceForElement($dataId, $userId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->where('merchant_id', $userId)->orderBy('price', 'desc')->first();
+        $max_price = Amount::where('data_id', $dataId)->where('merchant_id', $userId)->orderBy('created_at', 'desc')->first();
 
         if ($max_price != null) {
             return $max_price->price;
@@ -224,7 +224,7 @@ class HomeController extends Controller
     public function getCurrentPartPriceForElement($dataId, $userId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->where('merchant_id', $userId)->orderBy('price_part', 'desc')->first();
+        $max_price = Amount::where('data_id', $dataId)->where('merchant_id', $userId)->orderBy('created_at', 'desc')->first();
 
         if ($max_price != null) {
             return $max_price->price_part;
@@ -263,8 +263,8 @@ class HomeController extends Controller
                 foreach ($items as $key => $item) {
                     $temp_amount = $item->amounts()->sum('amount');
                     $temp_amount_parts = $item->amounts()->sum('amount_part');
-                    $temp_price = $item->amountsForUser($merchantId)->orderBy('price', 'desc')->first();
-                    $temp_price_part = $item->amountsForUser($merchantId)->orderBy('price_part', 'desc')->first();
+                    $temp_price = $item->amountsForUser($merchantId)->orderBy('created_at', 'desc')->first();
+                    $temp_price_part = $item->amountsForUser($merchantId)->orderBy('created_at', 'desc')->first();
                     $data = $item->toArray();
                     $data['quantity'] = $temp_amount != null ? $temp_amount : 0;
                     $data['quantity_parts'] = $temp_amount_parts != null ? $temp_amount_parts : 0;

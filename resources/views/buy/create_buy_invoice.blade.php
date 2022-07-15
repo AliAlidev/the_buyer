@@ -47,7 +47,7 @@
                         <div class="card-body">
                             <!-- Demo purpose only -->
                             <div style="min-height: 300px;">
-                                <form method="POST" action="{{ route('create-item') }}">
+                                <form>
                                     @csrf
                                     @if ($errors->any())
                                         <div class="alert alert-danger">
@@ -95,33 +95,54 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <label class="mt-3" for="">Quantity</label>
-                                                    <input id="quantity" class="form-control" type="number"
-                                                        value="{{ old('quantity') }}" name="quantity"
-                                                        placeholder="QUANTITY" required>
+                                                    <input id="quantity" class="form-control" type="number" value="0"
+                                                        name="quantity" placeholder="" readonly>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <label class="mt-3" for="">Price</label>
-                                                    <input id="price" class="form-control" type="number"
-                                                        value="{{ old('price') }}" name="price" placeholder="PRICE"
-                                                        required>
+                                                    <input id="price" class="form-control" type="number" value="0"
+                                                        name="price" placeholder="" readonly>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <label class="mt-3" for="">Quantity Parts</label>
                                                     <input id="quantityparts" class="form-control" type="number"
-                                                        value="{{ old('quantityparts') }}" name="quantityparts"
-                                                        placeholder="QUANTITY PARTS" required>
+                                                        value="0" name="quantityparts" placeholder="" readonly>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="mt-3" for="">Part Price</label>
+                                                    <input id="partprice" class="form-control" type="number" value="0"
+                                                        name="partprice" placeholder="" readonly>
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <label class="mt-3" for="">Part Price</label>
-                                                    <input id="partprice" class="form-control" type="number"
-                                                        value="{{ old('partprice') }}" name="partprice"
-                                                        placeholder="PART PRICE" required>
+                                                    <label class="mt-3" for="">Expiry Date</label>
+                                                    <input id="expiry_date" class="form-control" type="date"
+                                                        value="{{ old('expiry_date') }}" name="expiry_date" readonly>
                                                 </div>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
+                                            <div class="row mt-3">
+                                                <div class="col-md-2">
+                                                    <label class="mt-3" for="">Quantity</label>
+                                                    <input id="quantity" class="form-control" type="number"
+                                                        value="0" name="quantity" placeholder="" required>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="mt-3" for="">Price</label>
+                                                    <input id="price" class="form-control" type="number"
+                                                        value="0" name="price" placeholder="" required>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="mt-3" for="">Quantity Parts</label>
+                                                    <input id="quantityparts" class="form-control" type="number"
+                                                        value="0" name="quantityparts" placeholder="" required>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="mt-3" for="">Part Price</label>
+                                                    <input id="partprice" class="form-control" type="number"
+                                                        value="0" name="partprice" placeholder="" required>
+                                                </div>
+                                                <div class="col-md-3">
                                                     <label class="mt-3" for="">Expiry Date</label>
                                                     <input id="expiry_date" class="form-control" type="date"
                                                         value="{{ old('expiry_date') }}" name="expiry_date">
@@ -129,7 +150,8 @@
                                             </div>
                                             <div class="row mt-3">
                                                 <div class="col-md-4">
-                                                    <button id="add_table_item" class="btn btn-primary">Add Item</button>
+                                                    <button id="add_table_item" class="btn btn-primary"
+                                                        type="button">Add Item</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -169,7 +191,8 @@
 
                                         <div class="col-md-12 text-center pb-5">
                                             <br />
-                                            <button id="sell_button" class="btn btn-primary btn-lg">Sell</button>
+                                            <button id="sell_button" class="btn btn-primary btn-lg"
+                                                type="button">Sell</button>
                                         </div>
                                     </div>
                                 </form>
@@ -226,30 +249,32 @@
             var priceP = $('#partprice').val();
             var total = price * quantity + quantityP * priceP;
             var deleteRow =
-                "<button class='btn btn-danger btn-sm delete_table_row'> X </button>";
+                "<button class='btn btn-danger btn-sm delete_table_row' type='button'> X </button>";
 
             var tableitem = "<tr><td>" + code + "</td><td>" + name + "</td><td>" + quantity +
                 "</td><td>" + price + "</td><td>" + quantityP + "</td><td>" + priceP +
                 "</td><td>" + total + "</td><td> " + deleteRow + " </td></tr>";
             $('#table_items').append(tableitem);
 
-            $('#result').val('');
-            $('#name').val('');
-            $('#quantity').val('');
-            $('#price').val('');
+            $('#code').val('');
+            $('#quantity').val('0');
+            $('#quantityparts').val('0');
+            $('#price').val('0');
+            $('#partprice').val('0');
+            $('#expiry_date').val('');
 
             calcTotalPrice();
         });
 
         function calcTotalPrice() {
             var total = 0;
-            $("#table_data > tbody  > tr").each(function() {
+            $("#table_data tr").each(function() {
                 var self = $(this);
                 var quantity = self.find("td:eq(2)").text().trim();
                 var price = self.find("td:eq(3)").text().trim();
                 var quantityP = self.find("td:eq(4)").text().trim();
                 var priceP = self.find("td:eq(5)").text().trim();
-                total = quantity * price + quantityP * priceP;
+                total += quantity * price + quantityP * priceP;
             });
             $('#total_price').text(total + ' ' + 'sp');
         }
@@ -288,6 +313,7 @@
 
     <script>
         $('#name').keyup(function(e) {
+            e.preventDefault();
             if (e.keyCode == 13) {
                 // clear old
                 $('#code').val('');
@@ -307,6 +333,8 @@
                         name: elementName
                     },
                     complete: function(data) {
+                        $('#price').css('color', 'balck');
+                        $('#expiry_date').css('color', 'black');
                         $('#alertdanger').attr('hidden', true);
                         $('#alertsuccess').attr('hidden', true);
                         $('#name').removeClass(
@@ -315,11 +343,17 @@
                             'is-valid  was-validated form-control:valid');
                         data = data.responseJSON;
                         if (data.success) {
-                            console.log(data);
                             $('#quantity').val(data.amounts.amounts);
                             $('#quantityparts').val(data.amounts.part_amounts);
                             $('#price').val(data.prices.price);
                             $('#partprice').val(data.prices.partprice);
+                            $('#expiry_date').val(data.expiry_date);
+                            if (data.hasMultipleExpiryDate) {
+                                $('#expiry_date').css('color', 'red');
+                            }
+                            if (data.has_greater_price) {
+                                $('#price').css('color', 'red');
+                            }
                             $('#name').addClass(
                                 'is-valid  was-validated form-control:valid');
                         } else {

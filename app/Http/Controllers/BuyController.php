@@ -81,19 +81,35 @@ class BuyController extends Controller
             } else {
                 $partprice = $this->getCurrentPartPriceForElement($data->id, $merchantId);
             }
-            return response()->json(['success' => true, 'data' => $data, 'prices' => ['price' => $price , 'partprice' => $partprice], 'amounts' => $this->getElementAmounts($data->id, $merchantId), 'has_greater_price' => $hasGreaterThanPrice, 'has_greater_part_price' => $hasGreaterThanPartPrice, 'max_price' => $max_price, 'max_part_price' => $max_part_price], 200);
+
+            $expiry_date = Amount::where('data_id', $data->id)->where('merchant_id', $merchantId)->where('expiry_date', '!=', '')->orderBy('expiry_date')->first();
+            $expiry_date = $expiry_date != null ? $expiry_date->expiry_date : '';
+
+            $hasMultipleExpiryDate = $this->hasMultipleExpiryDate($data->id, $merchantId);
+
+            return response()->json(['success' => true, 'hasMultipleExpiryDate' => $hasMultipleExpiryDate, 'data' => $data, 'expiry_date' => $expiry_date, 'prices' => ['price' => $price, 'partprice' => $partprice], 'amounts' => $this->getElementAmounts($data->id, $merchantId), 'has_greater_price' => $hasGreaterThanPrice, 'has_greater_part_price' => $hasGreaterThanPartPrice, 'max_price' => $max_price, 'max_part_price' => $max_part_price], 200);
         } else {
             return response()->json(['success' => false, 'message' => 'Data not found'], 400);
+        }
+    }
+
+    public function hasMultipleExpiryDate($dataId, $merchantId)
+    {
+        $has_multpleExpiryDate = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->where('expiry_date', '!=', '')->count();
+        if ($has_multpleExpiryDate > 1)
+            return true;
+        else {
+            return false;
         }
     }
 
     public function hasGreaterPriceFromAnotherUser($dataId, $merchantId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->orderBy('price', 'desc')->where('merchant_id', '!=', $merchantId)->first();
+        $max_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->where('merchant_id', '!=', $merchantId)->first();
 
         // get price for prouct for specifc user
-        $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->orderBy('price', 'desc')->first();
+        $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->orderBy('created_at', 'desc')->first();
 
         if ($max_price != null && $user_price != null) {
             if ($user_price->price < $max_price->price) {
@@ -109,7 +125,7 @@ class BuyController extends Controller
     public function hasGreaterPartPriceFromAnotherUser($dataId, $merchantId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->orderBy('price_part', 'desc')->where('merchant_id', '!=', $merchantId)->first();
+        $max_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->where('merchant_id', '!=', $merchantId)->first();
 
         // get price for prouct for specifc user
         $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->first();
@@ -147,7 +163,7 @@ class BuyController extends Controller
     public function getMaxPartPriceForElement($dataId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->orderBy('price_part', 'desc')->first();
+        $max_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->first();
 
         if ($max_price != null) {
             return $max_price->price_part;
@@ -159,7 +175,7 @@ class BuyController extends Controller
     public function getMaxPriceForElement($dataId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->orderBy('price', 'desc')->first();
+        $max_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->first();
 
         if ($max_price != null) {
             return $max_price->price;
@@ -171,7 +187,7 @@ class BuyController extends Controller
     public function getCurrentPartPriceForElement($dataId, $userId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->where('merchant_id', $userId)->orderBy('price_part', 'desc')->first();
+        $max_price = Amount::where('data_id', $dataId)->where('merchant_id', $userId)->orderBy('created_at', 'desc')->first();
 
         if ($max_price != null) {
             return $max_price->price_part;
