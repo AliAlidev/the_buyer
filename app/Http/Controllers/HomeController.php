@@ -24,7 +24,7 @@ use function PHPUnit\Framework\returnSelf;
 
 class HomeController extends Controller
 {
-    
+
     public function importDataWithShapesAndCompanies()
     {
         $this->importData();
@@ -257,6 +257,75 @@ class HomeController extends Controller
             return response()->json(['success' => true, 'data' => $data], 200);
         } else {
             return response()->json(['success' => false, 'message' => 'Data not found'], 400);
+        }
+    }
+
+    public function fastinventorylist(Request $request)
+    {
+        try {
+            if ($request->ajax()) {
+                $data = Data::get();
+
+                return Datatables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('amount', function ($row) {
+                        return '<input type="number" class="form-control  w-100" value=0>';
+                    })
+                    ->addColumn('partamount', function ($row) {
+                        return '<input type="number" class="form-control  w-100" value=0>';
+                    })
+                    ->addColumn('price', function ($row) {
+                        return '<input type="number" class="form-control  w-100" value=0>';
+                    })
+                    ->addColumn('part_price', function ($row) {
+                        return '<input type="number" class="form-control  w-100" value=0>';
+                    })
+                    ->addColumn('action', function ($row) {
+                        $btn = '<a href="' . route('store-fast-inventory-list') . '" class="btn btn-info btn-sm mt-2 btn_add">Add</a> &nbsp';
+
+                        return $btn;
+                    })
+                    ->rawColumns(['action', 'price', 'part_price', 'amount', 'partamount'])
+                    ->make(true);
+            }
+            return view('inventory.fast_inventory_list');
+        } catch (Exception $th) {
+            return $this->errors("HomeController@listitems", $th->getMessage());
+        }
+    }
+
+    public function storefastinventorylist(Request $request)
+    {
+        $userId = 1;
+        $merchantId = 1;
+        if (($request->quantity == 0 && $request->price != 0) || ($request->quantity != 0 && $request->price == 0)) {
+            return response()->json(['success' => false, 'message' => 'Yous should select quantity and prices']);
+        }
+
+        if (($request->quantityP == 0 && $request->priceP != 0) || ($request->quantityP != 0 && $request->priceP == 0)) {
+            return response()->json(['success' => false, 'message' => 'Yous should select parts quantity and prices']);
+        }
+
+        if ($request->quantity == 0 && $request->quantityP == 0 && $request->price == 0 && $request->priceP == 0) {
+            return response()->json(['success' => false, 'message' => 'Yous should select quantity and prices']);
+        }
+        $data = Data::where('name', $request->name)->First();
+        if ($data) {
+            UserData::create([
+                'user_id' => $userId,
+                'merchant_id' => $merchantId,
+                'data_id' => $data->id,
+            ]);
+            $amount = Amount::create([
+                'data_id' => $data->id,
+                'amount' => $request->quantity != null ? $request->quantity : 0,
+                'amount_part' => $request->quantityP != null ? $request->quantityP : 0,
+                'price' => $request->price != null ? $request->price : 0,
+                'price_part' => $request->priceP != null ? $request->priceP : 0,
+                'user_id' => $userId,
+                'merchant_id' => $merchantId,
+            ]);
+            return response()->json(['success' => true, 'message' => 'Data addedd successfully']);
         }
     }
 

@@ -32,6 +32,8 @@ Route::group(['prefix' => 'inventory'], function () {
     Route::get('getMaxPartPrice/{id}', [HomeController::class, 'getMaxPartPriceForElement'])->name('get-max-part-price-for-element');
     Route::get('get_itms_na', [HomeController::class, 'getItemsName'])->name('get-items-name');
     Route::get('list_itm', [HomeController::class, 'listitems'])->name('list-items');
+    Route::get('fast_inventory_list', [HomeController::class, 'fastinventorylist'])->name('fast-inventory-list');
+    Route::post('store_fast_inventory_list', [HomeController::class, 'storefastinventorylist'])->name('store-fast-inventory-list');
     Route::get('list_invitem_amnt', [HomeController::class, 'listinventoryitemamounts'])->name('list-inventory-item-amounts');
     Route::get('create_itm', [HomeController::class, 'createitemindex'])->name('create-item-index');
     Route::get('add_inv_item_amnt/{id}', [HomeController::class, 'createinventoryitemamountindex'])->name('create-inventory-item-amount-index');

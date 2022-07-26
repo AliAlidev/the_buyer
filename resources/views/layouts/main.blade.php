@@ -174,6 +174,13 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a href="{{ route('fast-inventory-list') }}" class="waves-effect">
+                                        <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
+                                        <span>Fast Inventory</span>
+
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="{{ route('create-item') }}" class="waves-effect">
                                         <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
                                         <span>Create Item</span>
