@@ -67,7 +67,15 @@
                 scrollY: 500,
                 scrollX: true,
                 ajax: "{{ route('fast-inventory-list') }}",
-
+                "initComplete": function(settings, json) {
+                    $('.dataTables_filter input').unbind();
+                    $('.dataTables_filter input').bind('keyup', function(e) {
+                        var code = e.keyCode || e.which;
+                        if (code == 13) {
+                            $('.data-table').DataTable().search(this.value).draw();
+                        }
+                    });
+                },
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
