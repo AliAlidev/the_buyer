@@ -203,13 +203,13 @@
 
                                     </a>
                                 </li>
-                                <li>
+                                {{-- <li>
                                     <a href="{{ route('create-buy-invoice') }}" class="waves-effect">
                                         <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
                                         <span>Buy Invoice</span>
 
                                     </a>
-                                </li>
+                                </li> --}}
 
                             </ul>
                         </li>
