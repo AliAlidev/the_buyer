@@ -366,6 +366,7 @@
 
             var curr_status = $('#start_cam').data('id');
             if (curr_status == 1) {
+                $('#result').val('');
 
                 $('scandit-barcode-picker').attr('accesscamera', true);
                 $('scandit-barcode-picker').attr('scanningpaused', false);
