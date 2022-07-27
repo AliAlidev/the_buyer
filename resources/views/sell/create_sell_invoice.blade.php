@@ -15,6 +15,8 @@
             max-height: 300px;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" />
 @endpush
 
 @section('content')
@@ -65,32 +67,37 @@
                                     @endif
 
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="col-md-3">
-                                                <button id="start_flash" data-id="0" class="btn btn-warning">Flash
-                                                    OFF</button>
-                                            </div>
-                                        </div>
                                         <div class="col-md-2"></div>
                                         <div class="col-md-8 mt-3">
                                             <div class="row">
                                                 <div class="col-md-2">
                                                     <input id="start_cam" type="button" value="Start Cam" data-id="1"
-                                                        onclick="startCam()" class="btn btn-primary">
+                                                        onclick="startBarcodePicker()" class="btn btn-primary">
                                                 </div>
                                             </div>
                                             <div class="row mb-4">
                                                 <div class="col-md-2"></div>
+                                                <div id="barcode-result" class="result-text">&nbsp;</div>
                                                 <div class="col-md-8">
-                                                    <div id="my_camera"></div>
+                                                    <scandit-barcode-picker id="barcode-picker" class="scanner"
+                                                        style="width: 100%; height: 80%;"
+                                                        configure.licenseKey="{{ config('services.bar_code_key') }}"
+                                                        configure.engineLocation="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x/build/"
+                                                        accessCamera="false" visible="false" playSoundOnScan="true"
+                                                        vibrateOnScan="true",
+                                                        scanSettings.enabledSymbologies='["ean8", "ean13", "upca", "upce"]'>
+                                                    </scandit-barcode-picker>
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <input id="data_id" type="text" hidden>
                                                 <label for="result">Code</label>
-                                                <div class="col-md-12">
+                                                <div class="col-md-10">
                                                     <input class="form-control" id="result" type="text" name="code"
-                                                        value="{{ old('code') }}" placeholder="SCAN CODE" readonly>
+                                                        value="{{ old('code') }}" placeholder="SCAN CODE">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input id="getdata" type="button" class="btn btn-primary"
+                                                        value="Check">
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -101,65 +108,63 @@
                                                         required>
                                                 </div>
                                             </div>
-
-                                            {{-- fixed values --}}
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <label class="mt-3" for="">Quantity</label>
+                                                    <input id="quantity" class="form-control" type="number"
+                                                        value="{{ old('quantity') != null ? old('quantity') : 0 }}"
+                                                        name="quantity" required placeholder="QUANTITY">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="mt-3" for="">Price</label>
+                                                    <input id="price" class="form-control" type="number"
+                                                        value="{{ old('price') != null ? old('price') : 0 }}" name="price"
+                                                        placeholder="PRICE" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="mt-3" for="">Quantity Parts</label>
+                                                    <input id="quantityparts" class="form-control" type="number"
+                                                        value="{{ old('quantityparts') != null ? old('quantityparts') : 0 }}"
+                                                        name="quantityparts" required placeholder="QUANTITY PARTS">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="mt-3" for="">Part Price</label>
+                                                    <input id="partprice" class="form-control" type="number"
+                                                        value="{{ old('partprice') != null ? old('partprice') : 0 }}"
+                                                        name="partprice" required placeholder="PART PRICE">
+                                                </div>
+                                            </div>
                                             <div class="row">
                                                 <div class="col-md-2">
-                                                    <label class="mt-3" for="">Quantity</label>
-                                                    <input id="quantity" class="form-control" type="number" value="0"
-                                                        name="quantity" placeholder="" readonly style="text-align: center">
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="mt-3" for="">Price</label>
-                                                    <input id="price" class="form-control" type="number" value="0"
-                                                        name="price" placeholder="" readonly style="text-align: center">
-                                                    <div style="text-align: center">
-                                                        <small id="max_price_from_another_merchants" hidden></small>
+                                                    <label class="form-check-label mt-3" for="flexSwitchCheckDefault">Has
+                                                        Parts</label>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" id="hasparts"
+                                                            name="hasparts">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-2">
-                                                    <label class="mt-3" for="">Quantity P</label>
-                                                    <input id="quantityparts" class="form-control" type="number"
-                                                        value="0" name="quantityparts" placeholder="" readonly
-                                                        style="text-align: center">
+                                                <div class="col-md-2" id="numofpartsdiv" hidden>
+                                                    <label class="form-check-label mt-3"
+                                                        for="flexSwitchCheckDefault">Parts Number</label>
+                                                    <input id="numofparts" type="number" class="form-control"
+                                                        value="{{ old('numofparts') != null ? old('numofparts') : 0 }}"
+                                                        name="numofparts">
                                                 </div>
-                                                <div class="col-md-2">
-                                                    <label class="mt-3" for="">Price P</label>
-                                                    <input id="partprice" class="form-control" type="number" value="0"
-                                                        name="partprice" placeholder="" readonly
-                                                        style="text-align: center">
-                                                    <div style="text-align: center">
-                                                        <small id="max_part_price_from_another_merchants" hidden></small>
-                                                    </div>
+                                                <div class="col-md-3">
+                                                    <label class="mt-3" for="">Start Date</label>
+                                                    <input id="start_date" class="form-control" type="date"
+                                                        value="{{ old('start_date') }}" name="start_date">
                                                 </div>
                                                 <div class="col-md-3">
                                                     <label class="mt-3" for="">Expiry Date</label>
                                                     <input id="expiry_date" class="form-control" type="date"
-                                                        value="{{ old('expiry_date') }}" name="expiry_date" readonly
-                                                        style="text-align: center">
+                                                        value="{{ old('expiry_date') }}" name="expiry_date">
                                                 </div>
                                             </div>
-
-                                            {{-- selected values --}}
-                                            <div class="row mt-3">
-                                                <div class="col-md-2">
-                                                    <label class="mt-3" for="">Quantity</label>
-                                                    <input id="selected_quantity" class="form-control" type="number"
-                                                        value="0" name="quantity" placeholder="" required
-                                                        style="text-align: center" min="0" max="0">
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <label class="mt-3" for="">Quantity Parts</label>
-                                                    <input id="selected_quantityparts" class="form-control"
-                                                        type="number" value="0" name="quantityparts"
-                                                        placeholder="" required style="text-align: center" min="0"
-                                                        max="0">
-                                                </div>
-                                            </div>
-                                            <div class="row mt-3">
-                                                <div class="col-md-4">
-                                                    <button id="add_table_item" class="btn btn-primary"
-                                                        type="button">Add Item</button>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label class="mt-3" for="">Description</label>
+                                                    <textarea id="description" class="form-control" name="description" id="" cols="30" rows="10">{{ old('description') }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -594,92 +599,68 @@
         }
     </script>
 
-    {{-- qr code reader --}}
     <script>
-        var html5QrCode;
+        var barcodePickerElement = document.getElementById("barcode-picker");
 
-        function startCam() {
+        barcodePickerElement.addEventListener("scan", (scanResult) => {
+            $('scandit-barcode-picker').attr('accesscamera', false);
+            $('scandit-barcode-picker').attr('scanningpaused', true);
+            $('scandit-barcode-picker').attr('hidden', true);
+
+            $('#start_cam').val("Start Cam");
+            $('#start_cam').data('id', 1);
+
+            const barcode = scanResult.detail.barcodes[0];
+            const symbology = ScanditSDK.Barcode.Symbology.toHumanizedName(barcode.symbology);
+
+            $('#result').empty();
+            $('#result').val(barcode.data);
+
+            $.ajax({
+                type: 'post',
+                dataType: "JSON",
+                url: "{{ route('get-data-by-serial') }}",
+                data: {
+                    '_token': '{{ csrf_token() }}'
+                },
+                complete: function(data) {
+                    if (data.success) {
+
+                    }
+                }
+            });
+        });
+
+        function startBarcodePicker() {
+
             var curr_status = $('#start_cam').data('id');
             if (curr_status == 1) {
-                html5QrCode = new Html5Qrcode("my_camera", false);
-                const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                    $('#result').empty();
-                    $('#result').val(decodedResult.decodedText);
-                    // stop
-                    var audio = new Audio('/sounds/alert.wav');
-                    audio.play();
 
-                    html5QrCode.stop();
-                    $('#start_cam').val("Start Cam");
-                    $('#start_cam').data('id', 1);
-                    $('#my_camera').empty();
+                $('scandit-barcode-picker').attr('accesscamera', true);
+                $('scandit-barcode-picker').attr('scanningpaused', false);
+                $('scandit-barcode-picker').attr('hidden', false);
 
-                    // get code details
-                    getItemDetailsByCode();
-                };
+                barcodePickerElement.addEventListener("ready", () => {
+                    document.getElementById("lib-loading").hidden = true;
+                    document.getElementById("barcode-picker-starter-button").hidden = false;
+                });
 
-                const s_height = $(window).height();
-                const s_width = $(window).width();
-
-                var config = null;
-                if (s_width > 500) {
-                    config = {
-                        fps: 20,
-                        qrbox: 250
-                    };
-                } else {
-                    config = {
-                        fps: 20,
-                        qrbox: 140
-                    };
-                }
-
-                // Start back camera and if not found start front cam
-                html5QrCode.start({
-                    facingMode: {
-                        exact: "environment"
-                    }
-                }, config, qrCodeSuccessCallback).catch((err) => {
-                    html5QrCode.start({
-                        facingMode: {
-                            exact: "user"
-                        }
-                    }, config, qrCodeSuccessCallback)
+                barcodePickerElement.barcodePicker.accessCamera().then(() => {
+                    barcodePickerElement.barcodePicker.setVisible(true).resumeScanning();
                 });
 
                 $('#start_cam').val("Stop Cam");
                 $('#start_cam').data('id', 2);
+
             } else if (curr_status == 2) {
-                html5QrCode.stop();
+
+                $('scandit-barcode-picker').attr('accesscamera', false);
+                $('scandit-barcode-picker').attr('scanningpaused', true);
+                $('scandit-barcode-picker').attr('hidden', true);
+
                 $('#start_cam').val("Start Cam");
                 $('#start_cam').data('id', 1);
-                $('#my_camera').empty();
-
-                $('#start_flash').data('id', 0);
-                $('#start_flash').text("Flash OFF");
-                powerTorch(false);
             }
         }
-
-        function powerTorch(powerOn) {
-            html5QrCode.applyVideoConstraints({
-                advanced: [{
-                    torch: powerOn
-                }]
-            });
-        }
-
-        $('#start_flash').click(function(e) {
-            e.preventDefault();
-            if ($(this).data('id') == 0) {
-                powerTorch(true);
-                $(this).data('id', 1);
-                $(this).text("Flash ON");
-            } else {
-                powerTorch(false);
-                $(this).data('id', 0);
-                $(this).text("Flash OFF");
-            }
-        });
     </script>
 @endpush

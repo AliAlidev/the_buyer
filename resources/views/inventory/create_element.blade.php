@@ -13,7 +13,6 @@
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x"></script>
-
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" />
 @endpush
 
@@ -68,7 +67,8 @@
                                                 <div class="col-md-2"></div>
                                                 <div id="barcode-result" class="result-text">&nbsp;</div>
                                                 <div class="col-md-8">
-                                                    <scandit-barcode-picker id="barcode-picker" class="scanner" style="width: 100%; height: 60%;"
+                                                    <scandit-barcode-picker id="barcode-picker" class="scanner"
+                                                        style="width: 100%; height: 80%;"
                                                         configure.licenseKey="{{ config('services.bar_code_key') }}"
                                                         configure.engineLocation="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x/build/"
                                                         accessCamera="false" visible="false" playSoundOnScan="true"
@@ -293,120 +293,6 @@
     </script>
 
     <script>
-        var html5QrCode;
-        var track;
-
-        function startCam() {
-            var curr_status = $('#start_cam').data('id');
-            if (curr_status == 1) {
-                html5QrCode = new Html5Qrcode("my_camera", false);
-                const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                    $('#result').empty();
-                    $('#result').val(decodedResult.decodedText);
-                    // stop
-                    var audio = new Audio('/sounds/alert.wav');
-                    audio.play();
-
-                    html5QrCode.stop();
-                    $('#start_cam').val("Start Cam");
-                    $('#start_cam').data('id', 1);
-                    $('#my_camera').empty();
-
-                    // get code details
-                    $.ajax({
-                        type: 'post',
-                        dataType: "JSON",
-                        url: "{{ route('get-data-by-serial') }}",
-                        data: {
-                            '_token': '{{ csrf_token() }}'
-                        },
-                        complete: function(data) {
-                            if (data.success) {
-
-                            }
-                        }
-                    });
-                };
-
-                const s_height = $(window).height();
-                const s_width = $(window).width();
-
-
-                var config = null;
-                if (s_width > 500) {
-                    config = {
-                        fps: 60,
-                        qrbox: {
-                            width: 250,
-                            height: 100
-                        },
-                        experimentalFeatures: {
-                            useBarCodeDetectorIfSupported: true
-                        }
-                    };
-                } else {
-                    config = {
-                        fps: 60,
-                        qrbox: {
-                            width: 100,
-                            height: 50
-                        },
-                        experimentalFeatures: {
-                            useBarCodeDetectorIfSupported: true
-                        }
-                    };
-                }
-                // Start back camera and if not found start front cam
-                html5QrCode.start({
-                    facingMode: {
-                        exact: "environment"
-                    }
-                }, config, qrCodeSuccessCallback).catch((err) => {
-                    html5QrCode.start({
-                        facingMode: {
-                            exact: "user"
-                        }
-                    }, config, qrCodeSuccessCallback)
-                });
-
-                $('#start_cam').val("Stop Cam");
-                $('#start_cam').data('id', 2);
-
-            } else if (curr_status == 2) {
-                html5QrCode.stop();
-                $('#start_cam').val("Start Cam");
-                $('#start_cam').data('id', 1);
-                $('#my_camera').empty();
-
-                $('#start_flash').data('id', 0);
-                $('#start_flash').text("Flash OFF");
-                powerTorch(false);
-            }
-        }
-
-        function powerTorch(powerOn) {
-            html5QrCode.applyVideoConstraints({
-                advanced: [{
-                    torch: powerOn
-                }]
-            });
-        }
-
-        $('#start_flash').click(function(e) {
-            e.preventDefault();
-            if ($(this).data('id') == 0) {
-                powerTorch(true);
-                $(this).data('id', 1);
-                $(this).text("Flash ON");
-            } else {
-                powerTorch(false);
-                $(this).data('id', 0);
-                $(this).text("Flash OFF");
-            }
-        });
-    </script>
-
-    <script>
         $('#submitForm').click(function(e) {
             var data = $('form').serialize();
             $.post("{{ route('create-item') }}", data).done(function(value) {
@@ -448,10 +334,32 @@
         var barcodePickerElement = document.getElementById("barcode-picker");
 
         barcodePickerElement.addEventListener("scan", (scanResult) => {
+            $('scandit-barcode-picker').attr('accesscamera', false);
+            $('scandit-barcode-picker').attr('scanningpaused', true);
+            $('scandit-barcode-picker').attr('hidden', true);
+
+            $('#start_cam').val("Start Cam");
+            $('#start_cam').data('id', 1);
+
             const barcode = scanResult.detail.barcodes[0];
             const symbology = ScanditSDK.Barcode.Symbology.toHumanizedName(barcode.symbology);
 
-            document.getElementById("barcode-result").innerText = `${barcode.data}`;
+            $('#result').empty();
+            $('#result').val(barcode.data);
+
+            $.ajax({
+                type: 'post',
+                dataType: "JSON",
+                url: "{{ route('get-data-by-serial') }}",
+                data: {
+                    '_token': '{{ csrf_token() }}'
+                },
+                complete: function(data) {
+                    if (data.success) {
+
+                    }
+                }
+            });
         });
 
         function startBarcodePicker() {
@@ -483,7 +391,6 @@
 
                 $('#start_cam').val("Start Cam");
                 $('#start_cam').data('id', 1);
-                $('#my_camera').empty();
             }
         }
     </script>
