@@ -11,6 +11,10 @@
             padding-right: 20px;
         }
     </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" />
 @endpush
 
 @section('content')
@@ -63,13 +67,20 @@
                                             <div class="row">
                                                 <div class="col-md-2">
                                                     <input id="start_cam" type="button" value="Start Cam" data-id="1"
-                                                        onclick="startCam()" class="btn btn-primary">
+                                                        onclick="startBarcodePicker()" class="btn btn-primary">
                                                 </div>
                                             </div>
                                             <div class="row mb-4">
                                                 <div class="col-md-2"></div>
+                                                <div id="barcode-result" class="result-text">&nbsp;</div>
                                                 <div class="col-md-8">
-                                                    <div id="my_camera"></div>
+                                                    <scandit-barcode-picker id="barcode-picker" class="scanner"
+                                                        configure.licenseKey="AWvBswJYICbOHM7G6AAjOZo2+u5sIIwq5nMzkMBRroPfVRGfYEiM/Zhoyif8ePDLIFEOp+BUTionZzuRjkrS50hfAiJvVVgjCGXxS9BlWlcNCv3PBBgURSA4YEf5Evn3A2Pm6jbU9piIsGnnoUYuFdONH/THF3B5kg9nmMrizEALRftaAUjOIvFn1b43APkweKbYieNOznxxlcvZ4Vhru2AY71rlNHAKeWBp/KMFVLyDLmqTiYhOt4mzUHWYILNScokExGXFtqwbvPcusNWG/gnmUGaB8gX87yLAxuY1+f/qZ1bMitdkkzhOC5/bY1GKylLB5dtp05sxl++am8IDfNLdu1qVZSEA/mALpsg3Apf2wlSAZ/Jz6cO8Ja5xPMz3sR7md1Dv2zKNBI73n8Oto2PXQ1F4PVVCAfdhWn68HSgdLrBxliuihg4QcXSdGSsMcvtD1/ueihATugpbVbXxPWygj3C4Q3E1Jx32UQMrV54MLtMf8BLIawvjmMX39/5skdwwe//w9sok2xfmYv6d7UwYSxOtq4iRiAt4lLBloJwc4JBXDHved5eij6afQjDIxdID9/8b54SobUNrqlrCaf85ui6lLqrEFFKqSHTsfkCeme+5L2iZq3ptZiHSD/b+VwGhRkJA84dsy2qMCyqQZYEkSN9p3WZe20ifSbaMxGeJeH8Ti/MKju/OJ2Olqb+RK1rQC6pTKOUhNaBLgPZL6DZw4k9OxX+cPyiilFmEERk48rdU22Z7njMCvwyoECfa25E+KJEwANE2RqWjwlAx8x4JAJALxKeJDdN/9d7APA=="
+                                                        configure.engineLocation="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x/build/"
+                                                        accessCamera="false" visible="false" playSoundOnScan="true"
+                                                        vibrateOnScan="true"
+                                                        scanSettings.enabledSymbologies='["ean8", "ean13", "upca", "upce"]'>
+                                                    </scandit-barcode-picker>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -101,8 +112,8 @@
                                                 <div class="col-md-3">
                                                     <label class="mt-3" for="">Price</label>
                                                     <input id="price" class="form-control" type="number"
-                                                        value="{{ old('price') != null ? old('price') : 0 }}"
-                                                        name="price" placeholder="PRICE" required>
+                                                        value="{{ old('price') != null ? old('price') : 0 }}" name="price"
+                                                        placeholder="PRICE" required>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <label class="mt-3" for="">Quantity Parts</label>
@@ -401,7 +412,6 @@
         });
     </script>
 
-
     <script>
         $('#submitForm').click(function(e) {
             var data = $('form').serialize();
@@ -438,5 +448,50 @@
         $('#form1').submit(function() {
             e.preventDefault();
         });
+    </script>
+
+    <script>
+        var barcodePickerElement = document.getElementById("barcode-picker");
+
+        barcodePickerElement.addEventListener("scan", (scanResult) => {
+            const barcode = scanResult.detail.barcodes[0];
+            const symbology = ScanditSDK.Barcode.Symbology.toHumanizedName(barcode.symbology);
+
+            document.getElementById("barcode-result").innerText = `${barcode.data}`;
+        });
+
+        function startBarcodePicker() {
+
+            var curr_status = $('#start_cam').data('id');
+            if (curr_status == 1) {
+
+                $('scandit-barcode-picker').attr('accesscamera', true);
+                $('scandit-barcode-picker').attr('scanningpaused', false);
+                $('scandit-barcode-picker').attr('hidden', false);
+
+                barcodePickerElement.addEventListener("ready", () => {
+                    document.getElementById("lib-loading").hidden = true;
+                    document.getElementById("barcode-picker-starter-button").hidden = false;
+                });
+
+                barcodePickerElement.barcodePicker.accessCamera().then(() => {
+                    barcodePickerElement.barcodePicker.setVisible(true).resumeScanning();
+                });
+
+                $('#start_cam').val("Stop Cam");
+                $('#start_cam').data('id', 2);
+
+            } else if (curr_status == 2) {
+
+                $('scandit-barcode-picker').attr('accesscamera', false);
+                $('scandit-barcode-picker').attr('scanningpaused', true);
+                $('scandit-barcode-picker').attr('hidden', true);
+
+                $('#start_cam').val("Start Cam");
+                $('#start_cam').data('id', 1);
+                $('#my_camera').empty();
+            }
+        }
+
     </script>
 @endpush
