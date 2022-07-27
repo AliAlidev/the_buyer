@@ -43,8 +43,7 @@
                     <div class="navbar-brand-box">
                         <a href="index.html" class="logo logo-dark">
                             <span class="logo-sm">
-                                <img src="{{ asset('assets/images/logo-sm-dark.png') }}" alt=""
-                                    height="22">
+                                <img src="{{ asset('assets/images/logo-sm-dark.png') }}" alt="" height="22">
                             </span>
                             <span class="logo-lg">
                                 <img src="{{ asset('assets/images/logo-dark.png') }}" alt="" height="24">
@@ -53,8 +52,7 @@
 
                         <a href="index.html" class="logo logo-light">
                             <span class="logo-sm">
-                                <img src="{{ asset('assets/images/logo-sm-light.png') }}" alt=""
-                                    height="22">
+                                <img src="{{ asset('assets/images/logo-sm-light.png') }}" alt="" height="22">
                             </span>
                             <span class="logo-lg">
                                 <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="24">
@@ -110,7 +108,7 @@
                             <a class="dropdown-item" href="#"><i
                                     class="mdi mdi-account-circle font-size-16 align-middle me-2 text-muted"></i>
                                 <span>Profile</span></a>
-                            <a class="dropdown-item text-primary" href="#"><i
+                            <a class="dropdown-item text-primary" href="/logout"><i
                                     class="mdi mdi-power font-size-16 align-middle me-2 text-primary"></i>
                                 <span>Logout</span></a>
                         </div>
@@ -142,7 +140,7 @@
                                                 class="mdi mdi-account-circle text-muted me-2"></i>
                                             Profile<div class="ripple-wrapper me-2"></div>
                                         </a></li>
-                                    <li><a href="javascript:void(0)" class="dropdown-item"><i
+                                    <li><a href="/logout" class="dropdown-item"><i
                                                 class="mdi mdi-power text-muted me-2"></i>
                                             Logout</a></li>
                                 </ul>
@@ -191,7 +189,7 @@
                             </ul>
                         </li>
 
-                        
+
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
                                 <i class="mdi mdi-home"></i>
@@ -280,8 +278,8 @@
     <script src="{{ asset('assets/libs/peity/jquery.peity.min.js') }}"></script>
 
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript">
-
-    <script src="{{ asset('assets/libs/morris.js/morris.min.js') }}"></script>
+        < script src = "{{ asset('assets/libs/morris.js/morris.min.js') }}" >
+    </script>
     <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
 
     <script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
