@@ -56,12 +56,6 @@
                                 <form id="form1" method="POST">
                                     @csrf
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="col-md-3">
-                                                <button id="start_flash" data-id="0" class="btn btn-warning">Flash
-                                                    OFF</button>
-                                            </div>
-                                        </div>
                                         <div class="col-md-2"></div>
                                         <div class="col-md-8 mt-3">
                                             <div class="row">
@@ -74,11 +68,11 @@
                                                 <div class="col-md-2"></div>
                                                 <div id="barcode-result" class="result-text">&nbsp;</div>
                                                 <div class="col-md-8">
-                                                    <scandit-barcode-picker id="barcode-picker" class="scanner"
-                                                        configure.licenseKey="AWvBswJYICbOHM7G6AAjOZo2+u5sIIwq5nMzkMBRroPfVRGfYEiM/Zhoyif8ePDLIFEOp+BUTionZzuRjkrS50hfAiJvVVgjCGXxS9BlWlcNCv3PBBgURSA4YEf5Evn3A2Pm6jbU9piIsGnnoUYuFdONH/THF3B5kg9nmMrizEALRftaAUjOIvFn1b43APkweKbYieNOznxxlcvZ4Vhru2AY71rlNHAKeWBp/KMFVLyDLmqTiYhOt4mzUHWYILNScokExGXFtqwbvPcusNWG/gnmUGaB8gX87yLAxuY1+f/qZ1bMitdkkzhOC5/bY1GKylLB5dtp05sxl++am8IDfNLdu1qVZSEA/mALpsg3Apf2wlSAZ/Jz6cO8Ja5xPMz3sR7md1Dv2zKNBI73n8Oto2PXQ1F4PVVCAfdhWn68HSgdLrBxliuihg4QcXSdGSsMcvtD1/ueihATugpbVbXxPWygj3C4Q3E1Jx32UQMrV54MLtMf8BLIawvjmMX39/5skdwwe//w9sok2xfmYv6d7UwYSxOtq4iRiAt4lLBloJwc4JBXDHved5eij6afQjDIxdID9/8b54SobUNrqlrCaf85ui6lLqrEFFKqSHTsfkCeme+5L2iZq3ptZiHSD/b+VwGhRkJA84dsy2qMCyqQZYEkSN9p3WZe20ifSbaMxGeJeH8Ti/MKju/OJ2Olqb+RK1rQC6pTKOUhNaBLgPZL6DZw4k9OxX+cPyiilFmEERk48rdU22Z7njMCvwyoECfa25E+KJEwANE2RqWjwlAx8x4JAJALxKeJDdN/9d7APA=="
+                                                    <scandit-barcode-picker id="barcode-picker" class="scanner" style="max-width: 50%; max-height: 50%;"
+                                                        configure.licenseKey="{{ config('services.bar_code_key') }}"
                                                         configure.engineLocation="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x/build/"
                                                         accessCamera="false" visible="false" playSoundOnScan="true"
-                                                        vibrateOnScan="true"
+                                                        vibrateOnScan="true",
                                                         scanSettings.enabledSymbologies='["ean8", "ean13", "upca", "upce"]'>
                                                     </scandit-barcode-picker>
                                                 </div>
@@ -492,6 +486,5 @@
                 $('#my_camera').empty();
             }
         }
-
     </script>
 @endpush

@@ -30,4 +30,6 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'bar_code_key' => env('BAR_CODE_KEY')
+
 ];
