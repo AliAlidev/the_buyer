@@ -96,8 +96,8 @@
                                                         value="{{ old('code') }}" placeholder="SCAN CODE">
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <input id="getdata" onclick="getItemDetailsByCode()" type="button" class="btn btn-primary"
-                                                        value="Check">
+                                                    <input id="getdata" onclick="getItemDetailsByCode()" type="button"
+                                                        class="btn btn-primary" value="Check">
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -616,19 +616,7 @@
             $('#result').empty();
             $('#result').val(barcode.data);
 
-            $.ajax({
-                type: 'post',
-                dataType: "JSON",
-                url: "{{ route('get-data-by-serial') }}",
-                data: {
-                    '_token': '{{ csrf_token() }}'
-                },
-                complete: function(data) {
-                    if (data.success) {
-
-                    }
-                }
-            });
+            getItemDetailsByCode();
         });
 
         function startBarcodePicker() {
