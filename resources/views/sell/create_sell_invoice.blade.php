@@ -96,7 +96,7 @@
                                                         value="{{ old('code') }}" placeholder="SCAN CODE">
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <input id="getdata" type="button" class="btn btn-primary"
+                                                    <input id="getdata" onclick="getItemDetailsByCode()" type="button" class="btn btn-primary"
                                                         value="Check">
                                                 </div>
                                             </div>
