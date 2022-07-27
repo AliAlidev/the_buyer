@@ -68,7 +68,7 @@
                                                 <div class="col-md-2"></div>
                                                 <div id="barcode-result" class="result-text">&nbsp;</div>
                                                 <div class="col-md-8">
-                                                    <scandit-barcode-picker id="barcode-picker" class="scanner" style="width: 100%; height: 80%;"
+                                                    <scandit-barcode-picker id="barcode-picker" class="scanner" style="width: 100%; height: 50%;"
                                                         configure.licenseKey="{{ config('services.bar_code_key') }}"
                                                         configure.engineLocation="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x/build/"
                                                         accessCamera="false" visible="false" playSoundOnScan="true"
