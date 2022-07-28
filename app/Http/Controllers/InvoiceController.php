@@ -10,9 +10,11 @@ use App\Models\InvoiceItems;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
 {
+    
     public function sell_index()
     {
         return view('sell.create_sell_invoice');
@@ -26,14 +28,12 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         try {
-            $uerId = 1;
-
-            $user = User::find($uerId);
+            $user = Auth::user();
             if (!$user) {
                 return response()->json(['success' => false, 'message' => 'User not found']);
             }
 
-            
+
             $discount = $request->discount;
             $total_amount = trim(str_replace("sp", "", $request->total_invoice_value));
             $paid_amount = $request->paid_amount;
@@ -46,7 +46,7 @@ class InvoiceController extends Controller
                 $paid_amount =  $paid_amount - (($paid_amount * $discount) / 100);
             }
             $invoice = Invoice::create([
-                'merchant_id' => $user->merchant_id,
+                'merchant_id' => $user->role == 3 ? $user->merchant_id : $user->id,
                 'user_id' => $user->id,
                 'total_amount' => $total_amount,
                 'discount' => $discount,
@@ -54,7 +54,7 @@ class InvoiceController extends Controller
                 'invoice_type' => $request->invoice_type,
                 'notes' => $request->notes
             ]);
-            
+
             $invoiceItems = json_decode($request->items);
             $items = [];
             foreach ($invoiceItems as $key => $item) {
@@ -89,7 +89,7 @@ class InvoiceController extends Controller
 
     public function findByItemCode(Request $request)
     {
-        $merchantId = 1;
+        $merchantId = Auth::user()->role == 3 ? Auth::user()->merchant_id : Auth::user()->id;
         $data = Data::where('code', $request->code)->first();
         if ($data) {
             $hasGreaterThanPrice = $this->hasGreaterPriceFromAnotherUser($data->id, $merchantId);
@@ -139,7 +139,7 @@ class InvoiceController extends Controller
 
     public function findByItemName(Request $request)
     {
-        $merchantId = 1;
+        $merchantId = Auth::user()->role == 3 ? Auth::user()->merchant_id : Auth::user()->id;
         $data = Data::where('name', $request->name)->first();
         if ($data) {
             $hasGreaterThanPrice = $this->hasGreaterPriceFromAnotherUser($data->id, $merchantId);

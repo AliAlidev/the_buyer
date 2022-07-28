@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use DataTables;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -99,8 +100,7 @@ class HomeController extends Controller
         }
 
         try {
-            $userId = 1;
-            $user = User::find($userId);
+            $user = Auth::user();
             if ($request->code != null) {
                 $has_parts = isset($request->hasparts) ? 1 : 0;
                 $num_of_parts = $request->numofparts != null ? $request->numofparts : 0;
@@ -124,8 +124,8 @@ class HomeController extends Controller
 
             UserData::create([
                 'user_id' => $user->id,
-                'merchant_id' => $user->merchant_id,
-                'data_id' => $data->id,
+                'merchant_id' => $user->role == 3 ? $user->merchant_id : $user->id,
+                'data_id' => $data->id
             ]);
 
             $amount = Amount::create([
@@ -137,7 +137,7 @@ class HomeController extends Controller
                 'start_date' => $request->start_date,
                 'expiry_date' => $request->expiry_date,
                 'user_id' => $user->id,
-                'merchant_id' => $user->merchant_id,
+                'merchant_id' => $user->role == 3 ? $user->merchant_id : $user->id
             ]);
 
             if ($data->wasRecentlyCreated) {
@@ -296,8 +296,8 @@ class HomeController extends Controller
 
     public function storefastinventorylist(Request $request)
     {
-        $userId = 1;
-        $merchantId = 1;
+        $userId = Auth::user()->id;
+        $merchantId = Auth::user()->role == 3 ? Auth::user()->merchant_id : Auth::user()->id;
         if (($request->quantity == 0 && $request->price != 0) || ($request->quantity != 0 && $request->price == 0)) {
             return response()->json(['success' => false, 'message' => 'Yous should select quantity and prices']);
         }
@@ -333,7 +333,7 @@ class HomeController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $merchantId = 1;
+                $merchantId = Auth::user()->role == 3 ? Auth::user()->merchant_id : Auth::user()->id;
                 $items = User::where('merchant_id', $merchantId)->first()->data()->select('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->groupBy('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->get();
                 $final = [];
                 foreach ($items as $key => $item) {
@@ -430,14 +430,13 @@ class HomeController extends Controller
         }
 
         try {
-            $userId = 1;
-            $user = User::find($userId);
+            $user = Auth::user();
             $data = Data::find($request->dataId);
 
             UserData::create([
                 'user_id' => $user->id,
-                'merchant_id' => $user->merchant_id,
-                'data_id' => $data->id,
+                'merchant_id' => $user->role == 3 ? $user->merchant_id : $user->id,
+                'data_id' => $data->id
             ]);
 
             $amount = Amount::create([
@@ -449,7 +448,7 @@ class HomeController extends Controller
                 'start_date' => $request->start_date,
                 'expiry_date' => $request->expiry_date,
                 'user_id' => $user->id,
-                'merchant_id' => $user->merchant_id,
+                'merchant_id' => $user->role == 3 ? $user->merchant_id : $user->id
             ]);
 
             if ($amount) {

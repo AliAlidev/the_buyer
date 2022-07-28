@@ -15,6 +15,11 @@ class UsersSeeder extends Seeder
      */
     public function run()
     {
+        /*
+            1 Admin
+            2 merchant
+            3 user
+        */
         User::updateOrCreate(
             ['email' => 'admin@buyer.com'],
             [
@@ -30,6 +35,7 @@ class UsersSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'email' => 'reem@buyer.com',
+                'role' => '2',
                 'password' => Hash::make('12345678')
             ]
         );
