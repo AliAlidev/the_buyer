@@ -33,7 +33,7 @@ class UsersSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'reem@buyer.com'],
             [
-                'name' => 'Admin',
+                'name' => 'Reem',
                 'email' => 'reem@buyer.com',
                 'role' => '2',
                 'password' => Hash::make('12345678')

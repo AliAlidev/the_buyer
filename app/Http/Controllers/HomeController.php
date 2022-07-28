@@ -334,7 +334,12 @@ class HomeController extends Controller
         try {
             if ($request->ajax()) {
                 $merchantId = Auth::user()->role == 3 ? Auth::user()->merchant_id : Auth::user()->id;
-                $items = User::where('merchant_id', $merchantId)->first()->data()->select('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->groupBy('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->get();
+                if(Auth::user()->role == 3){
+                    $items = User::where('merchant_id', $merchantId)->first()->data()->select('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->groupBy('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->get(); 
+                }
+                else{
+                    $items = User::where('id', $merchantId)->first()->data()->select('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->groupBy('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->get();
+                }
                 $final = [];
                 foreach ($items as $key => $item) {
                     $temp_amount = $item->amounts()->sum('amount');

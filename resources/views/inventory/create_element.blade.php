@@ -210,8 +210,13 @@
     <script>
         $('#name').keyup(function(e) {
             if (e.keyCode == 13) {
+                $('#result').removeClass(
+                    'is-invalid  was-validated form-control:invalid');
+                $('#result').removeClass(
+                    'is-valid  was-validated form-control:valid');
+
                 // clear old
-                $('#code').val('');
+                $('#result').val('');
                 $('#quantity').val('0');
                 $('#quantityparts').val('0');
                 $('#price').val('0');
@@ -251,9 +256,12 @@
 
     <script>
         $('#getdata').click(function() {
-
+            $('#name').removeClass(
+                'is-invalid  was-validated form-control:invalid');
+            $('#name').removeClass(
+                'is-valid  was-validated form-control:valid');
             // clear old
-            $('#code').val('');
+            $('#name').val('');
             $('#quantity').val('0');
             $('#quantityparts').val('0');
             $('#price').val('0');
@@ -347,19 +355,7 @@
             $('#result').empty();
             $('#result').val(barcode.data);
 
-            $.ajax({
-                type: 'post',
-                dataType: "JSON",
-                url: "{{ route('get-data-by-serial') }}",
-                data: {
-                    '_token': '{{ csrf_token() }}'
-                },
-                complete: function(data) {
-                    if (data.success) {
-
-                    }
-                }
-            });
+            $('#getdata').trigger('click');
         });
 
         function startBarcodePicker() {
