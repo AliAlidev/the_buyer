@@ -89,6 +89,7 @@
                                                     </scandit-barcode-picker>
                                                 </div>
                                             </div>
+                                            <input type="text" name="" id="data_id" hidden>
                                             <div class="row">
                                                 <label for="result">Code</label>
                                                 <div class="col-md-10">
@@ -108,66 +109,89 @@
                                                         required>
                                                 </div>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <label class="mt-3" for="">Quantity</label>
-                                                    <input id="quantity" class="form-control" type="number"
-                                                        value="{{ old('quantity') != null ? old('quantity') : 0 }}"
-                                                        name="quantity" required placeholder="QUANTITY">
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <label class="mt-3" for="">Price</label>
-                                                    <input id="price" class="form-control" type="number"
-                                                        value="{{ old('price') != null ? old('price') : 0 }}" name="price"
-                                                        placeholder="PRICE" required>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <label class="mt-3" for="">Quantity Parts</label>
-                                                    <input id="quantityparts" class="form-control" type="number"
-                                                        value="{{ old('quantityparts') != null ? old('quantityparts') : 0 }}"
-                                                        name="quantityparts" required placeholder="QUANTITY PARTS">
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <label class="mt-3" for="">Part Price</label>
-                                                    <input id="partprice" class="form-control" type="number"
-                                                        value="{{ old('partprice') != null ? old('partprice') : 0 }}"
-                                                        name="partprice" required placeholder="PART PRICE">
-                                                </div>
+                                            <label for="square-switch1" class="mt-3">Current Amounts</label>
+                                            <div class="square-switch">
+                                                <input type="checkbox" id="square-switch1" switch="none">
+                                                <label class="form-label" for="square-switch1" data-on-label="On"
+                                                    data-off-label="Off"></label>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <label class="form-check-label mt-3" for="flexSwitchCheckDefault">Has
-                                                        Parts</label>
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="checkbox" id="hasparts"
-                                                            name="hasparts">
+
+                                            <div id="description" hidden>
+                                                {{-- fixed values --}}
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <label class="mt-3" for="">Quantity</label>
+                                                        <input id="quantity" class="form-control" type="number"
+                                                            value="0" name="quantity" placeholder="" readonly
+                                                            style="text-align: center">
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label class="mt-3" for="">Price</label>
+                                                        <input id="price" class="form-control" type="number"
+                                                            value="0" name="price" placeholder="" readonly
+                                                            style="text-align: center">
+                                                        <div style="text-align: center">
+                                                            <small id="max_price_from_another_merchants" hidden></small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label class="mt-3" for="">Quantity P</label>
+                                                        <input id="quantityparts" class="form-control" type="number"
+                                                            value="0" name="quantityparts" placeholder="" readonly
+                                                            style="text-align: center">
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label class="mt-3" for="">Price P</label>
+                                                        <input id="partprice" class="form-control" type="number"
+                                                            value="0" name="partprice" placeholder="" readonly
+                                                            style="text-align: center">
+                                                        <div style="text-align: center">
+                                                            <small id="max_part_price_from_another_merchants"
+                                                                hidden></small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="mt-3" for="">Expiry Date</label>
+                                                        <input id="expiry_date" class="form-control" type="date"
+                                                            value="{{ old('expiry_date') }}" name="expiry_date" readonly
+                                                            style="text-align: center">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-2" id="numofpartsdiv" hidden>
-                                                    <label class="form-check-label mt-3"
-                                                        for="flexSwitchCheckDefault">Parts Number</label>
-                                                    <input id="numofparts" type="number" class="form-control"
-                                                        value="{{ old('numofparts') != null ? old('numofparts') : 0 }}"
-                                                        name="numofparts">
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <label class="mt-3" for="">Start Date</label>
-                                                    <input id="start_date" class="form-control" type="date"
-                                                        value="{{ old('start_date') }}" name="start_date">
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <label class="mt-3" for="">Expiry Date</label>
-                                                    <input id="expiry_date" class="form-control" type="date"
-                                                        value="{{ old('expiry_date') }}" name="expiry_date">
-                                                </div>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <label class="mt-3" for="">Description</label>
-                                                    <textarea id="description" class="form-control" name="description" id="" cols="30" rows="10">{{ old('description') }}</textarea>
+
+                                            {{-- selected values --}}
+                                            <div class="row mt-4">
+
+                                                <div class="mb-3 w-25">
+                                                    <label class="form-label">Amounts</label>
+                                                    <div
+                                                        class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+                                                        <input id="selected_quantity" data-toggle="touchspin"
+                                                            type="text" value="0" class="form-control"
+                                                            name="quantity" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-3 w-25">
+                                                    <label class="form-label">Quantity Parts</label>
+                                                    <div
+                                                        class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+                                                        <input id="selected_quantityparts" data-toggle="touchspin"
+                                                            type="text" value="0" class="form-control"
+                                                            name="quantityparts" required>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-md-4">
+                                                    <button id="add_table_item" class="btn btn-primary"
+                                                        type="button">Add
+                                                        Item</button>
                                                 </div>
                                             </div>
                                         </div>
+
 
                                         <div class="row mt-5">
                                             <div class="col-md-2"></div>
@@ -196,47 +220,65 @@
                                                     <div class="col-md-3 mt-4" style="font-weight: 800; font-size: 200%">
                                                         Total:
                                                     </div>
+
                                                     <div class="col-md-3 mt-4"
                                                         style="font-weight: bolder; font-size: 200%">
                                                         <div id="total_price" style="font-weight: 500;">0
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-3">
-                                                        <label for="" class="mt-3"
-                                                            style="font-size: 110%; font-weight: 600">Discount Type</label>
-                                                        <select name="" id="discount_type" class="form-control">
-                                                            <option value="perc">Perc</option>
-                                                            <option value="val">Val</option>
-                                                        </select>
-                                                    </div>
-                                                    <div id="discount_value_div" class="col-md-3">
-                                                        <label class="mt-3" for=""
-                                                            style="font-size: 110%; font-weight: 600">Percentage%</label>
-                                                        <input id="discount" class="form-control" type="number"
-                                                            value="0" name="discount" style="text-align: center"
-                                                            step="0.1" min="0" max="100">
-                                                    </div>
-                                                    <div id="paid_amount_div" class="col-md-3" hidden>
-                                                        <label class="mt-3" for=""
-                                                            style="font-size: 110%; font-weight: 600">Paid Amount</label>
-                                                        <input id="paid_amount" class="form-control" type="number"
-                                                            value="0" name="paid_amount" style="text-align: center"
-                                                            min="0">
-                                                    </div>
                                                 </div>
-                                                <div class="row mt-5">
-                                                    <label for="notes">Notes</label>
-                                                    <textarea id="notes" class="form-control" name="notes" id="" cols="30" rows="2"></textarea>
+
+                                                <label for="invoice_options_checkbox" class="mt-5">Invoice
+                                                    Options</label>
+                                                <div class="square-switch">
+                                                    <input type="checkbox" id="invoice_options_checkbox" switch="none">
+                                                    <label class="form-label" for="invoice_options_checkbox"
+                                                        data-on-label="On" data-off-label="Off"></label>
+                                                </div>
+                                                <div id="invoice_options" hidden>
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <label for="" class="mt-3"
+                                                                style="font-size: 110%; font-weight: 600">Discount
+                                                                Type</label>
+                                                            <select name="" id="discount_type"
+                                                                class="form-control">
+                                                                <option value="perc">Perc</option>
+                                                                <option value="val">Val</option>
+                                                            </select>
+                                                        </div>
+                                                        <div id="discount_value_div" class="col-md-3">
+                                                            <label class="mt-3" for=""
+                                                                style="font-size: 110%; font-weight: 600">Percentage%</label>
+                                                            <input id="discount" class="form-control" type="number"
+                                                                value="0" name="discount" style="text-align: center"
+                                                                step="0.1" min="0" max="100">
+                                                        </div>
+                                                        <div id="paid_amount_div" class="col-md-3" hidden>
+                                                            <label class="mt-3" for=""
+                                                                style="font-size: 110%; font-weight: 600">Paid
+                                                                Amount</label>
+                                                            <input id="paid_amount" class="form-control" type="number"
+                                                                value="0" name="paid_amount"
+                                                                style="text-align: center" min="0">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mt-5">
+                                                        <div class="col-md-12">
+                                                            <label for="notes">Notes</label>
+                                                            <textarea id="notes" class="form-control" name="notes" id="" cols="30" rows="2"></textarea>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div class="col-md-12 text-center pb-5">
-                                            <br />
-                                            <button id="sell_button" class="btn btn-primary btn-lg"
-                                                type="button">Sell</button>
+                                            <div class="col-md-12 text-center pb-5">
+                                                <br />
+                                                <button id="sell_button" class="btn btn-primary btn-lg"
+                                                    type="button">Sell</button>
+                                            </div>
                                         </div>
-                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -453,8 +495,7 @@
                         if (data.success) {
                             var itemQuantityInCurrInvoice = getItemAmountsInInvoice(data.data.id);
                             var itemPartQuantityInCurrInvoice = getItemPartAmountsInInvoice(data
-                                .data
-                                .id);
+                                .data.id);
 
                             $('#selected_quantity').val('0');
                             $('#selected_quantity').attr('max', data.amounts.amounts -
@@ -537,10 +578,18 @@
                             'is-valid  was-validated form-control:valid');
                         data = data.responseJSON;
                         if (data.success) {
+                            var itemQuantityInCurrInvoice = getItemAmountsInInvoice(data.data.id);
+                            var itemPartQuantityInCurrInvoice = getItemPartAmountsInInvoice(data.data.id);
                             $('#selected_quantity').val('0');
-                            $('#selected_quantity').attr('max', data.amounts.amounts);
+                            $('#selected_quantity').attr('max', data.amounts.amounts -
+                                itemQuantityInCurrInvoice);
                             $('#selected_quantityparts').val('0');
-                            $('#selected_quantityparts').attr('max', data.amounts.part_amounts);
+                            $('#selected_quantityparts').attr('max', data.amounts.part_amounts -
+                                itemPartQuantityInCurrInvoice);
+                            $('#quantity').val(data.amounts.amounts - itemQuantityInCurrInvoice);
+                            $('#quantityparts').val(data.amounts.part_amounts -
+                                itemPartQuantityInCurrInvoice);
+
                             $('#name').val(data.data.name);
                             $('#quantity').val(data.amounts.amounts);
                             $('#quantityparts').val(data.amounts.part_amounts);
@@ -599,6 +648,7 @@
         }
     </script>
 
+    {{-- barcode reader --}}
     <script>
         var barcodePickerElement = document.getElementById("barcode-picker");
 
@@ -651,5 +701,23 @@
                 $('#start_cam').data('id', 1);
             }
         }
+    </script>
+
+    <script>
+        $('#square-switch1').change(function() {
+            if ($(this).is(':checked'))
+
+                $('#description').attr('hidden', false);
+            else
+                $('#description').attr('hidden', true);
+        })
+
+        $('#invoice_options_checkbox').change(function() {
+            if ($(this).is(':checked'))
+
+                $('#invoice_options').attr('hidden', false);
+            else
+                $('#invoice_options').attr('hidden', true);
+        })
     </script>
 @endpush
