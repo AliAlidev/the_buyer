@@ -89,7 +89,7 @@
                                                     </scandit-barcode-picker>
                                                 </div>
                                             </div>
-                                            <input type="text" name="" id="data_id" hidden>
+                                            <input type="text" name="" value="0" id="data_id" hidden>
                                             <div class="row">
                                                 <label for="result">Code</label>
                                                 <div class="col-md-10">
@@ -341,7 +341,7 @@
             var name = $('#name').val();
             var quantity = $('#selected_quantity').val();
             var quantityP = $('#selected_quantityparts').val();
-            if (quantity != 0 || quantityP != 0) {
+            if (dataId  != 0 && (quantity != 0 || quantityP != 0)) {
                 var price = $('#price').val();
                 var priceP = $('#partprice').val();
                 var total = price * quantity + quantityP * priceP;
@@ -353,7 +353,7 @@
                     "</td><td>" + total + "</td><td> " + deleteRow + " </td></tr>";
                 $('#table_items').append(tableitem);
 
-                $('#data_id').val('');
+                $('#data_id').val('0');
                 $('#result').val('');
                 $('#name').val('');
                 $('#quantity').val('0');
@@ -465,7 +465,7 @@
                 });
             },
             select: function(event, ui) {
-                $('#data_id').val('');
+                $('#data_id').val('0');
                 $('#result').val('');
                 $('#quantity').val('0');
                 $('#quantityparts').val('0');
@@ -550,7 +550,7 @@
         function getItemDetailsByCode() {
             if ($('#result').val() != '') {
                 // clear old
-                $('#data_id').val('');
+                $('#data_id').val('0');
                 $('#name').val('');
                 $('#quantity').val('0');
                 $('#quantityparts').val('0');
