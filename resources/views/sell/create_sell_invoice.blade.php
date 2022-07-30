@@ -161,8 +161,7 @@
 
                                             {{-- selected values --}}
                                             <div class="row mt-4">
-
-                                                <div class="mb-3 w-25">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Amounts</label>
                                                     <div
                                                         class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
@@ -172,7 +171,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="mb-3 w-25">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Quantity Parts</label>
                                                     <div
                                                         class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
@@ -181,7 +180,6 @@
                                                             name="quantityparts" required>
                                                     </div>
                                                 </div>
-
                                             </div>
                                             <div class="row mt-3">
                                                 <div class="col-md-4">
