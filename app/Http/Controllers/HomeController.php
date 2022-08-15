@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use DataTables;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -157,13 +158,14 @@ class HomeController extends Controller
     public function hasGreaterPartPriceFromAnotherUser($dataId, $merchantId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->where('merchant_id', '!=', $merchantId)->first();
+        $max_price = DB::select("SELECT MAX(price_part) as price_part from (select MAX(created_at)as maxdatevalue, price_part from (select data_id, merchant_id, price_part, created_at from amounts where data_id = $dataId and merchant_id != $merchantId group by data_id, merchant_id,price_part ORDER BY created_at DESC) as t1 GROUP BY data_id, merchant_id) as t2;");
+        $max_price = $max_price != null ? $max_price[0]->price_part : '';
 
         // get price for prouct for specifc user
-        $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->first();
+        $user_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->where('merchant_id', $merchantId)->first();
 
         if ($max_price != null && $user_price != null) {
-            if ($user_price->price_part < $max_price->price_part) {
+            if ($user_price->price_part < $max_price) {
                 return true;
             } else {
                 return false;
@@ -176,13 +178,14 @@ class HomeController extends Controller
     public function hasGreaterPriceFromAnotherUser($dataId, $merchantId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->where('merchant_id', '!=', $merchantId)->first();
+        $max_price = DB::select("SELECT MAX(price) as price from (select MAX(created_at)as maxdatevalue, price from (select data_id, merchant_id, price, created_at from amounts where data_id = $dataId and merchant_id != $merchantId group by data_id, merchant_id,price ORDER BY created_at DESC) as t1 GROUP BY data_id, merchant_id) as t2;");
+        $max_price = $max_price != null ? $max_price[0]->price : '';
 
         // get price for prouct for specifc user
         $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->orderBy('created_at', 'desc')->first();
 
         if ($max_price != null && $user_price != null) {
-            if ($user_price->price < $max_price->price) {
+            if ($user_price->price < $max_price) {
                 return true;
             } else {
                 return false;
@@ -207,10 +210,10 @@ class HomeController extends Controller
     public function getMaxPriceForElement($dataId)
     {
         // get max price for product
-        $max_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->first();
-
+        $max_price = DB::select("SELECT MAX(price) as price from (select MAX(created_at)as maxdatevalue, price from (select data_id, merchant_id, price, created_at from amounts where data_id = 1 and merchant_id != 1 group by data_id, merchant_id,price ORDER BY created_at DESC) as t1 GROUP BY data_id, merchant_id) as t2;");
+        $max_price = $max_price != null ? $max_price[0]->price : 0;
         if ($max_price != null) {
-            return $max_price->price;
+            return $max_price;
         } else {
             return 0;
         }
