@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Apis\AuthController;
+use App\Http\Controllers\Apis\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('login', [AuthController::class, 'login']);
+
+Route::group(['prefix' => 'products', 'middleware' => 'auth:api', 'as' => 'product.'], function () {
+    Route::post('store', [ProductController::class, 'store'])->name('store');
+    Route::get('get-shapes', [ProductController::class, 'getShapes'])->name('shapes');
+    Route::get('get-companies', [ProductController::class, 'getCompanies'])->name('companies');
+    Route::get('get-eff-mat', [ProductController::class, 'getEffMaterials'])->name('eff_materials');
+    Route::get('get-treat-group', [ProductController::class, 'getTreatementGroup'])->name('treatement_group');
 });

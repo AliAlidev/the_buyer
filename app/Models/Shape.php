@@ -10,4 +10,6 @@ class Shape extends Model
     use HasFactory;
     protected $table = "chapes";
     protected $guarded = [];
+
+    protected $hidden = ['created_at', 'updated_at'];
 }

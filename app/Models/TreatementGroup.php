@@ -5,11 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Company extends Model
+class TreatementGroup extends Model
 {
     use HasFactory;
-    protected $table ="companies";
+    protected $table = "treatement_group";
     protected $guarded = [];
-
-    protected $hidden = ['created_at', 'updated_at'];
 }

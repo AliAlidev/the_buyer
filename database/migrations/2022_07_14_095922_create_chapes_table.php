@@ -16,7 +16,8 @@ class CreateChapesTable extends Migration
         Schema::create('chapes', function (Blueprint $table) {
             $table->id();
             $table->string('shape_id');
-            $table->string('shape_name');
+            $table->string('ar_shape_name');
+            $table->string('en_shape_name');
             $table->string('merchant_type');
             $table->timestamps();
         });

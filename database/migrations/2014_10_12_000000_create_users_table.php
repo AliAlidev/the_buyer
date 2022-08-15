@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable(true);
             $table->integer("merchant_id")->default(0);
-            $table->integer("role")->default(0);
+            $table->integer("role")->default(0);  //  1 merchant   2 employee
             $table->rememberToken();
             $table->timestamps();
         });

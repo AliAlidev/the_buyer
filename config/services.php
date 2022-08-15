@@ -30,6 +30,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    'bar_code_key' => env('BAR_CODE_KEY')
+    'bar_code_key' => env('BAR_CODE_KEY'),
+
+    'passport' => [
+        'client_id' => env('CLIENT_ID'),
+        'client_secret' => env('CLIENT_SECRET'),
+        'base_url' => env('BASE_URL')
+    ]
 
 ];
