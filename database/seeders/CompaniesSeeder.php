@@ -56,48 +56,5 @@ class CompaniesSeeder extends Seeder
                 'merchant_type' => '2'
             ]
         );
-
-        Company::firstOrCreate(
-            [
-                'comp_id' => '1',
-                'ar_comp_name' => 'ابن الهيقم',
-                'en_comp_name' => 'ibn al hetham',
-                'merchant_type' => '1'
-            ],
-            [
-                'comp_id' => '1',
-                'ar_comp_name' => 'ابن الهيقم',
-                'en_comp_name' => 'ibn al hetham',
-                'merchant_type' => '1'
-            ]
-        );
-        Company::firstOrCreate(
-            [
-                'comp_id' => '1',
-                'ar_comp_name' => 'ابن زهر',
-                'en_comp_name' => 'ibn al zaher',
-                'merchant_type' => '1'
-            ],
-            [
-                'comp_id' => '1',
-                'ar_comp_name' => 'ابن زهر',
-                'en_comp_name' => 'ibn al zaher',
-                'merchant_type' => '1'
-            ]
-        );
-        Company::firstOrCreate(
-            [
-                'comp_id' => '1',
-                'ar_comp_name' => 'تاميكو',
-                'en_comp_name' => 'tamico',
-                'merchant_type' => '1'
-            ],
-            [
-                'comp_id' => '1',
-                'ar_comp_name' => 'تاميكو',
-                'en_comp_name' => 'tamico',
-                'merchant_type' => '1'
-            ]
-        );
     }
 }

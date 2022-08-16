@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Shape extends Model
 {
     use HasFactory;
-    protected $table = "chapes";
+    protected $table = "shapes";
     protected $guarded = [];
 
     protected $hidden = ['created_at', 'updated_at'];

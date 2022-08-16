@@ -29,15 +29,15 @@ class HomeController extends Controller
 
     public function importDataWithShapesAndCompanies()
     {
-        $this->importData();
-        $this->importCompanies();
         $this->importShapes();
+        $this->importCompanies();
+        $this->importData();
     }
 
     public function importCompanies()
     {
         try {
-            (new CompaniesImport)->import('companies.csv');
+            (new CompaniesImport)->import('2.csv');
         } catch (\Exception $th) {
             dd($th->getMessage());
         }
@@ -46,7 +46,7 @@ class HomeController extends Controller
     public function importShapes()
     {
         try {
-            (new ShapesImport)->import('shapes.csv');
+            (new ShapesImport)->import('2.csv');
         } catch (\Exception $th) {
             dd($th->getMessage());
         }
@@ -55,7 +55,7 @@ class HomeController extends Controller
     public function importData()
     {
         try {
-            (new DataImport)->import('drugs_with_arabic.csv');
+            (new DataImport)->import('2.csv');
         } catch (\Exception $th) {
             dd($th->getMessage());
         }

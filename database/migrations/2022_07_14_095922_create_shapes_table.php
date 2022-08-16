@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateChapesTable extends Migration
+class CreateShapesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateChapesTable extends Migration
      */
     public function up()
     {
-        Schema::create('chapes', function (Blueprint $table) {
+        Schema::create('shapes', function (Blueprint $table) {
             $table->id();
             $table->string('shape_id');
             $table->string('ar_shape_name');
