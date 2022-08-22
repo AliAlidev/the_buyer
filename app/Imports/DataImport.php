@@ -6,6 +6,7 @@ use App\Exports\DataExport;
 use App\Models\Company;
 use App\Models\Data;
 use App\Models\Shape;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -22,6 +23,7 @@ class DataImport implements ToCollection
 
     public function collection(Collection $collection)
     {
+        $admin = User::where('email', 'admin@buyer.com')->first();
         foreach ($collection as $key => $item) {
             $shape = Shape::where('ar_shape_name', $item[2])->first();
             $comp = Company::where('ar_comp_name', $item[3])->first();
@@ -30,7 +32,9 @@ class DataImport implements ToCollection
                     'name' => $item[4],
                     'dose' => $item[1],
                     'shape_id' => $shape != null ? $shape->shape_id : null,
-                    'comp_id' =>  $comp != null ? $comp->comp_id : null
+                    'comp_id' =>  $comp != null ? $comp->comp_id : null,
+                    'merchant_type' => 1,
+                    'created_by' => $admin != null ? $admin->id : 0
                 ]);
         }
     }
