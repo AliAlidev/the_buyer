@@ -31,6 +31,7 @@ class UserResource extends JsonResource
             $merchant_type = "Market";
 
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             'merchant_id' => $this->merchant_id,

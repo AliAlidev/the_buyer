@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CompResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ShapeResource;
+use App\Http\Resources\TreatementGroupResource;
 use App\Models\Amount;
 use App\Models\Company;
 use App\Models\Data;
@@ -366,6 +367,6 @@ class ApiProductController extends Controller
     public function getTreatementGroup()
     {
         $treatementGroups = TreatementGroup::where('merchant_type', Auth::guard('api')->user()->merchant_type)->get();
-        return $this->sendResponse('Proccess completed successfully', $treatementGroups);
+        return $this->sendResponse('Proccess completed successfully', TreatementGroupResource::collection($treatementGroups));
     }
 }

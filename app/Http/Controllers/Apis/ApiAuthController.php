@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Apis;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -18,6 +20,8 @@ class ApiAuthController extends Controller
             'password' => $request->password,
             'scope' => '',
         ]);
-        return $response->json();
+        $data = $response->json();
+        $data['user'] = new UserResource(User::where('email', $request->email)->first());
+        return $this->sendResponse('Proccess completed successfully', $data);
     }
 }
