@@ -7,10 +7,13 @@ use App\Imports\DataImport;
 use App\Imports\ShapesImport;
 use App\Imports\TreatementGroupImport;
 use App\Models\Amount;
+use App\Models\Company;
 use App\Models\Data;
 use App\Models\Home;
 use App\Models\ItemDate;
 use App\Models\Price;
+use App\Models\Shape;
+use App\Models\TreatementGroup;
 use App\Models\User;
 use App\Models\UserData;
 use Carbon\Carbon;
@@ -30,6 +33,11 @@ class HomeController extends Controller
 
     public function importDataWithShapesAndCompanies()
     {
+        Data::truncate();
+        TreatementGroup::truncate();
+        Shape::truncate();
+        Company::truncate();
+
         $this->importShapes();
         $this->importCompanies();
         $this->importData();
@@ -348,10 +356,9 @@ class HomeController extends Controller
         try {
             if ($request->ajax()) {
                 $merchantId = Auth::user()->role == 3 ? Auth::user()->merchant_id : Auth::user()->id;
-                if(Auth::user()->role == 3){
-                    $items = User::where('merchant_id', $merchantId)->first()->data()->select('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->groupBy('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->get(); 
-                }
-                else{
+                if (Auth::user()->role == 3) {
+                    $items = User::where('merchant_id', $merchantId)->first()->data()->select('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->groupBy('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->get();
+                } else {
                     $items = User::where('id', $merchantId)->first()->data()->select('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->groupBy('data.id', 'merchant_id', 'data_id', 'code', 'name', 'description')->get();
                 }
                 $final = [];
