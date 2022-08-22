@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Imports\CompaniesImport;
 use App\Imports\DataImport;
 use App\Imports\ShapesImport;
+use App\Imports\TreatementGroupImport;
 use App\Models\Amount;
 use App\Models\Data;
 use App\Models\Home;
@@ -32,6 +33,7 @@ class HomeController extends Controller
         $this->importShapes();
         $this->importCompanies();
         $this->importData();
+        $this->importTreatementGroup();
     }
 
     public function importCompanies()
@@ -56,6 +58,15 @@ class HomeController extends Controller
     {
         try {
             (new DataImport)->import('2.csv');
+        } catch (\Exception $th) {
+            dd($th->getMessage());
+        }
+    }
+
+    public function importTreatementGroup()
+    {
+        try {
+            (new TreatementGroupImport)->import('3.csv');
         } catch (\Exception $th) {
             dd($th->getMessage());
         }

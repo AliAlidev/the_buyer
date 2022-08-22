@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Apis\AuthController;
-use App\Http\Controllers\Apis\ProductController;
+use App\Http\Controllers\Apis\ApiAuthController;
+use App\Http\Controllers\Apis\ApiProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,12 +15,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('login', [AuthController::class, 'login']);
+Route::post('login', [ApiAuthController::class, 'login']);
 
-Route::group(['prefix' => 'products', 'middleware' => 'auth:api', 'as' => 'product.'], function () {
-    Route::post('store', [ProductController::class, 'store'])->name('store');
-    Route::get('get-shapes', [ProductController::class, 'getShapes'])->name('shapes');
-    Route::get('get-companies', [ProductController::class, 'getCompanies'])->name('companies');
-    Route::get('get-eff-mat', [ProductController::class, 'getEffMaterials'])->name('eff_materials');
-    Route::get('get-treat-group', [ProductController::class, 'getTreatementGroup'])->name('treatement_group');
+Route::group(['prefix' => 'products', 'middleware' => 'admin_merchant', 'as' => 'product.'], function () {
+    Route::post('store', [ApiProductController::class, 'store'])->name('store');
+    Route::post('update/{id_name}', [ApiProductController::class, 'update'])->name('update');
+    Route::get('details/{id_name}', [ApiProductController::class, 'details'])->name('details');
+    Route::get('get-shapes', [ApiProductController::class, 'getShapes'])->name('shapes');
+    Route::get('get-companies', [ApiProductController::class, 'getCompanies'])->name('companies');
+    Route::get('get-eff-mat', [ApiProductController::class, 'getEffMaterials'])->name('eff_materials');
+    Route::get('get-treat-group', [ApiProductController::class, 'getTreatementGroup'])->name('treatement_group');
+});
+
+Route::fallback(function () {
+    return 'Invalid route';
 });

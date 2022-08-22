@@ -15,9 +15,9 @@ class CreateTreatementGroupTable extends Migration
     {
         Schema::create('treatement_group', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('data_id');
-            $table->string('ar_name');
-            $table->string('en_name');
+            $table->integer('tg_id');
+            $table->string('ar_name')->nullable();
+            $table->string('en_name')->nullable();
             $table->string('merchant_type');
             $table->timestamps();
         });
