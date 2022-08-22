@@ -90,7 +90,8 @@ class ProductController extends Controller
                     'interference' => $request->interference,
                     'side_effects' => $request->side_effects,
                     'treatement_group' => $request->treatement_group,
-                    'merchant_type' => $user->merchant_type
+                    'merchant_type' => $user->merchant_type,
+                    'created_by' => Auth::user()->id
                 ]);
 
                 UserData::create([
@@ -132,7 +133,8 @@ class ProductController extends Controller
                     'num_of_parts' => $num_of_parts,
                     'description' => $request->description,
                     'minimum_amount' => $minimum_amount,
-                    'maximum_amount' => $maximum_amount
+                    'maximum_amount' => $maximum_amount,
+                    'created_by' => Auth::user()->id
                 ]);
 
                 UserData::create([
