@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Apis;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CompResource;
+use App\Http\Resources\EffMatResouce;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ShapeResource;
 use App\Http\Resources\TreatementGroupResource;
@@ -361,7 +362,7 @@ class ApiProductController extends Controller
     public function getEffMaterials()
     {
         $effMaterials = EffMaterial::where('merchant_type', Auth::guard('api')->user()->merchant_type)->get();
-        return $this->sendResponse('Proccess completed successfully', $effMaterials);
+        return $this->sendResponse('Proccess completed successfully', EffMatResouce::collection($effMaterials));
     }
 
     public function getTreatementGroup()
