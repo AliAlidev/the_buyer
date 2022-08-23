@@ -35,16 +35,16 @@ class HomeController extends Controller
 
     public function importDataWithShapesAndCompanies()
     {
-        // Data::truncate();
-        // TreatementGroup::truncate();
-        // Shape::truncate();
-        // Company::truncate();
+        Data::truncate();
+        TreatementGroup::truncate();
+        Shape::truncate();
+        Company::truncate();
         EffMaterial::truncate();
 
-        // $this->importShapes();
-        // $this->importCompanies();
-        // $this->importData();
-        // $this->importTreatementGroup();
+        $this->importShapes();
+        $this->importCompanies();
+        $this->importData();
+        $this->importTreatementGroup();
         $this->importEffMat();
     }
 
