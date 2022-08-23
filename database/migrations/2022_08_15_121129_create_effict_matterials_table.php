@@ -15,7 +15,7 @@ class CreateEffictMatterialsTable extends Migration
     {
         Schema::create('effict_matterials', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('data_id');
+            $table->integer('eff_mat_id');
             $table->string('ar_name')->nullable();
             $table->string('en_name')->nullable();
             $table->string('merchant_type');
