@@ -25,7 +25,7 @@ class CreateInvoicesTable extends Migration
             $table->enum("discount_type", [0, 1, 2])->default(0);
             // 1 buy
             // 2 sell
-            $table->enum("invoice_type", [0, 1, 2])->default(0)->change();
+            $table->enum("invoice_type", [0, 1, 2])->default(0);
             $table->string("notes")->nullable(true);
             $table->timestamps();
         });
