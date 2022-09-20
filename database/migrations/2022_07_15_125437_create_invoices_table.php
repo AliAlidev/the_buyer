@@ -20,7 +20,12 @@ class CreateInvoicesTable extends Migration
             $table->float("total_amount")->default(0);
             $table->float("discount")->default(0);
             $table->float("paid_amount")->default(0);
-            $table->integer("invoice_type")->default(0);
+            // 1 value
+            // 2 percentage
+            $table->enum("discount_type", [0, 1, 2])->default(0);
+            // 1 buy
+            // 2 sell
+            $table->enum("invoice_type", [0, 1, 2])->default(0)->change();
             $table->string("notes")->nullable(true);
             $table->timestamps();
         });

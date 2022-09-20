@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Apis\ApiAuthController;
+use App\Http\Controllers\Apis\ApiOrderController;
 use App\Http\Controllers\Apis\ApiProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,10 @@ Route::group(['prefix' => 'products', 'middleware' => 'admin_merchant', 'as' => 
     Route::get('get-companies', [ApiProductController::class, 'getCompanies'])->name('companies');
     Route::get('get-eff-mat', [ApiProductController::class, 'getEffMaterials'])->name('eff_materials');
     Route::get('get-treat-group', [ApiProductController::class, 'getTreatementGroup'])->name('treatement_group');
+});
+
+Route::group(['prefix' => 'orders', 'middleware' => 'admin_merchant', 'as' => 'orders.'], function () {
+    Route::post('buy', [ApiOrderController::class, 'buy'])->name('buy');
 });
 
 Route::fallback(function () {
