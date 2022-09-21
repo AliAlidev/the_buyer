@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Apis;
 use App\Http\Controllers\Controller;
 use App\Models\Amount;
 use App\Models\Data;
+use App\Models\DrugStore;
 use App\Models\Invoice;
 use App\Models\InvoiceItems;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Nette\Utils\Random;
 
 use function PHPUnit\Framework\isJson;
 
@@ -67,7 +69,10 @@ class ApiOrderController extends Controller
             'discount' => $request->discount,
             'paid_amount' => $request->paid_amount,
             'invoice_type' => "1",
-            'notes' => $request->notes
+            'payment_type' => "1",
+            "drug_store_id" => $this->getDrugStoreId($request->drug_store),
+            'notes' => $request->notes,
+            'order_number' => $this->generateOrderNumber()
         ]);
 
         foreach ($items as $key => $item) {
@@ -145,7 +150,7 @@ class ApiOrderController extends Controller
         $invoice->invoiceItems()->saveMany($invoiceItemsList);
         Amount::insert($amounts_list);
 
-        return $this->sendResponse("Invoice created successfully");
+        return $this->sendResponse("Invoice created successfully", ['order_number' => $invoice->order_number]);
     }
 
     public function itemExists($col, $val)
@@ -163,6 +168,42 @@ class ApiOrderController extends Controller
             return true;
         } else {
             return false;
+        }
+    }
+
+    public function getDrugStoreId($name)
+    {
+        if ($name == null) {
+            $store = DrugStore::firstOrCreate(['name' => 'general store'], [
+                'name' => 'general store'
+            ]);
+        } else {
+            $store = DrugStore::where('name', $name)->first();
+            if (!$store) {
+                $store = DrugStore::create([
+                    'name' => $name
+                ]);
+            }
+        }
+        return $store->id;
+    }
+
+    public function generateOrderNumber()
+    {
+        while (1) {
+            $rand = Random::generate(6, '0-9');
+            $year = now()->year;
+            $month = now()->month;
+            $day = now()->day;
+            if (strlen($month) == 1)
+                $month = '0' . $month;
+            if (strlen($day) == 1)
+                $day = '0' . $day;
+            $final_rand = $year . $month . $day . $rand;
+            $is_found = Invoice::where('order_number', $final_rand)->first();
+            if (!$is_found) {
+                return $final_rand;
+            }
         }
     }
 }

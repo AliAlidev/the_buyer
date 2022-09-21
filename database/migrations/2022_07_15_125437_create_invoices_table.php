@@ -26,7 +26,14 @@ class CreateInvoicesTable extends Migration
             // 1 buy
             // 2 sell
             $table->enum("invoice_type", [0, 1, 2])->default(0);
+            // 1 cash
+            // 2 debt
+            // 3 free
+            $table->enum("payment_type", [1, 2, 3])->default(1);
             $table->string("notes")->nullable(true);
+            // if pass drug_store as null then add it to general store
+            $table->string("drug_store_id")->default(0);
+            $table->text('order_number');
             $table->timestamps();
         });
     }
