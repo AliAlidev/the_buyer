@@ -69,6 +69,9 @@ Route::group(['middleware' => 'auth'], function () {
     });
 });
 
+Route::get('view-invoice/{number}', [HomeController::class, 'viewInvoice'])->name('view.invoice');
+Route::get('download-invoice/{number}', [HomeController::class, 'downloadInvoice'])->name('download.invoice');
+Route::get('save-invoice/{number}', [HomeController::class, 'saveInvoice'])->name('save.invoice');
 
 Auth::routes();
 

@@ -34,6 +34,7 @@ class CreateInvoicesTable extends Migration
             // if pass drug_store as null then add it to general store
             $table->string("drug_store_id")->default(0);
             $table->text('order_number');
+            $table->text('customer_name')->nullable();
             $table->timestamps();
         });
     }

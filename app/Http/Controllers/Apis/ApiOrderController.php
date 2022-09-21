@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Nette\Utils\Random;
+use PDF;
 
 use function PHPUnit\Framework\isJson;
 
@@ -62,7 +63,7 @@ class ApiOrderController extends Controller
 
         // insert into invoice
         $invoice = Invoice::create([
-            'merchant_id' => $user->role == 3 ? $user->merchant_id : $user->id,
+            'merchant_id' => $user->role == 2 ? $user->merchant_id : $user->id,
             'user_id' => $user->id,
             'total_amount' => $total_invoice,
             'discount_type' => $request->discount_type,
@@ -112,7 +113,7 @@ class ApiOrderController extends Controller
                 'expiry_type' => $item['expiry_type'],
                 'start_date' => $startDate,
                 'expiry_date' => $endDate,
-                'merchant_id' => $user->role == 3 ? $user->merchant_id : $user->id,
+                'merchant_id' => $user->role == 2 ? $user->merchant_id : $user->id,
                 'user_id' => $user->id,
                 'amount_type' => "1",
                 'amount_type_id' => $invoice->id,
@@ -150,7 +151,8 @@ class ApiOrderController extends Controller
         $invoice->invoiceItems()->saveMany($invoiceItemsList);
         Amount::insert($amounts_list);
 
-        return $this->sendResponse("Invoice created successfully", ['order_number' => $invoice->order_number]);
+        return $this->sendResponse("Invoice created successfully", ['order_number' => $invoice->order_number,
+         'pdf_link' => $this->saveInvoice($invoice->order_number), 'view_link' => route('view.invoice', $invoice->order_number)]);
     }
 
     public function itemExists($col, $val)
@@ -205,5 +207,21 @@ class ApiOrderController extends Controller
                 return $final_rand;
             }
         }
+    }
+
+    public static function saveInvoice($order_number)
+    {
+        $invoice = Invoice::where('order_number', $order_number)->first();
+        if ($invoice) {
+            $invoice_type = $invoice->invoice_type == 1 ? 'BUY' : ($invoice->invoice_type == 2 ? 'SELL' : '');
+            $from = $invoice->merchant->name;
+            $customer = $invoice->customer_name;
+            $pdf = PDF::loadView('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
+            $invoiceName = 'Invoice1.pdf';
+            /** Here you can use the path you want to save */
+            $pdf->save(public_path('uploads/invoices/' . $invoiceName));
+            return public_path('uploads/invoices/' . $invoiceName);
+        }
+        return abort(404);
     }
 }

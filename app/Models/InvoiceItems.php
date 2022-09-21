@@ -9,5 +9,10 @@ class InvoiceItems extends Model
 {
     use HasFactory;
     protected $table = "invoice_items";
-    protected $guarded =[];
+    protected $guarded = [];
+
+    public function data()
+    {
+        return $this->belongsTo(Data::class, 'data_id');
+    }
 }

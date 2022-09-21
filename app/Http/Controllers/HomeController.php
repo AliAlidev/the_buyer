@@ -12,6 +12,7 @@ use App\Models\Company;
 use App\Models\Data;
 use App\Models\EffMaterial;
 use App\Models\Home;
+use App\Models\Invoice;
 use App\Models\ItemDate;
 use App\Models\Price;
 use App\Models\Shape;
@@ -26,7 +27,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use Maatwebsite\Excel\Facades\Excel;
+use PDF;
 
 use function PHPUnit\Framework\returnSelf;
 
@@ -602,5 +603,47 @@ class HomeController extends Controller
                 ->make(true);
         }
         return view('inventory.list_inventory_item_amounts', ['data' => $data]);
+    }
+
+    public function viewInvoice($order_number)
+    {
+        $invoice = Invoice::where('order_number', $order_number)->first();
+        if ($invoice) {
+            $invoice_type = $invoice->invoice_type == 1 ? 'BUY' : ($invoice->invoice_type == 2 ? 'SELL' : '');
+            $from = $invoice->merchant->name;
+            $customer = $invoice->customer_name;
+            return view('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
+        }
+        return abort(404);
+    }
+
+    public static function downloadInvoice($order_number)
+    {
+        $invoice = Invoice::where('order_number', $order_number)->first();
+        if ($invoice) {
+            $invoice_type = $invoice->invoice_type == 1 ? 'BUY' : ($invoice->invoice_type == 2 ? 'SELL' : '');
+            $from = $invoice->merchant->name;
+            $customer = $invoice->customer_name;
+            $pdf = PDF::loadView('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
+            $invoiceName = 'Invoice1.pdf';
+            /** Here you can use the path you want to save */
+            $pdf->download(public_path('uploads/invoices/' . $invoiceName));
+        }
+        return abort(404);
+    }
+
+    public static function saveInvoice($order_number)
+    {
+        $invoice = Invoice::where('order_number', $order_number)->first();
+        if ($invoice) {
+            $invoice_type = $invoice->invoice_type == 1 ? 'BUY' : ($invoice->invoice_type == 2 ? 'SELL' : '');
+            $from = $invoice->merchant->name;
+            $customer = $invoice->customer_name;
+            $pdf = PDF::loadView('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
+            $invoiceName = 'Invoice1.pdf';
+            /** Here you can use the path you want to save */
+            $pdf->save(public_path('uploads/invoices/' . $invoiceName));
+        }
+        return abort(404);
     }
 }
