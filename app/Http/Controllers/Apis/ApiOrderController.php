@@ -223,7 +223,7 @@ class ApiOrderController extends Controller
             $invoiceName = 'Invoice_' . $user->id . '.pdf';
             /** Here you can use the path you want to save */
             $pdf->save(public_path('uploads/invoices/' . $invoiceName));
-            return public_path('uploads/invoices/' . $invoiceName);
+            return asset('uploads/invoices/' . $invoiceName);
         }
         return abort(404);
     }
