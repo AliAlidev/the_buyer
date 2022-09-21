@@ -151,8 +151,10 @@ class ApiOrderController extends Controller
         $invoice->invoiceItems()->saveMany($invoiceItemsList);
         Amount::insert($amounts_list);
 
-        return $this->sendResponse("Invoice created successfully", ['order_number' => $invoice->order_number,
-         'pdf_link' => $this->saveInvoice($invoice->order_number), 'view_link' => route('view.invoice', $invoice->order_number)]);
+        return $this->sendResponse("Invoice created successfully", [
+            'order_number' => $invoice->order_number,
+            'pdf_link' => $this->saveInvoice($invoice->order_number), 'view_link' => route('view.invoice', $invoice->order_number)
+        ]);
     }
 
     public function itemExists($col, $val)
@@ -217,7 +219,8 @@ class ApiOrderController extends Controller
             $from = $invoice->merchant->name;
             $customer = $invoice->customer_name;
             $pdf = PDF::loadView('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
-            $invoiceName = 'Invoice1.pdf';
+            $user = Auth::guard('api')->user();
+            $invoiceName = 'Invoice_' . $user->id . '.pdf';
             /** Here you can use the path you want to save */
             $pdf->save(public_path('uploads/invoices/' . $invoiceName));
             return public_path('uploads/invoices/' . $invoiceName);
