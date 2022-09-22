@@ -153,7 +153,7 @@ class ApiOrderController extends Controller
 
         return $this->sendResponse("Invoice created successfully", [
             'order_number' => $invoice->order_number,
-            'pdf_link' => $this->saveInvoice($invoice->order_number), 'view_link' => route('view.invoice', $invoice->order_number)
+            'pdf_link' => $this->saveBuyInvoice($invoice->order_number), 'view_link' => route('view.invoice', $invoice->order_number)
         ]);
     }
 
@@ -211,13 +211,13 @@ class ApiOrderController extends Controller
         }
     }
 
-    public static function saveInvoice($order_number)
+    public static function saveBuyInvoice($order_number)
     {
         $invoice = Invoice::where('order_number', $order_number)->first();
         if ($invoice) {
             $invoice_type = $invoice->invoice_type == 1 ? 'BUY' : ($invoice->invoice_type == 2 ? 'SELL' : '');
             $from = $invoice->merchant->name;
-            $customer = $invoice->customer_name;
+            $customer = $invoice->drugStore->name;
             $pdf = PDF::loadView('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
             $user = Auth::guard('api')->user();
             $invoiceName = 'Invoice_' . $user->id . '.pdf';
