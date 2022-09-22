@@ -23,6 +23,6 @@ class Invoice extends Model
 
     public function drugStore()
     {
-        $this->belongsTo(DrugStore::class, 'drug_store_id');
+       return  $this->belongsTo(DrugStore::class, 'drug_store_id');
     }
 }
