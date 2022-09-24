@@ -14,6 +14,7 @@ use App\Models\Data;
 use App\Models\EffMaterial;
 use App\Models\Shape;
 use App\Models\TreatementGroup;
+use App\Models\User;
 use App\Models\UserData;
 use Carbon\Carbon;
 use Exception;
@@ -24,6 +25,42 @@ use Illuminate\Support\Facades\Validator;
 
 class ApiProductController extends Controller
 {
+    public function listMerchantData(Request $request)
+    {
+        $length = $request->query('lenght');
+        $only_names = $request->query('only_names');
+        $data = Auth::guard('api')->user();
+        if ($length != '*') {
+            $length = $length ?? 100;
+            $data = $data->data()->paginate($length);
+        } else {
+            $data = $data->data;
+        }
+
+        if ($only_names)
+            $data = $data->pluck('name');
+
+        return $this->sendResponse('Proccess completed succssfully', $data);
+    }
+
+    public function listData(Request $request)
+    {
+        $length = $request->query('lenght');
+        $only_names = $request->query('only_names');
+        $data = Data::query();
+        if ($length != '*') {
+            $length = $length ?? 100;
+            $data = $data->paginate($length);
+        }
+
+        if ($only_names)
+            $data = $data->pluck('name');
+        else if ($length == '*')
+            $data = $data->get();
+
+        return $this->sendResponse('Proccess completed succssfully', $data);
+    }
+
     public function store(Request $request)
     {
         if ($request->code != null) {

@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [ApiAuthController::class, 'login']);
 
 Route::group(['prefix' => 'products', 'middleware' => 'admin_merchant', 'as' => 'product.'], function () {
+    Route::get('listMerchantData', [ApiProductController::class, 'listMerchantData'])->name('list_merchant_data');
+    Route::get('listData', [ApiProductController::class, 'listData'])->name('list_data');
     Route::post('store', [ApiProductController::class, 'store'])->name('store');
     Route::post('update/{id_name}', [ApiProductController::class, 'update'])->name('update');
     Route::get('details/{id_name}', [ApiProductController::class, 'details'])->name('details');
