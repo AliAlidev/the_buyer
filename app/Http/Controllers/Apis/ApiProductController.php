@@ -206,7 +206,7 @@ class ApiProductController extends Controller
                 'amount_part' => $request->quantityparts,
                 'price' => $request->price,
                 'price_part' => $request->partprice,
-                'duration_type' => $request->duration_type,
+                'expiry_type' => $request->expiry_type,
                 'start_date' => $request->start_date,
                 'expiry_date' => $expiry_date,
                 'user_id' => $user->id,
