@@ -15,11 +15,9 @@ class DataFactory extends Factory
     public function definition()
     {
         return [
-            'code' => Str::random(10),
+            'code' => $this->faker->ean13,
             'name' => $this->faker->name(),
-            'quantity' => $this->faker->numerify,
-            'price' => $this->faker->numerify,
-            'merchant_id' => 1
+            'merchant_type' => 1
         ];
     }
 }

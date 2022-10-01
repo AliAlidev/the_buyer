@@ -25,4 +25,9 @@ class Invoice extends Model
     {
        return  $this->belongsTo(DrugStore::class, 'drug_store_id');
     }
+
+    public function customer()
+    {
+       return  $this->belongsTo(Customer::class, 'customer_id');
+    }
 }

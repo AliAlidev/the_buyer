@@ -16,7 +16,7 @@ class CreateDataTable extends Migration
         Schema::create('data', function (Blueprint $table) {
             $table->id();
             $table->string('code')->nullable(true);
-            $table->string('name')->nullable(false);
+            $table->string('name')->nullable(false)->unique();
             $table->string('dose')->nullable(true);
             $table->string('tab_count')->nullable(true);
             $table->string('med_shape')->nullable(true);

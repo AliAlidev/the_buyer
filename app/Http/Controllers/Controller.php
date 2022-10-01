@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ErrorsStore;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -41,5 +42,20 @@ class Controller extends BaseController
             'message' => $message,
             'data' => $data
         ], $code);
+    }
+
+    public function is_date($val)
+    {
+        try {
+            Carbon::parse($val);
+            return true;
+        } catch (\Throwable $th) {
+            return false;
+        }
+    }
+
+    public function isPositiveInt($val)
+    {
+        return !is_int($val) ? false : (intval($val) >= 0 ? true : false);
     }
 }

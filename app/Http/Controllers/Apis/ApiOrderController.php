@@ -3,19 +3,18 @@
 namespace App\Http\Controllers\Apis;
 
 use App\Http\Controllers\Controller;
-use App\Models\Amount;
+use App\Models\Customer;
 use App\Models\Data;
 use App\Models\DrugStore;
 use App\Models\Invoice;
-use App\Models\InvoiceItems;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Nette\Utils\Random;
 use PDF;
-
-use function PHPUnit\Framework\isJson;
 
 class ApiOrderController extends Controller
 {
@@ -30,7 +29,29 @@ class ApiOrderController extends Controller
         if (!$items) {
             return $this->sendErrorResponse("Validation error", "You should add order items");
         }
+
+        $user = Auth::guard('api')->user();
+        $total_invoice = 0;
+
+        DB::beginTransaction();
+        $order_number = $this->generateOrderNumber();
+        $invoiceId = DB::table('invoices')->insertGetId([
+            'merchant_id' => $user->role == 2 ? $user->merchant_id : $user->id,
+            'user_id' => $user->id,
+            'total_amount' => $total_invoice,
+            'discount_type' => $request->discount_type,
+            'discount' => $request->discount,
+            'invoice_type' => "1",
+            'payment_type' => $request->payment_type,
+            "drug_store_id" => $this->getDrugStoreId($request->drug_store),
+            'notes' => $request->notes,
+            'order_number' => $order_number,
+            'created_at' => now()->toDateTimeString(),
+            'updated_at' => now()->toDateTimeString()
+        ]);
+
         foreach ($items as $key => $item) {
+
             $validator = Validator::make($item, [
                 'code' => 'required_if:name,!=,null',
                 'name' => 'required_if:code,!=,null',
@@ -54,29 +75,7 @@ class ApiOrderController extends Controller
             if ($item['name'] && $this->missingMedPartCount('name', $item['name'], $item['part_amount'])) {
                 return $this->sendErrorResponse("Validation error", "You should add element parts count for item " . $key + 1);
             }
-        }
 
-        $user = Auth::guard('api')->user();
-        $invoiceItemsList = [];
-        $amounts_list = [];
-        $total_invoice = 0;
-
-        // insert into invoice
-        $invoice = Invoice::create([
-            'merchant_id' => $user->role == 2 ? $user->merchant_id : $user->id,
-            'user_id' => $user->id,
-            'total_amount' => $total_invoice,
-            'discount_type' => $request->discount_type,
-            'discount' => $request->discount,
-            'paid_amount' => $request->paid_amount,
-            'invoice_type' => "1",
-            'payment_type' => "1",
-            "drug_store_id" => $this->getDrugStoreId($request->drug_store),
-            'notes' => $request->notes,
-            'order_number' => $this->generateOrderNumber()
-        ]);
-
-        foreach ($items as $key => $item) {
             $data = "";
             if ($item['code']) {
                 $data = Data::where('code', $item['code'])->first();
@@ -102,7 +101,7 @@ class ApiOrderController extends Controller
                 $endDate = $item['expiry_value'];
             }
 
-            $amounts_list[] = [
+            DB::table('amounts')->insert([
                 'data_id' => $data->id,
                 'amount' => $item['amount'],
                 'amount_part' => $item['part_amount'],
@@ -116,16 +115,18 @@ class ApiOrderController extends Controller
                 'merchant_id' => $user->role == 2 ? $user->merchant_id : $user->id,
                 'user_id' => $user->id,
                 'amount_type' => "1",
-                'amount_type_id' => $invoice->id,
+                'amount_type_id' => $invoiceId,
                 'created_at' => now()->toDateTimeString(),
                 'updated_at' => now()->toDateTimeString()
-            ];
+            ]);
 
             $total_quantity_price = floatval($item['amount']) * floatval($item['real_price']);
             $total_parts_price = floatval($item['part_amount']) * floatval($real_part_price);
             $total_price = $total_quantity_price + $total_parts_price;
             $total_invoice += $total_price;
-            $invoiceItemsList[] = new InvoiceItems([
+
+            DB::table('invoice_items')->insert([
+                'invoice_id' => $invoiceId,
                 'data_id' => $data->id,
                 'quantity' => $item['amount'],
                 'quantity_parts' => $item['part_amount'],
@@ -133,27 +134,27 @@ class ApiOrderController extends Controller
                 'price_part' => $real_part_price,
                 'total_quantity_price' => $total_quantity_price,
                 'total_parts_price' =>  $total_parts_price,
-                'total_price' => $total_price
+                'total_price' => $total_price,
+                'created_at' => now()->toDateTimeString(),
+                'updated_at' => now()->toDateTimeString()
             ]);
         }
-
-        $invoice->total_amount = $total_invoice;
 
         $paid_amount = 0;
         if ($request->discount_type == 1) {
             $paid_amount = $total_invoice - $request->discount;
         } else if ($request->discount_type == 2) {
             $paid_amount = $total_invoice - $total_invoice * $request->discount / 100;
+        } else {
+            $paid_amount = $total_invoice;
         }
-        $invoice->paid_amount = $paid_amount;
-        $invoice->Save();
 
-        $invoice->invoiceItems()->saveMany($invoiceItemsList);
-        Amount::insert($amounts_list);
+        DB::table('invoices')->where('id', $invoiceId)->update(['paid_amount' => $paid_amount, 'total_amount' => $total_invoice]);
+        DB::commit();
 
         return $this->sendResponse("Invoice created successfully", [
-            'order_number' => $invoice->order_number,
-            'pdf_link' => $this->saveBuyInvoice($invoice->order_number), 'view_link' => route('view.invoice', $invoice->order_number)
+            'order_number' => $order_number,
+            'pdf_link' => $this->saveBuyInvoice($order_number), 'view_link' => route('view.invoice', $order_number)
         ]);
     }
 
@@ -226,5 +227,226 @@ class ApiOrderController extends Controller
             return asset('uploads/invoices/' . $invoiceName);
         }
         return abort(404);
+    }
+
+    public function sell(Request $request)
+    {
+        $items = null;
+        if (!is_array($request->data)) {
+            $items = json_decode($request->data, true);
+        } else {
+            $items = $request->data;
+        }
+        if (!$items) {
+            return $this->sendErrorResponse("Validation error", "You should add order items");
+        }
+
+        $apiProductController = new ApiProductController();
+
+        $user = Auth::guard('api')->user();
+
+        $total_invoice = 0;
+
+        DB::beginTransaction();
+        $order_number = $this->generateOrderNumber();
+        $invoiceId = DB::table('invoices')->insertGetId([
+            'merchant_id' => $user->role == 2 ? $user->merchant_id : $user->id,
+            'user_id' => $user->id,
+            'discount_type' => $request->discount_type,
+            'discount' => $request->discount,
+            'invoice_type' => "2",
+            'payment_type' => $request->payment_type,
+            "customer_id" => $this->getCustomerId($request->customer_name),
+            'notes' => $request->notes,
+            'order_number' => $order_number,
+            'created_at' => now()->toDateTimeString(),
+            'updated_at' => now()->toDateTimeString()
+        ]);
+
+        foreach ($items as $key => $item) {
+
+            $validator = Validator::make($item, [
+                'data_id' => 'required|exists:data,id',
+                'amount' => 'required_without:part_amount|integer',
+                'part_amount' => 'required_without:amount|integer',
+                'price' => 'required|numeric|gt:0'
+            ]);
+            if ($validator->fails()) {
+                return $this->sendErrorResponse("Validation error", $validator->getMessageBag());
+            }
+
+            if ($item['data_id'] && $this->missingMedPartCount('id', $item['data_id'], $item['part_amount'])) {
+                return $this->sendErrorResponse("Validation error", "You should add element parts count for item " . $key + 1);
+            }
+
+            // check amounts
+            $currVal = $apiProductController->getProductAmounts($item['data_id']);
+
+            if (!$this->enoughAmounts($currVal['amounts'], $currVal['part_amounts'], $currVal['num_of_parts'], $item['amount'], $item['part_amount'])) {
+                return $this->sendErrorResponse("Validation error", "Amounts not enough for item " . $key + 1);
+            }
+
+            DB::table('amounts')->insert([
+                'data_id' => $item['data_id'],
+                'amount' => $item['amount'],
+                'amount_part' => $item['part_amount'],
+                'price' => $item['price'],
+                'price_part' => $item['part_price'],
+                'merchant_id' => $user->role == 2 ? $user->merchant_id : $user->id,
+                'user_id' => $user->id,
+                'amount_type' => "2",
+                'amount_type_id' => $invoiceId,
+                'created_at' => now()->toDateTimeString(),
+                'updated_at' => now()->toDateTimeString()
+            ]);
+
+            $total_quantity_price = floatval($item['amount']) * floatval($item['price']);
+            $total_parts_price = floatval($item['part_amount']) * floatval($item['part_price']);
+            $total_price = $total_quantity_price + $total_parts_price;
+            $total_invoice += $total_price;
+
+            DB::table('invoice_items')->insert([
+                'invoice_id' => $invoiceId,
+                'data_id' => $item['data_id'],
+                'quantity' => $item['amount'],
+                'quantity_parts' => $item['part_amount'],
+                'price' => $item['price'],
+                'price_part' => $item['part_price'],
+                'total_quantity_price' => $total_quantity_price,
+                'total_parts_price' =>  $total_parts_price,
+                'total_price' => $total_price,
+                'created_at' => now()->toDateTimeString(),
+                'updated_at' => now()->toDateTimeString()
+            ]);
+        }
+
+        $paid_amount = 0;
+        if ($request->discount_type == 1) {
+            $paid_amount = $total_invoice - $request->discount;
+        } else if ($request->discount_type == 2) {
+            $paid_amount = $total_invoice - $total_invoice * $request->discount / 100;
+        } else {
+            $paid_amount = $total_invoice;
+        }
+
+        dB::table('invoices')->where('id', $invoiceId)->update(['total_amount' => $total_invoice, 'paid_amount' => $paid_amount]);
+        DB::commit();
+
+        return $this->sendResponse("Invoice created successfully", [
+            'order_number' => $order_number,
+            'pdf_link' => $this->saveSellInvoice($order_number), 'view_link' => route('view.invoice', $order_number)
+        ]);
+    }
+
+    public function getCustomerId($name)
+    {
+        if ($name == null) {
+            $customer = Customer::firstOrCreate(['name' => 'general customer'], [
+                'name' => 'general customer'
+            ]);
+        } else {
+            $customer = Customer::where('name', $name)->first();
+            if (!$customer) {
+                $customer = Customer::create([
+                    'name' => $name
+                ]);
+            }
+        }
+        return $customer->id;
+    }
+
+    public static function saveSellInvoice($order_number)
+    {
+        $invoice = Invoice::where('order_number', $order_number)->first();
+        if ($invoice) {
+            $invoice_type = $invoice->invoice_type == 1 ? 'BUY' : ($invoice->invoice_type == 2 ? 'SELL' : '');
+            $from = $invoice->merchant->name;
+            $customer = $invoice->customer->name;
+            $pdf = PDF::loadView('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
+            $user = Auth::guard('api')->user();
+            $invoiceName = 'Invoice_' . $user->id . '.pdf';
+            /** Here you can use the path you want to save */
+            $pdf->save(public_path('uploads/invoices/' . $invoiceName));
+            return asset('uploads/invoices/' . $invoiceName);
+        }
+        return abort(404);
+    }
+
+    public function enoughAmounts($currAmount, $currPartAmount, $itemPartCounts, $val, $pVal)
+    {
+        if ($itemPartCounts > 0) {
+            $total = $currAmount * $itemPartCounts + $currPartAmount;
+            $totalNeed = $val * $itemPartCounts + $pVal;
+        } else {
+            $total = $currAmount;
+            $totalNeed = $val;
+        }
+
+        if ($total >= $totalNeed)
+            return true;
+        else
+            return false;
+    }
+
+    public function inventoryAmounts(Request $request)
+    {
+        try {
+            if ($request->start_date && !$this->is_date($request->start_date))
+                return $this->sendErrorResponse("Start date should bew valid date!");
+
+            if (!$this->isPositiveInt($request->amount))
+                return $this->sendErrorResponse("You should enter valid amount value!");
+
+            if (!$this->isPositiveInt($request->price))
+                return $this->sendErrorResponse("You should enter valid price value!");
+
+            if (!$this->isPositiveInt($request->part_amount))
+                return $this->sendErrorResponse("You should enter valid part amount value!");
+
+            $user = Auth::guard('api')->user();
+            $data = Data::find($request->data_id);
+            $price = $request->price;
+            $partPrice = 0;
+            if ($data->num_of_parts > 0) {
+                $partPrice = $price / $data->num_of_parts;
+            }
+            $startDate = $request->start_date;
+            $startDate = "";
+            $endDate = "";
+            if ($request->expiry_type == 1) {
+                $startDate = $request->start_date;
+                if ($request->expiry_value && !$this->is_date($request->expiry_value))
+                    return $this->sendErrorResponse("Expiry date should bew valid date!");
+
+                $endDate = $request->expiry_value;
+            } else if ($request->expiry_type == 2) {
+                $startDate = $request->start_date;
+                $endDate = Carbon::parse($request->start_date)->addMonths($request->expiry_value)->toDateString();
+            } else if ($request->expiry_type == 3) {
+                if ($request->expiry_value && !$this->is_date($request->expiry_value))
+                    return $this->sendErrorResponse("Expiry date should bew valid date!");
+                $endDate = $request->expiry_value;
+            }
+
+            DB::table('amounts')->insert([
+                'data_id' => $data->id,
+                'amount' => $request->amount,
+                'amount_part' => $request->part_amount,
+                'price' => $price,
+                'price_part' => $partPrice,
+                'merchant_id' => $user->role == 2 ? $user->merchant_id : $user->id,
+                'user_id' => $user->id,
+                'amount_type' => "0",
+                'start_date' => $startDate,
+                'expiry_date' => $endDate,
+                'amount_type_id' => '',
+                'created_at' => now()->toDateTimeString(),
+                'updated_at' => now()->toDateTimeString()
+            ]);
+
+            return $this->sendResponse("Proccess Completed successfully");
+        } catch (Exception $th) {
+            return $this->errors("ApiOrderController@inventoryAmounts", $th->getMessage());
+        }
     }
 }

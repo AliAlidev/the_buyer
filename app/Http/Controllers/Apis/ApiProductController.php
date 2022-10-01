@@ -12,6 +12,7 @@ use App\Models\Amount;
 use App\Models\Company;
 use App\Models\Data;
 use App\Models\EffMaterial;
+use App\Models\Invoice;
 use App\Models\Shape;
 use App\Models\TreatementGroup;
 use App\Models\User;
@@ -29,16 +30,37 @@ class ApiProductController extends Controller
     {
         $length = $request->query('lenght');
         $only_names = $request->query('only_names');
-        $data = Auth::guard('api')->user();
-        if ($length != '*') {
-            $length = $length ?? 100;
-            $data = $data->data()->paginate($length);
-        } else {
-            $data = $data->data;
-        }
+        $user = Auth::guard('api')->user();
+        $filter = $only_names ? 'data.name' : '*';
+        $page = $request->page ?? 0;
 
-        if ($only_names)
-            $data = $data->pluck('name');
+        if ($filter != '*' && $length != '*') {
+            $data = DB::table('data')->join('user_data', 'user_data.data_id', '=', 'data.id')
+                ->where('user_data.merchant_id', $user->merchant_id)
+                ->select($filter)
+                ->limit($length)
+                ->skip($page)
+                ->pluck('data.name')
+                ->toArray();
+        } else if ($filter == '*' && $length != '*') {
+            $data = DB::table('data')->join('user_data', 'user_data.data_id', '=', 'data.id')
+                ->where('user_data.merchant_id', $user->merchant_id)
+                ->select($filter)
+                ->limit($length)
+                ->skip($page)
+                ->get();
+        } else if ($filter != '*' && $length == '*') {
+            $data = DB::table('data')->join('user_data', 'user_data.data_id', '=', 'data.id')
+                ->where('user_data.merchant_id', $user->merchant_id)
+                ->select($filter)
+                ->pluck('data.name')
+                ->toArray();
+        } else if ($filter == '*' && $length == '*') {
+            $data = DB::table('data')->join('user_data', 'user_data.data_id', '=', 'data.id')
+                ->where('user_data.merchant_id', $user->merchant_id)
+                ->select($filter)
+                ->get();
+        }
 
         return $this->sendResponse('Proccess completed succssfully', $data);
     }
@@ -47,16 +69,33 @@ class ApiProductController extends Controller
     {
         $length = $request->query('lenght');
         $only_names = $request->query('only_names');
-        $data = Data::query();
-        if ($length != '*') {
-            $length = $length ?? 100;
-            $data = $data->paginate($length);
-        }
+        $user = Auth::guard('api')->user();
+        $filter = $only_names ? 'data.name' : '*';
+        $page = $request->page ?? 0;
 
-        if ($only_names)
-            $data = $data->pluck('name');
-        else if ($length == '*')
-            $data = $data->get();
+        if ($filter != '*' && $length != '*') {
+            $data = DB::table('data')->join('user_data', 'user_data.data_id', '=', 'data.id')
+                ->select($filter)
+                ->limit($length)
+                ->skip($page)
+                ->pluck('data.name')
+                ->toArray();
+        } else if ($filter == '*' && $length != '*') {
+            $data = DB::table('data')->join('user_data', 'user_data.data_id', '=', 'data.id')
+                ->select($filter)
+                ->limit($length)
+                ->skip($page)
+                ->get();
+        } else if ($filter != '*' && $length == '*') {
+            $data = DB::table('data')->join('user_data', 'user_data.data_id', '=', 'data.id')
+                ->select($filter)
+                ->pluck('data.name')
+                ->toArray();
+        } else if ($filter == '*' && $length == '*') {
+            $data = DB::table('data')->join('user_data', 'user_data.data_id', '=', 'data.id')
+                ->select($filter)
+                ->get();
+        }
 
         return $this->sendResponse('Proccess completed succssfully', $data);
     }
@@ -406,5 +445,74 @@ class ApiProductController extends Controller
     {
         $treatementGroups = TreatementGroup::where('merchant_type', Auth::guard('api')->user()->merchant_type)->get();
         return $this->sendResponse('Proccess completed successfully', TreatementGroupResource::collection($treatementGroups));
+    }
+
+    public function getProductAmounts($dataId, $merchant_id = null)
+    {
+        if (!$merchant_id)
+            $merchant_id = Auth::guard('api')->user()->merchant_id;
+
+        $general_amounts = DB::table('amounts')->join('data', 'amounts.data_id', '=', 'data.id')->where('merchant_id', $merchant_id)->where('data_id', $dataId)->get();
+        $num_of_parts = 0;
+        if ($general_amounts->first()) {
+            /// get inventory amounts
+            $inventoryAmounts = $general_amounts->where('amount_type', 0)->sum('amount');
+            $inventoryPartAmounts = $general_amounts->where('amount_type', 0)->sum('amount_part');
+
+            /// get buyed amounts
+            $buyedAmounts = $general_amounts->where('amount_type', 1)->sum('amount');
+            $buyedPartAmounts = $general_amounts->where('amount_type', 1)->sum('amount_part');
+
+            /// get selled amounts
+            $selledAmounts = $general_amounts->where('amount_type', 2)->sum('amount');
+            $selledPartAmounts = $general_amounts->where('amount_type', 2)->sum('amount_part');
+
+            $totalAmounts = $inventoryAmounts + $buyedAmounts - $selledAmounts;
+            $totalParts = 0;
+            $num_of_parts =  $general_amounts[0]->num_of_parts;
+            if ($num_of_parts && $num_of_parts > 0) {
+                $temp = $totalAmounts * $num_of_parts + ($inventoryPartAmounts + $buyedPartAmounts - $selledPartAmounts);
+                $totalAmounts = intval($temp / $num_of_parts);
+                $totalParts = $temp % $num_of_parts;
+            }
+            return ['amounts' => $totalAmounts, 'part_amounts' => $totalParts, 'num_of_parts' => $num_of_parts];
+        }
+        return ['amounts' => 0, 'part_amounts' => 0, 'num_of_parts' => $num_of_parts];
+    }
+
+    public function getCurrentPriceForElement($dataId, $merchant_id = null)
+    {
+        if (!$merchant_id)
+            $merchant_id = Auth::guard('api')->user()->merchant_id;
+        // get max price for product
+        $max_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchant_id)->where('amount_type', '1')->orderBy('created_at', 'desc')->first();
+        if ($max_price != null) {
+            return ['price' => $max_price->price, 'part_price' => $max_price->price_part];
+        } else {
+            $max_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchant_id)->where('amount_type', '0')->orderBy('created_at', 'desc')->first();
+            if ($max_price != null)
+                return ['price' => $max_price->price, 'part_price' => $max_price->price_part];
+            else
+                return ['price' => 0, 'part_price' => 0];
+        }
+    }
+
+    public function getMaxPriceForElement($dataId, $merchant_id = null)
+    {
+        if (!$merchant_id)
+            $merchant_id = Auth::guard('api')->user()->merchant_id;
+        // get max price for product
+        $max_price = DB::select("SELECT MAX(price) as price from (select MAX(created_at)as maxdatevalue, price from (select data_id, merchant_id, price, created_at from amounts where data_id = $dataId and merchant_id != $merchant_id group by data_id, merchant_id,price ORDER BY created_at DESC) as t1 GROUP BY data_id, merchant_id) as t2;");
+        $max_price = $max_price != null ? $max_price[0]->price : 0;
+
+        // get max part price for product
+        $max_part_price = DB::select("SELECT MAX(price_part) as price_part from (select MAX(created_at)as maxdatevalue, price_part from (select data_id, merchant_id, price_part, created_at from amounts where data_id = $dataId and merchant_id != $merchant_id group by data_id, merchant_id,price_part ORDER BY created_at DESC) as t1 GROUP BY data_id, merchant_id) as t2;");
+        $max_part_price = $max_part_price != null ? $max_part_price[0]->price_part : 0;
+        if ($max_part_price != null) {
+            return ['price' => $max_price, 'part_price' => $max_part_price];
+        } else {
+            return ['price' => 0, 'part_price' => 0];
+        }
+
     }
 }

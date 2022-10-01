@@ -16,7 +16,7 @@ class AddAmountTypeForAmountsTable extends Migration
         Schema::table('amounts', function (Blueprint $table) {
             // 0 inventory amount
             // 1 buy amount 
-            // 2 other amount
+            // 2 sell amount
             $table->enum('amount_type', [0, 1, 2]);
             $table->float('real_price')->default(0);
             $table->float('real_part_price')->default(0);

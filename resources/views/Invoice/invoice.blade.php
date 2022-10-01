@@ -112,7 +112,7 @@
                                 <div class="">
                                     From
                                     <address>
-                                        <strong>{{ strtoupper($from)  }}</strong><br>
+                                        <strong>{{ strtoupper($from) }}</strong><br>
                                     </address>
                                 </div>
                             </td>
@@ -120,7 +120,7 @@
                                 <div class="">
                                     To
                                     <address>
-                                        <strong class="billing_name">{{ strtoupper($customer)  }}</strong><br>
+                                        <strong class="billing_name">{{ strtoupper($customer) }}</strong><br>
                                     </address>
                                 </div>
                             </td>
@@ -151,7 +151,7 @@
                         <tbody>
                             @foreach ($invoice->invoiceItems as $key => $item)
                                 <tr>
-                                    <td>{{ $key+1 }}</td>
+                                    <td>{{ $key + 1 }}</td>
                                     <td>{{ $item->data->name }}</td>
                                     <td style="text-align: center">{{ $item->quantity }}</td>
                                     <td style="text-align: center">{{ $item->quantity_parts }}</td>
@@ -160,12 +160,18 @@
                                 </tr>
                             @endforeach
                             <tr>
-                                <td colspan="5" class="text-right">Sub Total</td>
-                                <td class="text-right"><strong>SP {{ $invoice->paid_amount }}</td>
+                                <td colspan="5" class="text-right">Total</td>
+                                <td class="text-right"><strong> {{ $invoice->total_amount }} SP</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="text-right">Discount Value</td>
+                                <td class="text-right">
+                                    <strong>{{ $invoice->discount_type == 2 ? $invoice->discount . ' %' : ($invoice->discount_type == 1 ? $invoice->discount . ' SP' : '0 SP') }}
+                                </td>
                             </tr>
                             <tr>
                                 <td colspan="5" class="text-right">Total Pay</td>
-                                <td class="text-right"><strong>SP {{ $invoice->total_amount }}</strong></td>
+                                <td class="text-right"><strong> {{ $invoice->paid_amount }} SP</strong></td>
                             </tr>
                         </tbody>
                     </table>

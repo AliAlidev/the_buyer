@@ -46,7 +46,8 @@ class User extends Authenticatable
 
     public function data()
     {
-        return $this->belongsToMany(Data::class, UserData::class, "merchant_id", "data_id", "merchant_id", "id")->wherePivot('merchant_id', Auth::guard('api')->user()->merchant_id);
+        return $this->belongsToMany(Data::class, UserData::class, "merchant_id", "data_id", "merchant_id", "id");
+        // return $this->belongsToMany(Data::class, UserData::class, "merchant_id", "data_id", "merchant_id", "id")->wherePivot('merchant_id', Auth::guard('api')->user()->merchant_id);
     }
 
 }

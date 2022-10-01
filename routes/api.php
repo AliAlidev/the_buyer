@@ -28,10 +28,17 @@ Route::group(['prefix' => 'products', 'middleware' => 'admin_merchant', 'as' => 
     Route::get('get-companies', [ApiProductController::class, 'getCompanies'])->name('companies');
     Route::get('get-eff-mat', [ApiProductController::class, 'getEffMaterials'])->name('eff_materials');
     Route::get('get-treat-group', [ApiProductController::class, 'getTreatementGroup'])->name('treatement_group');
+    Route::get('get-product-amounts/{id}', [ApiProductController::class, 'getProductAmounts'])->name('amounts');
+    Route::get('get-product-price/{id}/{merchantId?}', [ApiProductController::class, 'getCurrentPriceForElement'])->name('price');
 });
 
 Route::group(['prefix' => 'orders', 'middleware' => 'admin_merchant', 'as' => 'orders.'], function () {
     Route::post('buy', [ApiOrderController::class, 'buy'])->name('buy');
+    Route::post('sell', [ApiOrderController::class, 'sell'])->name('sell');
+});
+
+Route::group(['prefix' => 'inventory', 'middleware' => 'admin_merchant', 'as' => 'inventory.'], function () {
+    Route::post('inventory-amounts', [ApiOrderController::class, 'inventoryAmounts'])->name('amounts');
 });
 
 Route::fallback(function () {

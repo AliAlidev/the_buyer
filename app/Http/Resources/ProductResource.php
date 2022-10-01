@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Controllers\Apis\ApiProductController;
 use App\Models\Company;
 use App\Models\Shape;
 use App\Models\User;
@@ -27,11 +28,12 @@ class ProductResource extends JsonResource
 
         if ($this->merchant_type == 1 || $this->merchant_type  == 0) //  Pharmacist or admin
             return [
+                'id' => $this->id,
                 'code' => $this->code,
                 'name' => $this->name,
                 'shape' => $this->shape_id == null ? 0 : new ShapeResource(Shape::find($this->shape_id)),
                 'company' => $this->comp_id == null ? 0 : new CompResource(Company::find($this->comp_id)),
-                'has_parts' => $this->has_parts == null? false: $this->has_parts,
+                'has_parts' => $this->has_parts == null ? false : $this->has_parts,
                 'num_of_parts' => $this->num_of_parts,
                 'description' => $this->description,
                 'minimum_amount' => $this->minimum_amount,
@@ -44,10 +46,14 @@ class ProductResource extends JsonResource
                 'side_effects' => $this->side_effects,
                 'treatement_group' => $this->treatement_group,
                 'merchant_type' => $merchant_type,
-                'created_by' => new UserResource(User::find($this->created_by))
+                'created_by' => new UserResource(User::find($this->created_by)),
+                'amounts' => (new ApiProductController)->getProductAmounts($this->id),
+                'prices' => (new ApiProductController)->getCurrentPriceForElement($this->id),
+                'max_prices' => (new ApiProductController)->getMaxPriceForElement($this->id)
             ];
         else    // Market
             return [
+                'id' => $this->id,
                 'code' => $this->code,
                 'name' => $this->name,
                 'shape_id' => $this->shape_id == null ? 0 : $this->shape_id,
@@ -58,7 +64,10 @@ class ProductResource extends JsonResource
                 'minimum_amount' => $this->minimum_amount,
                 'maximum_amount' => $this->maximum_amount,
                 'merchant_type' => $merchant_type,
-                'created_by' => new UserResource(User::find($this->created_by))
+                'created_by' => new UserResource(User::find($this->created_by)),
+                'amounts' => (new ApiProductController)->getProductAmounts($this->id),
+                'prices' => (new ApiProductController)->getCurrentPriceForElement($this->id),
+                'max_prices' => (new ApiProductController)->getMaxPriceForElement($this->id)
             ];
     }
 }
