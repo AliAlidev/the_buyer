@@ -392,7 +392,7 @@ class ApiOrderController extends Controller
     {
         try {
             if ($request->start_date && !$this->is_date($request->start_date))
-                return $this->sendErrorResponse("Start date should bew valid date!");
+                return $this->sendErrorResponse("Start date should be valid date!");
 
             if (!$this->isPositiveInt($request->amount))
                 return $this->sendErrorResponse("You should enter valid amount value!");
@@ -449,4 +449,45 @@ class ApiOrderController extends Controller
             return $this->errors("ApiOrderController@inventoryAmounts", $th->getMessage());
         }
     }
+
+    public function productReturn(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'order_number' => 'required|exists:invoices,order_number'
+            ]);
+            if ($validator->fails()) {
+                return $this->sendErrorResponse("Validation errors", $validator->getMessageBag());
+            }
+
+            DB::beginTransaction();
+            $invoiceData = DB::table('invoices')->where('order_number', $request->order_number)->first();
+            $amounts = DB::table('amounts')->where('amount_type_id', $invoiceData->id)->get();
+            foreach ($amounts as $key => $amount) {
+                DB::table('product_returns')->insert([
+                    "data_id" => $amount->data_id,
+                    "amount" => $amount->amount,
+                    "amount_part" => $amount->amount_part,
+                    "price" => $amount->price,
+                    "price_part" => $amount->price_part,
+                    "start_date" => $amount->start_date,
+                    "expiry_date" => $amount->expiry_date,
+                    "merchant_id" => $amount->merchant_id,
+                    "user_id" => $amount->user_id,
+                    "return_type" => $amount->amount_type,
+                    "return_side_id" => $invoiceData->invoice_type == 1 ? $invoiceData->drug_store_id : ($invoiceData->invoice_type == 2 ? $invoiceData->customer_id : ''),
+                    "created_at" => now()->toDateTimeString(),
+                    "updated_at" => now()->toDateTimeString()
+                ]);
+                DB::table('amounts')->where('id', $amount->id)->delete();
+            }
+            DB::table('invoice_items')->where('invoice_id', $invoiceData->id)->delete();
+            DB::table('invoices')->where('id', $invoiceData->id)->delete();
+            DB::commit();
+            return $this->sendResponse("Proccess completed successfully");
+        } catch (Exception $th) {
+            return $this->errors("ApiProductController@productReturn", $th->getMessage());
+        }
+    }
+
 }

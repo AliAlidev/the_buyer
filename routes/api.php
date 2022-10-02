@@ -3,6 +3,7 @@
 use App\Http\Controllers\Apis\ApiAuthController;
 use App\Http\Controllers\Apis\ApiOrderController;
 use App\Http\Controllers\Apis\ApiProductController;
+use App\Http\Controllers\Apis\ApiReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,11 +31,18 @@ Route::group(['prefix' => 'products', 'middleware' => 'admin_merchant', 'as' => 
     Route::get('get-treat-group', [ApiProductController::class, 'getTreatementGroup'])->name('treatement_group');
     Route::get('get-product-amounts/{id}', [ApiProductController::class, 'getProductAmounts'])->name('amounts');
     Route::get('get-product-price/{id}/{merchantId?}', [ApiProductController::class, 'getCurrentPriceForElement'])->name('price');
+    Route::post('delete-product', [ApiProductController::class, 'deleteProduct'])->name('delete');
 });
 
 Route::group(['prefix' => 'orders', 'middleware' => 'admin_merchant', 'as' => 'orders.'], function () {
     Route::post('buy', [ApiOrderController::class, 'buy'])->name('buy');
     Route::post('sell', [ApiOrderController::class, 'sell'])->name('sell');
+    Route::post('product-return', [ApiOrderController::class, 'productReturn'])->name('product_return');
+});
+
+Route::group(['prefix' => 'reports', 'middleware' => 'admin_merchant', 'as' => 'reports.'], function () {
+    Route::get('expired', [ApiReportController::class, 'expired'])->name('expired');
+    Route::get('expired-till-month/{id}', [ApiReportController::class, 'expiredTillMonth'])->name('expired_till_month');
 });
 
 Route::group(['prefix' => 'inventory', 'middleware' => 'admin_merchant', 'as' => 'inventory.'], function () {
