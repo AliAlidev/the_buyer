@@ -36,30 +36,30 @@ class UsersSeeder extends Seeder
             ]
         );
 
-        $merchant = User::where('email', 'admin@buyer.com')->First();
-        User::updateOrCreate(
-            ['email' => 'ali_m@buyer.com'],
-            [
-                'name' => 'Ali',
-                'email' => 'ali_m@buyer.com',
-                'role' => '2',  // employee
-                'merchant_type' => '2',  // market
-                'merchant_id' => $merchant->id,
-                'password' => Hash::make('12345678')
-            ]
-        );
+        // $merchant = User::where('email', 'admin@buyer.com')->First();
+        // User::updateOrCreate(
+        //     ['email' => 'ali_m@buyer.com'],
+        //     [
+        //         'name' => 'Ali',
+        //         'email' => 'ali_m@buyer.com',
+        //         'role' => '2',  // employee
+        //         'merchant_type' => '2',  // market
+        //         'merchant_id' => $merchant->id,
+        //         'password' => Hash::make('12345678')
+        //     ]
+        // );
 
-        $merchant = User::where('email', 'admin@buyer.com')->First();
-        User::updateOrCreate(
-            ['email' => 'ali_p@buyer.com'],
-            [
-                'name' => 'Ali p',
-                'email' => 'ali_p@buyer.com',
-                'role' => '2',  // employee
-                'merchant_type' => '1',  // Pharmacist
-                'merchant_id' => $merchant->id,
-                'password' => Hash::make('12345678')
-            ]
-        );
+        // $merchant = User::where('email', 'admin@buyer.com')->First();
+        // User::updateOrCreate(
+        //     ['email' => 'ali_p@buyer.com'],
+        //     [
+        //         'name' => 'Ali p',
+        //         'email' => 'ali_p@buyer.com',
+        //         'role' => '2',  // employee
+        //         'merchant_type' => '1',  // Pharmacist
+        //         'merchant_id' => $merchant->id,
+        //         'password' => Hash::make('12345678')
+        //     ]
+        // );
     }
 }

@@ -49,7 +49,8 @@ class ProductResource extends JsonResource
                 'created_by' => new UserResource(User::find($this->created_by)),
                 'amounts' => (new ApiProductController)->getProductAmounts($this->id),
                 'prices' => (new ApiProductController)->getCurrentPriceForElement($this->id),
-                'max_prices' => (new ApiProductController)->getMaxPriceForElement($this->id)
+                'max_prices' => (new ApiProductController)->getMaxPriceForElement($this->id),
+                'status' => $this->status == 1 ? 'Active' : ($this->status == 2 ? 'Inactive' : 'Under Inspection')
             ];
         else    // Market
             return [
@@ -67,7 +68,8 @@ class ProductResource extends JsonResource
                 'created_by' => new UserResource(User::find($this->created_by)),
                 'amounts' => (new ApiProductController)->getProductAmounts($this->id),
                 'prices' => (new ApiProductController)->getCurrentPriceForElement($this->id),
-                'max_prices' => (new ApiProductController)->getMaxPriceForElement($this->id)
+                'max_prices' => (new ApiProductController)->getMaxPriceForElement($this->id),
+                'status' => $this->status == 1 ? 'Active' : ($this->status == 2 ? 'Inactive' : 'Under Inspection')
             ];
     }
 }

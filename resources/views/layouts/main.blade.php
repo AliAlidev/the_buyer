@@ -151,74 +151,8 @@
                     </div>
                 </div>
 
-
-                <!--- Sidemenu -->
-                <div id="sidebar-menu">
-                    <!-- Left Menu Start -->
-                    <ul class="metismenu list-unstyled" id="side-menu">
-                        <li class="menu-title">Main</li>
-
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="mdi mdi-home"></i>
-                                <span>Inventory</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li>
-                                    <a href="{{ route('list-items') }}" class="waves-effect">
-                                        <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
-                                        <span>List Items</span>
-
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('fast-inventory-list') }}" class="waves-effect">
-                                        <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
-                                        <span>Fast Inventory</span>
-
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('create-item') }}" class="waves-effect">
-                                        <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
-                                        <span>Create Item</span>
-
-                                    </a>
-                                </li>
-
-                            </ul>
-                        </li>
-
-
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="mdi mdi-home"></i>
-                                <span>Invoices</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li>
-                                    <a href="{{ route('create-sell-invoice') }}" class="waves-effect">
-                                        <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
-                                        <span>Sell Invoice</span>
-
-                                    </a>
-                                </li>
-                                {{-- <li>
-                                    <a href="{{ route('create-buy-invoice') }}" class="waves-effect">
-                                        <i class="mdi mdi-home"></i><span class="badge bg-primary float-end"></span>
-                                        <span>Buy Invoice</span>
-
-                                    </a>
-                                </li> --}}
-
-                            </ul>
-                        </li>
-
-
-
-                    </ul>
-                </div>
-                <!-- Sidebar -->
+               @include('layouts.sidemenu')
+               
             </div>
         </div>
         <!-- Left Sidebar End -->

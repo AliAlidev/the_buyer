@@ -391,6 +391,15 @@ class ApiOrderController extends Controller
     public function inventoryAmounts(Request $request)
     {
         try {
+            $user = Auth::guard('api')->user();
+
+            $data = Data::find($request->data_id);
+            if (!$data)
+                return $this->sendErrorResponse("Product not found!");
+
+            if ($data->status == '2')
+                return $this->sendErrorResponse("This product should be activated by system admin!");
+
             if ($request->start_date && !$this->is_date($request->start_date))
                 return $this->sendErrorResponse("Start date should be valid date!");
 
@@ -403,8 +412,13 @@ class ApiOrderController extends Controller
             if (!$this->isPositiveInt($request->part_amount))
                 return $this->sendErrorResponse("You should enter valid part amount value!");
 
-            $user = Auth::guard('api')->user();
-            $data = Data::find($request->data_id);
+            if ($request->amount == 0) {
+                return $this->sendErrorResponse("You should enter product amount!");
+            }
+
+            if ($request->amount > 0 && ($request->price == 0 && $request->part_amount == 0))
+                return $this->sendErrorResponse("You should enter product amount/part price!");
+
             $price = $request->price;
             $partPrice = 0;
             if ($data->num_of_parts > 0) {
@@ -489,5 +503,4 @@ class ApiOrderController extends Controller
             return $this->errors("ApiProductController@productReturn", $th->getMessage());
         }
     }
-
 }

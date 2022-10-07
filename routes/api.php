@@ -18,10 +18,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('login', [ApiAuthController::class, 'login']);
+Route::post('change-password', [ApiAuthController::class, 'change_password'])->name('change_password');
+Route::post('check-email', [ApiAuthController::class, 'check_email'])->name('check_email');
+Route::post('forgot-password', [ApiAuthController::class, 'forgot_password'])->name('forgot_password');
+
 
 Route::group(['prefix' => 'products', 'middleware' => 'admin_merchant', 'as' => 'product.'], function () {
     Route::get('listMerchantData', [ApiProductController::class, 'listMerchantData'])->name('list_merchant_data');
+    Route::get('listMerchantInActiveData', [ApiProductController::class, 'listMerchantInActiveData'])->name('list_merchant_in_active_data');
     Route::get('listData', [ApiProductController::class, 'listData'])->name('list_data');
+    Route::get('listInActiveData', [ApiProductController::class, 'listInActiveData'])->name('list_in_active_data');
     Route::post('store', [ApiProductController::class, 'store'])->name('store');
     Route::post('update/{id_name}', [ApiProductController::class, 'update'])->name('update');
     Route::get('details/{id_name}', [ApiProductController::class, 'details'])->name('details');

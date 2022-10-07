@@ -27,7 +27,12 @@ use Illuminate\Support\Facades\Validator;
 
 class ApiProductController extends Controller
 {
-    public function listMerchantData(Request $request)
+    public function listMerchantInActiveData(Request $request)
+    {
+        return $this->listMerchantData($request, '2');
+    }
+
+    public function listMerchantData(Request $request, $active = '1')
     {
         $length = $request->query('lenght');
         $only_names = $request->query('only_names');
@@ -38,6 +43,7 @@ class ApiProductController extends Controller
         if ($filter != '*' && $length != '*') {
             $data = DB::table('user_data')->leftJoin('data', 'user_data.data_id', '=', 'data.id')
                 ->where('user_data.merchant_id', $user->merchant_id)
+                ->where('data.status', $active)
                 ->select($filter)
                 ->limit($length)
                 ->skip($page)
@@ -46,6 +52,7 @@ class ApiProductController extends Controller
         } else if ($filter == '*' && $length != '*') {
             $data = DB::table('user_data')->leftJoin('data', 'user_data.data_id', '=', 'data.id')
                 ->where('user_data.merchant_id', $user->merchant_id)
+                ->where('data.status', $active)
                 ->select($filter)
                 ->limit($length)
                 ->skip($page)
@@ -53,12 +60,14 @@ class ApiProductController extends Controller
         } else if ($filter != '*' && $length == '*') {
             $data = DB::table('user_data')->leftJoin('data', 'user_data.data_id', '=', 'data.id')
                 ->where('user_data.merchant_id', $user->merchant_id)
+                ->where('data.status', $active)
                 ->select($filter)
                 ->pluck('data.name')
                 ->toArray();
         } else if ($filter == '*' && $length == '*') {
             $data = DB::table('user_data')->leftJoin('data', 'user_data.data_id', '=', 'data.id')
                 ->where('user_data.merchant_id', $user->merchant_id)
+                ->where('data.status', $active)
                 ->select($filter)
                 ->get();
         }
@@ -66,7 +75,12 @@ class ApiProductController extends Controller
         return $this->sendResponse('Proccess completed succssfully', $data);
     }
 
-    public function listData(Request $request)
+    public function listInActiveData(Request $request)
+    {
+        return $this->listData($request, '2');
+    }
+
+    public function listData(Request $request, $active = '1')
     {
         try {
             $length = $request->query('lenght');
@@ -75,26 +89,30 @@ class ApiProductController extends Controller
             $page = $request->page ?? 0;
 
             if ($filter != '*' && $length != '*') {
-                $data = DB::table('user_data')->leftJoin('data', 'user_data.data_id', '=', 'data.id')
+                $data = DB::table('data')
                     ->select($filter)
+                    ->where('data.status', $active)
                     ->limit($length)
                     ->skip($page)
                     ->pluck('data.name')
                     ->toArray();
             } else if ($filter == '*' && $length != '*') {
-                $data = DB::table('user_data')->leftJoin('data', 'user_data.data_id', '=', 'data.id')
+                $data = DB::table('data')
                     ->select($filter)
+                    ->where('data.status', $active)
                     ->limit($length)
                     ->skip($page)
                     ->get();
             } else if ($filter != '*' && $length == '*') {
-                $data = DB::table('user_data')->leftJoin('data', 'user_data.data_id', '=', 'data.id')
+                $data = DB::table('data')
                     ->select($filter)
+                    ->where('data.status', $active)
                     ->pluck('data.name')
                     ->toArray();
             } else if ($filter == '*' && $length == '*') {
-                $data = DB::table('user_data')->leftJoin('data', 'user_data.data_id', '=', 'data.id')
+                $data = DB::table('data')
                     ->select($filter)
+                    ->where('data.status', $active)
                     ->get();
             }
 
@@ -180,7 +198,8 @@ class ApiProductController extends Controller
                     'merchant_type' => $user->merchant_type,
                     'created_by' => Auth::guard('api')->user()->id,
                     'created_at' => now()->toDateTimeString(),
-                    'updated_at' => now()->toDateTimeString()
+                    'updated_at' => now()->toDateTimeString(),
+                    'status' => '2' // inactive
                 ]);
 
                 DB::table('user_data')->insert([
@@ -250,7 +269,8 @@ class ApiProductController extends Controller
                     'description' => $request->description,
                     'minimum_amount' => $minimum_amount,
                     'maximum_amount' => $maximum_amount,
-                    'created_by' => Auth::guard('api')->user()->id
+                    'created_by' => Auth::guard('api')->user()->id,
+                    'status' => '1'  // active
                 ]);
 
                 DB::table('user_data')->insert([
@@ -303,6 +323,9 @@ class ApiProductController extends Controller
             if (!$product) {
                 return $this->sendErrorResponse('Product not found!');
             }
+
+            if ($product->status == '2')
+                return $this->sendErrorResponse("This product should be activated by system admin!");
 
             if ($request->code != null) {
                 $validator = Validator::make($request->all(), [
