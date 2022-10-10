@@ -83,7 +83,7 @@
                                     </div>
                                 </div>
                                 <div id="market_section" hidden>
-                                    <form class="form" method="POST">
+                                    <form class="form" method="POST" style="margin: 5%">
                                         @csrf
                                         <div class="row mt-5 pl-5 pr-5 d-flex justify-content-center">
                                             {{-- code --}}
@@ -194,7 +194,7 @@
                                     </form>
                                 </div>
                                 <div id="pharmacy_section" hidden>
-                                    <form class="form" method="POST">
+                                    <form class="form" method="POST" style="margin: 5%">
                                         @csrf
                                         <div class="row mt-5 pl-5 pr-5 d-flex justify-content-center">
                                             {{-- code --}}
@@ -557,41 +557,42 @@
 
     <script>
         $('.getdatabyname').click(function(e) {
-                    $('.result').removeClass(
-                        'is-invalid  was-validated form-control:invalid');
-                    $('.result').removeClass(
-                        'is-valid  was-validated form-control:valid');
+            $('.result').removeClass(
+                'is-invalid  was-validated form-control:invalid');
+            $('.result').removeClass(
+                'is-valid  was-validated form-control:valid');
 
-                    // clear old
-                    // $('.result').val('');
-                    var currInput = $(this).closest('div').prev().children('input');
-                        var elementName = currInput.val(); $.ajax({
-                            type: 'post',
-                            dataType: "JSON",
-                            url: "{{ route('get-data-by-name') }}",
-                            data: {
-                                '_token': '{{ csrf_token() }}',
-                                name: elementName
-                            },
-                            complete: function(data) {
-                                $('#alertdanger').attr('hidden', true);
-                                $('#alertsuccess').attr('hidden', true);
-                                currInput.removeClass(
-                                    'is-invalid  was-validated form-control:invalid');
-                                currInput.removeClass(
-                                    'is-valid  was-validated form-control:valid');
-                                data = data.responseJSON;
-                                if (data.success) {
-                                    data = data.data;
-                                    currInput.addClass(
-                                        'is-invalid  was-validated form-control:invalid');
-                                } else {
-                                    currInput.addClass(
-                                        'is-valid  was-validated form-control:valid');
-                                }
-                            }
-                        });
-                    });
+            // clear old
+            // $('.result').val('');
+            var currInput = $(this).closest('div').prev().children('input');
+            var elementName = currInput.val();
+            $.ajax({
+                type: 'post',
+                dataType: "JSON",
+                url: "{{ route('get-data-by-name') }}",
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    name: elementName
+                },
+                complete: function(data) {
+                    $('#alertdanger').attr('hidden', true);
+                    $('#alertsuccess').attr('hidden', true);
+                    currInput.removeClass(
+                        'is-invalid  was-validated form-control:invalid');
+                    currInput.removeClass(
+                        'is-valid  was-validated form-control:valid');
+                    data = data.responseJSON;
+                    if (data.success) {
+                        data = data.data;
+                        currInput.addClass(
+                            'is-invalid  was-validated form-control:invalid');
+                    } else {
+                        currInput.addClass(
+                            'is-valid  was-validated form-control:valid');
+                    }
+                }
+            });
+        });
     </script>
 
     <script>

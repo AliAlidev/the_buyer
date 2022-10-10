@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class Controller extends BaseController
@@ -59,5 +60,17 @@ class Controller extends BaseController
     public function isPositiveInt($val)
     {
         return !is_int($val) ? false : (intval($val) >= 0 ? true : false);
+    }
+
+    public function getCurrentLanguage()
+    {
+        $lang = Session::get('locale');
+        if ($lang != null)
+            return strtolower($lang);
+
+        if (Auth::check()) {
+            return strtolower(Auth::user()->language);
+        }
+        return null;
     }
 }

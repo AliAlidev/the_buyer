@@ -4,14 +4,14 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-flex align-items-center justify-content-between">
-                <div class="page-title">
+                {{-- <div class="page-title">
                     <h4 class="mb-0 font-size-18">Sidebar with User</h4>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Agroxa</a></li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">The Buyer</a></li>
                         <li class="breadcrumb-item"><a href="javascript: void(0);">Layouts</a></li>
                         <li class="breadcrumb-item active">Sidebar with User</li>
                     </ol>
-                </div>
+                </div> --}}
 
                 <div class="state-information d-none d-sm-block">
                     <div class="state-graph">

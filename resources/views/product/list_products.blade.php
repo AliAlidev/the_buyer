@@ -25,7 +25,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>List Items</h4>
+                            <h4>{{ __('product/list_products.list_items') }}</h4>
                         </div>
                         <div class="card-body">
                             @if ($errors->any())
@@ -37,22 +37,22 @@
                                     </ul>
                                 </div>
                             @endif
-                            @if (session()->has('success'))
-                                <div class="alert alert-success">
-                                    {{ session()->get('success') }}
-                                </div>
-                            @endif
+                            <div class="alert alert-success" hidden>
+                                {{ session()->get('success') }}
+                            </div>
                             <div class="row mb-5">
                                 <div class="col-md-3">
-                                    <label for="merchant_type">Merchant Type</label>
+                                    <label for="merchant_type">{{ __('product/list_products.merchant_type') }}</label>
                                     <select name="merchant_type" id="merchant_type" class="form-select">
                                         <option value=""></option>
-                                        <option value="1">Pharmacy</option>
-                                        <option value="2">Market</option>
+                                        <option value="1">{{ __('product/list_products.merchant_type_pharmacy') }}
+                                        </option>
+                                        <option value="2">{{ __('product/list_products.merchant_type_market') }}
+                                        </option>
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="shape_id">Shape</label>
+                                    <label for="shape_id">{{ __('product/list_products.shape') }}</label>
                                     <select name="shape_id" id="shape_id" class="form-select">
                                         <option value=""></option>
                                         @foreach ($shapes as $shape)
@@ -61,7 +61,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="company_id">Company</label>
+                                    <label for="company_id">{{ __('product/list_products.company') }}</label>
                                     <select name="company_id" id="company_id" class="form-select">
                                         <option value=""></option>
                                         @foreach ($companies as $company)
@@ -71,19 +71,30 @@
                                 </div>
                             </div>
                             <table class="table table-bordered data-table" style="width: 150%">
-                                <thead>
+                                <thead style="background-color: #1b82ec; color: white">
                                     <tr>
-                                        <th style="text-align: center">No</th>
-                                        <th style="text-align: center">Code</th>
-                                        <th style="text-align: center">Name</th>
-                                        <th style="text-align: center">Shape</th>
-                                        <th style="text-align: center">Company</th>
-                                        <th style="text-align: center">Has Parts</th>
-                                        <th style="text-align: center">Part Number</th>
-                                        <th style="text-align: center">Description</th>
-                                        <th style="text-align: center">Merchant Type</th>
-                                        <th style="text-align: center">Status</th>
-                                        <th style="text-align: center">Action</th>
+                                        <th style="text-align: center;">{{ __('product/list_products.table_header_id') }}
+                                        </th>
+                                        <th style="text-align: center">{{ __('product/list_products.table_header_code') }}
+                                        </th>
+                                        <th style="text-align: center">{{ __('product/list_products.table_header_name') }}
+                                        </th>
+                                        <th style="text-align: center">{{ __('product/list_products.table_header_shape') }}
+                                        </th>
+                                        <th style="text-align: center">{{ __('product/list_products.table_header_comp') }}
+                                        </th>
+                                        <th style="text-align: center">
+                                            {{ __('product/list_products.table_header_has_parts') }}</th>
+                                        <th style="text-align: center">
+                                            {{ __('product/list_products.table_header_parts_number') }}</th>
+                                        <th style="text-align: center">
+                                            {{ __('product/list_products.table_header_description') }}</th>
+                                        <th style="text-align: center">
+                                            {{ __('product/list_products.table_header_merchant_type') }}</th>
+                                        <th style="text-align: center">
+                                            {{ __('product/list_products.table_header_status') }}</th>
+                                        <th style="text-align: center">
+                                            {{ __('product/list_products.table_header_action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody style="text-align: center">
@@ -101,19 +112,49 @@
 @endsection
 
 @push('scripts')
+    <script>
+        function getCurrentLanguage() {
+            var sessionLang = "{{ strtolower(session()->get('locale')) }}";
+            if (sessionLang == '') {
+                sessionLang = "{{ strtolower(Auth::user()->language) }}";
+            }
+            return sessionLang;
+        }
+    </script>
     <script type="text/javascript">
         var table;
         $(function() {
-
+            var langOptions = getCurrentLanguage();
+            if (langOptions == 'ar')
+                langOptions = {
+                    "searchPlaceholder": "اكتب النص ومن ثم اضغط انتر",
+                    "loadingRecords": "الرجاء الانتظار - جار التحميل...",
+                    "sProcessing": "جارٍ التحميل...",
+                    "sLengthMenu": "أظهر _MENU_ مدخلات",
+                    "sZeroRecords": "لم يعثر على أية سجلات",
+                    "sInfo": "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
+                    "sInfoEmpty": "يعرض 0 إلى 0 من أصل 0 سجل",
+                    "sInfoFiltered": "(منتقاة من مجموع _MAX_ مُدخل)",
+                    "sInfoPostFix": "",
+                    "sSearch": "ابحث:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "الأول",
+                        "sPrevious": "السابق",
+                        "sNext": "التالي",
+                        "sLast": "الأخير"
+                    }
+                };
             table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
                 scrollY: 500,
                 scrollX: true,
-                "pageLength": 25,
+                "pageLength": 50,
                 "deferRender": true,
                 "paging": true,
                 "pagingType": "full_numbers",
+                "autoWidth": false,
                 ajax: {
                     "url": "{{ route('product-list') }}",
                     "dataType": "json",
@@ -129,27 +170,35 @@
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        "width": "5%"
                     },
                     {
                         data: 'code',
                         name: 'code',
+                        orderable: false
                     },
                     {
                         data: 'name',
                         name: 'name',
+                        orderable: false
                     },
                     {
                         data: 'ar_shape_name',
                         name: 'ar_shape_name',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'ar_comp_name',
                         name: 'ar_comp_name',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'has_parts',
                         name: 'has_parts',
+                        orderable: false,
                         render: function(data) {
                             if (data == 0)
                                 return 'No';
@@ -160,14 +209,18 @@
                     {
                         data: 'num_of_parts',
                         name: 'num_of_parts',
+                        orderable: false
                     },
                     {
                         data: 'description',
                         name: 'description',
+                        orderable: false
                     },
                     {
                         data: 'merchant_type',
                         name: 'merchant_type',
+                        orderable: false,
+                        searchable: false,
                         render: function(data) {
                             if (data == 1)
                                 return 'Pharmcay';
@@ -178,6 +231,8 @@
                     {
                         data: 'status',
                         name: 'status',
+                        orderable: false,
+                        searchable: false,
                         render: function(data) {
                             if (data == 1)
                                 return 'Active';
@@ -190,16 +245,15 @@
                     {
                         data: 'action',
                         name: 'action',
+                        orderable: false,
+                        searchable: false
                     },
                 ],
                 "lengthMenu": [
-                    [25, 500, 1000, 2000, 5000, 10000],
-                    [25, 500, 1000, 2000, 5000, 10000]
+                    [50, 100, 500, 1000, 2000, 5000, 10000],
+                    [50, 100, 500, 1000, 2000, 5000, 10000]
                 ],
-                "language": {
-                    "searchPlaceholder": "Type and press Enter",
-                    "loadingRecords": "Please wait - loading..."
-                },
+                "language": langOptions,
                 "dom": 'lBfrtipr'
 
             });
@@ -301,47 +355,68 @@
         //     }
         // });
 
-        // $('body').on('click', '.delete', function() {
-        //     var id = $(this).attr('id');
-        //     swal({
-        //         title: 'Are you sure?',
-        //         text: 'This record and it`s details will be permanantly deleted!',
-        //         icon: 'warning',
-        //         buttons: ["Cancel", "Yes!"],
-        //     }).then(function(value) {
-        //         if (value) {
+        $('body').on('click', '.delete', function() {
+            var title = '';
+            var text = '';
+            var buttons = '';
+            if (getCurrentLanguage() == 'ar') {
+                title = "هل أنت متأكد من عملية الحذف؟";
+                text = "هذا المنتج وجميع المرفقات الخاصة به سيتم حذفها ولايمكن التراجع عن هذه العملية!";
+                buttons = ["إلغاء", "تأكيد"];
+            }else{
+                title = "Are you sure?";
+                text = "This record and it`s details will be permanantly deleted!";
+                buttons = ["Cancel", "Yes!"];
+            }
 
-        //             $.ajaxSetup({
-        //                 headers: {
-        //                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //                 }
-        //             });
+            var id = $(this).attr('id');
+            swal({
+                title: title,
+                text: text,
+                icon: 'warning',
+                buttons: buttons,
+            }).then(function(value) {
+                if (value) {
 
-        //             // ajax
-        //             $.ajax({
-        //                 type: "POST",
-        //                 url: "@{{ route('delete-item') }}",
-        //                 data: {
-        //                     id: id
-        //                 },
-        //                 dataType: 'json',
-        //                 success: function(result) {
-        //                     if (result.success) {
-        //                         $('.alert-success').empty();
-        //                         $('.alert-success').append(result.message);
-        //                         $('.data-table').DataTable().clear().draw();
-        //                     } else {
-        //                         $('.alert-danger').empty();
-        //                         $('.alert-danger').show();
-        //                         $('.alert-danger').append(result.message);
-        //                     }
-        //                 },
-        //                 error: function(erorr) {
-        //                     console.log(erorr);
-        //                 }
-        //             });
-        //         }
-        //     });
-        // });
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    // ajax
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('delete-item') }}",
+                        data: {
+                            id: id
+                        },
+                        dataType: 'json',
+                        success: function(result) {
+                            console.log(result);
+                            if (result.success) {
+                                $('.alert-success').empty();
+                                $('.alert-success').append(result.message);
+                                $('.alert-success').removeAttr('hidden');
+                                $('.data-table').DataTable().clear().draw();
+                                setInterval(() => {
+                                    $('.alert-success').attr('hidden', 'hidden');
+                                }, 5000);
+                            } else {
+                                $('.alert-danger').empty();
+                                $('.alert-danger').append(result.message);
+                                $('.alert-danger').removeAttr('hidden');
+                                setInterval(() => {
+                                    $('.alert-danger').attr('hidden', 'hidden');
+                                }, 5000);
+                            }
+                        },
+                        error: function(erorr) {
+                            console.log(erorr);
+                        }
+                    });
+                }
+            });
+        });
     </script>
 @endpush

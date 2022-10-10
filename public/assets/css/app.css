@@ -637,7 +637,7 @@ body[data-sidebar-size="small"].vertical-collpsed .footer {
   left: 70px; }
 
 body[data-sidebar="dark"] .page-title-box {
-  background: url(../images/pattern-white.png);
+  /* background: url(../images/pattern-white.png); */
   color: #343a40; }
   body[data-sidebar="dark"] .page-title-box .page-title h4 {
     font-weight: 600;

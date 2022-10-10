@@ -166,7 +166,7 @@ class HomeController extends Controller
     public function listProducts(Request $request)
     {
         if ($request->ajax()) {
-            $data = DB::table('data')->leftJoin('companies', 'companies.comp_id', '=', 'data.comp_id')->leftJoin('shapes', 'shapes.shape_id', '=', 'data.shape_id')->select('data.*','companies.ar_comp_name','shapes.ar_shape_name');
+            $data = DB::table('data')->leftJoin('companies', 'companies.comp_id', '=', 'data.comp_id')->leftJoin('shapes', 'shapes.shape_id', '=', 'data.shape_id')->select('data.*', 'companies.ar_comp_name', 'shapes.ar_shape_name');
             if ($request->comp_id) {
                 $data = $data->where('data.comp_id', $request->comp_id);
             }
@@ -179,7 +179,10 @@ class HomeController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a id=' . $row->id . ' class="delete btn btn-danger btn-sm mt-2">Delete</a>';
+                    if ($this->getCurrentLanguage() == "en")
+                        $btn = '<a id=' . $row->id . ' class="delete btn btn-danger btn-sm mt-2">Delete</a>';
+                    else if ($this->getCurrentLanguage() == "ar")
+                        $btn = '<a id=' . $row->id . ' class="delete btn btn-danger waves-effect waves-light btn-sm mt-2">حذف</a>';
                     return $btn;
                 })
                 ->rawColumns(['action'])
@@ -188,6 +191,22 @@ class HomeController extends Controller
         $companies = Company::get();
         $shapes = Shape::get();
         return view('product.list_products', ['companies' => $companies, 'shapes' => $shapes]);
+    }
+
+    public function deleteitem(Request $request)
+    {
+        try {
+            $data = Data::find($request->id);
+            if ($data) {
+                $data->delete();
+                Amount::where('data_id', $data->id)->delete();
+                UserData::where('data_id', $data->id)->delete();
+                return response()->json(['success' => true, 'message' => __('product/list_products.element_deleted_successfully')]);
+            }
+            return redirect()->route('list-items')->withErrors('Element not found');
+        } catch (Exception $th) {
+            return $this->errors("HomeController@deleteitem", $th->getMessage());
+        }
     }
 
     // public function importDataWithShapesAndCompanies()

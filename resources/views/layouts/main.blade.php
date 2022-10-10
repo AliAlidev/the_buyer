@@ -10,7 +10,7 @@
         <meta content="Themesbrand" name="author" />
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <!-- App favicon -->
-        <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
+        <link rel="shortcut icon" href="{{ asset('assets/images/logo1.png') }}">
 
 
         <!-- Bootstrap Css -->
@@ -53,14 +53,14 @@
                                 </span>
                             </a>
 
-                            <a href="index.html" class="logo logo-light">
+                            <a href="{{ route('home') }}" class="logo logo-light">
                                 <span class="logo-sm">
-                                    <img src="{{ asset('assets/images/logo-sm-light.png') }}" alt=""
+                                    <img src="{{ asset('assets/images/logo1.png') }}" alt=""
                                         height="22">
                                 </span>
                                 <span class="logo-lg">
-                                    <img src="{{ asset('assets/images/logo-light.png') }}" alt=""
-                                        height="24">
+                                    <img src="{{ asset('assets/images/logo1.png') }}" alt=""
+                                        height="40">
                                 </span>
                             </a>
                         </div>
@@ -105,7 +105,7 @@
                             <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <img class="rounded-circle header-profile-user"
-                                    src="{{ asset('assets/images/users/avatar-4.jpg') }}" alt="Header Avatar">
+                                    src="{{ asset('assets/images/users/no_image.png') }}" alt="Header Avatar">
                             </button>
 
                             <div class="dropdown-menu dropdown-menu-end">
@@ -334,12 +334,12 @@
 
                             <a href="index.html" class="logo logo-light">
                                 <span class="logo-sm">
-                                    <img src="{{ asset('assets/images/logo-sm-light.png') }}" alt=""
+                                    <img src="{{ asset('assets/images/logo1.png') }}" alt=""
                                         height="22">
                                 </span>
                                 <span class="logo-lg">
-                                    <img src="{{ asset('assets/images/logo-light.png') }}" alt=""
-                                        height="24">
+                                    <img src="{{ asset('assets/images/logo1.png') }}" alt=""
+                                        height="40">
                                 </span>
                             </a>
                         </div>
@@ -385,7 +385,7 @@
                                 id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
                                 <img class="rounded-circle header-profile-user"
-                                    src="{{ asset('assets/images/users/avatar-4.jpg') }}" alt="Header Avatar">
+                                    src="{{ asset('assets/images/users/no_image.png') }}" alt="Header Avatar">
                             </button>
 
 

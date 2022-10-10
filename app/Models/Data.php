@@ -35,8 +35,4 @@ class Data extends Model
         return $this->belongsToMany(EffMaterial::class, 'data_effmaterials', 'data_id', 'effict_matterials_id', 'id', 'id');
     }
 
-    public function company()
-    {
-        return $this->belongsTo(Company::class, 'comp_id');
-    }
 }
