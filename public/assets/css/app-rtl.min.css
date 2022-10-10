@@ -33,7 +33,7 @@ File: Main Css File
 .navbar-brand-box {
   padding: 0 1.5rem;
   text-align: center;
-  width: 240px; }
+  width: 260px; }
 
 .logo {
   line-height: 70px; }
@@ -246,7 +246,7 @@ body[data-layout="horizontal"] .page-title-box {
   position: absolute;
   left: 0;
   color: #74788d;
-  right: 240px;
+  right: 260px;
   height: 60px;
   background-color: #fafafa;
   -webkit-box-shadow: 0 -1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -334,7 +334,7 @@ body[data-layout="horizontal"] .footer {
     transition-property: height, visibility; }
 
 .vertical-menu {
-  width: 240px;
+  width: 260px;
   z-index: 1001;
   background: #ffffff;
   bottom: 0;
@@ -345,7 +345,7 @@ body[data-layout="horizontal"] .footer {
           box-shadow: 0 2px 3px rgba(0, 0, 0, 0.08); }
 
 .main-content {
-  margin-right: 240px;
+  margin-right: 260px;
   overflow: hidden; }
   .main-content .content {
     padding: 0 15px 10px 15px;
@@ -864,7 +864,7 @@ body[data-layout-size="boxed"] {
     margin: 60px auto 0px; }
   body[data-layout-size="boxed"] .footer {
     margin: 0 auto;
-    max-width: calc(1300px - 240px); }
+    max-width: calc(1300px - 260px); }
   body[data-layout-size="boxed"].vertical-collpsed .footer {
     max-width: calc(1300px - 70px); }
 

@@ -50,4 +50,11 @@ class User extends Authenticatable
         // return $this->belongsToMany(Data::class, UserData::class, "merchant_id", "data_id", "merchant_id", "id")->wherePivot('merchant_id', Auth::guard('api')->user()->merchant_id);
     }
 
+    public function is_en()
+    {
+        if (Auth::user()->language == 'en')
+            return true;
+        else
+            return false;
+    }
 }

@@ -34,6 +34,15 @@ use function PHPUnit\Framework\returnSelf;
 class HomeController extends Controller
 {
 
+    public function change_lang(Request $request)
+    {
+        $user = User::find(Auth::user()->id);
+        $user->language = $request->language;
+        $user->save();
+        session()->put('locale', $request->language);
+        return $request->language;
+    }
+
     public function index()
     {
         return view('admin.home');
@@ -41,7 +50,6 @@ class HomeController extends Controller
 
     public function create(Request $request)
     {
-
         if ($request->ajax()) {
             if ($request->code != null) {
                 $request->validate([
@@ -55,59 +63,64 @@ class HomeController extends Controller
             }
 
             try {
-                $user = Auth::user();
-                if ($request->code != null) {
-                    $has_parts = isset($request->hasparts) ? 1 : 0;
-                    $num_of_parts = $request->numofparts != null ? $request->numofparts : 0;
-                    $data = Data::Create([
-                        'code' => $request->code,
-                        'name' => $request->name,
-                        'has_parts' => $has_parts,
-                        'num_of_parts' => $num_of_parts,
-                        'description' => $request->description
-                    ]);
-                } else {
-                    $has_parts = isset($request->hasparts) ? 1 : 0;
-                    $num_of_parts = $request->numofparts != null ? $request->numofparts : 0;
-                    $data = Data::Create([
-                        'name' => $request->name,
-                        'has_parts' => $has_parts,
-                        'num_of_parts' => $num_of_parts,
-                        'description' => $request->description
-                    ]);
-                }
+                $has_parts = isset($request->hasparts) ? 1 : 0;
+                $minimum_amount = $request->minimum_amount == null ? 0 : $request->minimum_amount;
+                $maximum_amount = $request->maximum_amount == null ? 0 : $request->maximum_amount;
 
-                UserData::create([
-                    'user_id' => $user->id,
-                    'merchant_id' => $user->role == 3 ? $user->merchant_id : $user->id,
-                    'data_id' => $data->id
+                DB::beginTransaction();
+
+                $dataId = DB::table('data')->insertGetId([
+                    'code' => $request->code,
+                    'name' => $request->name,
+                    'shape_id' => $request->shape_id == null ? 0 : $request->shape_id,
+                    'comp_id' => $request->comp_id == null ? 0 : $request->comp_id,
+                    'has_parts' => $has_parts,
+                    'num_of_parts' => $request->numofparts,
+                    'description' => $request->description,
+                    'minimum_amount' => $minimum_amount,
+                    'maximum_amount' => $maximum_amount,
+                    'dose' => $request->dose,
+                    'tab_count' => $request->tab_count,
+                    'treatements' => $request->treatements,
+                    'special_alarms' => $request->special_alarms,
+                    'interference' => $request->interference,
+                    'side_effects' => $request->side_effects,
+                    'treatement_group' => $request->treatement_group,
+                    'merchant_type' => $request->merchant_type,
+                    'created_by' => Auth::guard('web')->user()->id,
+                    'created_at' => now()->toDateTimeString(),
+                    'updated_at' => now()->toDateTimeString(),
+                    'status' => '1' // active
                 ]);
 
-                $amount = Amount::create([
-                    'data_id' => $data->id,
-                    'amount' => $request->quantity,
-                    'amount_part' => $request->quantityparts,
-                    'price' => $request->price,
-                    'price_part' => $request->partprice,
-                    'start_date' => $request->start_date,
-                    'expiry_date' => $request->expiry_date,
-                    'user_id' => $user->id,
-                    'merchant_id' => $user->role == 3 ? $user->merchant_id : $user->id
-                ]);
-
-                if ($data->wasRecentlyCreated) {
-                    return response()->json(['success' => true, 'message' => 'Data addedd successfully']);
+                $materials = json_decode($request->eff_materials, true);
+                if ($materials) {
+                    foreach ($materials as $key => $material) {
+                        DB::table('data_effmaterials')->insert([
+                            'data_id' => $dataId,
+                            'effict_matterials_id' => $material->mat,
+                            'dose' => $material->dose,
+                            'unit' => $material->unit
+                        ]);
+                    }
                 }
+
+                DB::commit();
+
+                return $this->sendResponse(__('product/create_product.product_created_successfully'));
             } catch (Exception $th) {
                 dd($th->getMessage());
                 return $this->errors("HomeController@createitem", $th->getMessage());
             }
         }
-        $shapes = Shape::get();
-        $companies = Company::get();
+        $shapes_market = Shape::where('merchant_type', 2)->get();
+        $shapes_pharmacy = Shape::where('merchant_type', 1)->get();
+        $companies_pharmacy = Company::where('merchant_type', 1)->get();
+        $companies_market = Company::where('merchant_type', 2)->get();
         $treatement_groups = TreatementGroup::get();
+        $eff_mat = EffMaterial::get();
 
-        return view('product.create_element', ['shapes' => $shapes, 'companies' => $companies, 'treatement_groups' => $treatement_groups]);
+        return view('product.create_product', ['shapes_market' => $shapes_market, 'shapes_pharmacy' => $shapes_pharmacy, 'companies_pharmacy' => $companies_pharmacy, 'companies_market' => $companies_market, 'treatement_groups' => $treatement_groups, 'eff_materials' => $eff_mat]);
     }
 
     public function findBySerialCode(Request $request)
@@ -132,6 +145,49 @@ class HomeController extends Controller
             return $this->sendErrorResponse("Validation errors", "Invalid link!");
 
         return view('auth.passwords.reset', ['token' => $token, 'email' => $user->email]);
+    }
+
+    public function getItemsName(Request $request)
+    {
+        $data = Data::where('name', 'like', $request->get('searchText') . '%')->skip(0)->take(25)->get();
+        return $data;
+    }
+
+    public function findByItemName(Request $request)
+    {
+        $data = Data::where('name', $request->name)->first();
+        if ($data) {
+            return response()->json(['success' => true, 'data' => $data], 200);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Data not found'], 400);
+        }
+    }
+
+    public function listProducts(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = DB::table('data')->leftJoin('companies', 'companies.comp_id', '=', 'data.comp_id')->leftJoin('shapes', 'shapes.shape_id', '=', 'data.shape_id')->select('data.*','companies.ar_comp_name','shapes.ar_shape_name');
+            if ($request->comp_id) {
+                $data = $data->where('data.comp_id', $request->comp_id);
+            }
+            if ($request->shape_id) {
+                $data = $data->where('data.shape_id', $request->shape_id);
+            }
+            if ($request->merchant_type) {
+                $data = $data->where('data.merchant_type', $request->merchant_type);
+            }
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '<a id=' . $row->id . ' class="delete btn btn-danger btn-sm mt-2">Delete</a>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        $companies = Company::get();
+        $shapes = Shape::get();
+        return view('product.list_products', ['companies' => $companies, 'shapes' => $shapes]);
     }
 
     // public function importDataWithShapesAndCompanies()
@@ -655,12 +711,6 @@ class HomeController extends Controller
     //     } catch (Exception $th) {
     //         return $this->errors("HomeController@edititem", $th->getMessage());
     //     }
-    // }
-
-    // public function getItemsName(Request $request)
-    // {
-    //     $data = Data::where('name', 'like', $request->get('searchText') . '%')->skip(0)->take(25)->get();
-    //     return $data;
     // }
 
     // public function listinventoryitemamounts(Request $request)

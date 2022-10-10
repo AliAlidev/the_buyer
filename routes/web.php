@@ -83,11 +83,13 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::get('logout', [LoginController::class, 'logout']);
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::post('change-lang', [HomeController::class, 'change_lang'])->name('change_lang');
 
     Route::group(['prefix' => 'product'], function () {
         Route::get('get_itms_na', [HomeController::class, 'getItemsName'])->name('get-items-name');
         Route::post('get_dat_name', [HomeController::class, 'findByItemName'])->name('get-data-by-name');
         Route::post('get_dat_ser', [HomeController::class, 'findBySerialCode'])->name('get-data-by-serial');
-        Route::match(['post', 'get'], 'create', [HomeController::class, 'create'])->name('create');
+        Route::match(['post', 'get'], 'create', [HomeController::class, 'create'])->name('product-create');
+        Route::match(['post', 'get'], 'list_products', [HomeController::class, 'listProducts'])->name('product-list');
     });
 });
