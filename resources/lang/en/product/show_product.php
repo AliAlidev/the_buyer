@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'create_element_title' => 'Create Product',
+    'show_element_title' => 'Show Product',
     'product_name' => 'Product Name',
     'dose' => 'Dose',
     'tab_counts' => 'Tab Counts',
@@ -23,13 +23,12 @@ return [
     'minimum_amount' => 'Minimum Amount',
     'maximum_amount' => 'Maximum Amount',
     'description' => 'Description',
-    'add_btn' => 'Add',
+    'back_btn' => 'Back',
     'effect_materials' => 'Effect Materials',
     'list_effect_materials' => 'List Effect Materials',
     'effect_materials_table_id' => 'ID',
     'effect_materials_table_material' => 'Effict Material',
     'effect_materials_table_dose' => 'Dose',
     'effect_materials_table_unit' => 'Unit',
-    'effect_materials_table_action' => 'Action',
-    'product_created_successfully' => 'Product created successfully'
+    'effect_materials_table_action' => 'Action'
 ];

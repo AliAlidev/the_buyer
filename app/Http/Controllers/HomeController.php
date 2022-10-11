@@ -107,6 +107,7 @@ class HomeController extends Controller
 
                 DB::commit();
 
+                session()->put('success', __('product/create_product.product_created_successfully'));
                 return $this->sendResponse(__('product/create_product.product_created_successfully'));
             } catch (Exception $th) {
                 dd($th->getMessage());
@@ -179,10 +180,15 @@ class HomeController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    if ($this->getCurrentLanguage() == "en")
-                        $btn = '<a id=' . $row->id . ' class="delete btn btn-danger btn-sm mt-2">Delete</a>';
-                    else if ($this->getCurrentLanguage() == "ar")
-                        $btn = '<a id=' . $row->id . ' class="delete btn btn-danger waves-effect waves-light btn-sm mt-2">حذف</a>';
+                    if ($this->getCurrentLanguage() == "en") {
+                        $btn = '<a href=' . route('edit-product', $row->id) . ' class="edit btn btn-primary btn-sm mt-2 ml-3 mr-3"><i class="mdi mdi-square-edit-outline"></i></a>';
+                        $btn .= '<a id=' . $row->id . ' class="delete btn btn-danger btn-sm mt-2" style="margin-left:4%"><i class="mdi mdi-delete"></i></a>';
+                        $btn .= '<a href=' . route('show-product', $row->id) . ' class="btn btn-info btn-sm mt-2" style="margin-left:4%"><i class="far fa-eye"></i></a>';
+                    } else if ($this->getCurrentLanguage() == "ar") {
+                        $btn = '<a href=' . route('edit-product', $row->id) . ' class="edit btn btn-primary waves-effect waves-light btn-sm mt-2 ml-3 mr-3"><i class="mdi mdi-square-edit-outline"></i></a>';
+                        $btn .= '<a id=' . $row->id . ' class="delete btn btn-danger waves-effect waves-light btn-sm mt-2" style="margin-right:4%"><i class="mdi mdi-delete"></i></a>';
+                        $btn .= '<a href=' . route('show-product', $row->id) . ' class="btn btn-info btn-sm mt-2" style="margin-right:4%"><i class="far fa-eye"></i></a>';
+                    }
                     return $btn;
                 })
                 ->rawColumns(['action'])
@@ -193,7 +199,7 @@ class HomeController extends Controller
         return view('product.list_products', ['companies' => $companies, 'shapes' => $shapes]);
     }
 
-    public function deleteitem(Request $request)
+    public function deleteProduct(Request $request)
     {
         try {
             $data = Data::find($request->id);
@@ -203,10 +209,96 @@ class HomeController extends Controller
                 UserData::where('data_id', $data->id)->delete();
                 return response()->json(['success' => true, 'message' => __('product/list_products.element_deleted_successfully')]);
             }
-            return redirect()->route('list-items')->withErrors('Element not found');
+            return redirect()->route('list-items')->withErrors('Product not found');
         } catch (Exception $th) {
             return $this->errors("HomeController@deleteitem", $th->getMessage());
         }
+    }
+
+    public function showProduct($id)
+    {
+        $data = Data::find($id);
+        $shapes_market = Shape::where('merchant_type', 2)->get();
+        $shapes_pharmacy = Shape::where('merchant_type', 1)->get();
+        $companies_pharmacy = Company::where('merchant_type', 1)->get();
+        $companies_market = Company::where('merchant_type', 2)->get();
+        $treatement_groups = TreatementGroup::get();
+        $eff_mat = EffMaterial::get();
+        $productEffMat = DB::table('data_effmaterials')->leftJoin('effict_matterials', 'effict_matterials.eff_mat_id', '=', 'data_effmaterials.effict_matterials_id')->where('data_id', $id)->get();
+        return view('product.show_product', ['productEffMat' => $productEffMat, 'product' => $data, 'shapes_market' => $shapes_market, 'shapes_pharmacy' => $shapes_pharmacy, 'companies_pharmacy' => $companies_pharmacy, 'companies_market' => $companies_market, 'treatement_groups' => $treatement_groups, 'eff_materials' => $eff_mat]);
+    }
+
+    public function editProduct(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            if ($request->code != null) {
+                $request->validate([
+                    'code' => 'unique:data,code,' . $id,
+                    'name' => 'required|unique:data,name,' . $id
+                ]);
+            } else {
+                $request->validate([
+                    'name' => 'required|unique:data,name,' . $id
+                ]);
+            }
+
+            try {
+                $has_parts = isset($request->hasparts) ? 1 : 0;
+                $minimum_amount = $request->minimum_amount == null ? 0 : $request->minimum_amount;
+                $maximum_amount = $request->maximum_amount == null ? 0 : $request->maximum_amount;
+
+                DB::beginTransaction();
+
+                $dataId = DB::table('data')->where('id', $id)->update([
+                    'code' => $request->code,
+                    'name' => $request->name,
+                    'shape_id' => $request->shape_id == null ? 0 : $request->shape_id,
+                    'comp_id' => $request->comp_id == null ? 0 : $request->comp_id,
+                    'has_parts' => $has_parts,
+                    'num_of_parts' => $request->numofparts,
+                    'description' => $request->description,
+                    'minimum_amount' => $minimum_amount,
+                    'maximum_amount' => $maximum_amount,
+                    'dose' => $request->dose,
+                    'tab_count' => $request->tab_count,
+                    'treatements' => $request->treatements,
+                    'special_alarms' => $request->special_alarms,
+                    'interference' => $request->interference,
+                    'side_effects' => $request->side_effects,
+                    'treatement_group' => $request->treatement_group,
+                    'created_by' => Auth::guard('web')->user()->id,
+                    'updated_at' => now()->toDateTimeString()
+                ]);
+
+                $materials = json_decode($request->eff_materials, true);
+                if ($materials) {
+                    foreach ($materials as $key => $material) {
+                        DB::table('data_effmaterials')->insert([
+                            'data_id' => $dataId,
+                            'effict_matterials_id' => $material->mat,
+                            'dose' => $material->dose,
+                            'unit' => $material->unit
+                        ]);
+                    }
+                }
+
+                DB::commit();
+
+                session()->put('success', __('product/update_product.product_updated_successfully'));
+                return $this->sendResponse(__('product/update_product.product_updated_successfully'));
+            } catch (Exception $th) {
+                return $this->errors("HomeController@createitem", $th->getMessage());
+            }
+        }
+        $data = Data::find($id);
+        $shapes_market = Shape::where('merchant_type', 2)->get();
+        $shapes_pharmacy = Shape::where('merchant_type', 1)->get();
+        $companies_pharmacy = Company::where('merchant_type', 1)->get();
+        $companies_market = Company::where('merchant_type', 2)->get();
+        $treatement_groups = TreatementGroup::get();
+        $eff_mat = EffMaterial::get();
+        $productEffMat = DB::table('data_effmaterials')->leftJoin('effict_matterials', 'effict_matterials.eff_mat_id', '=', 'data_effmaterials.effict_matterials_id')->where('data_id', $id)->get();
+        return view('product.update_product', ['productEffMat' => $productEffMat, 'product' => $data, 'shapes_market' => $shapes_market, 'shapes_pharmacy' => $shapes_pharmacy, 'companies_pharmacy' => $companies_pharmacy, 'companies_market' => $companies_market, 'treatement_groups' => $treatement_groups, 'eff_materials' => $eff_mat]);
     }
 
     // public function importDataWithShapesAndCompanies()

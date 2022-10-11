@@ -18,5 +18,5 @@ return [
     'table_header_merchant_type'=>'Merchant Type',
     'table_header_status'=>'Status',
     'table_header_action'=>'Action',
-    'element_deleted_successfully'=>'Element deleted successfully'
+    'element_deleted_successfully'=>'Product deleted successfully'
 ];

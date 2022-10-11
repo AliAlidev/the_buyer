@@ -1,5 +1,17 @@
 @extends('layouts.main')
 
+@push('styles')
+    <style>
+        label {
+            font-size: 16px;
+            font-weight: 900;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" />
+@endpush
+
 @section('content')
     <div class="container-fluid">
 
@@ -29,7 +41,7 @@
                         </div>
                         <div class="card-body">
                             @if ($errors->any())
-                                <div class="alert alert-danger">
+                                <div class="alert alert-danger" id="danger_div">
                                     <ul>
                                         @foreach ($errors->all() as $error)
                                             <li>{{ $error }}</li>
@@ -37,7 +49,7 @@
                                     </ul>
                                 </div>
                             @endif
-                            <div class="alert alert-success" hidden>
+                            <div class="alert alert-success" id="success_div" hidden>
                                 {{ session()->get('success') }}
                             </div>
                             <div class="row mb-5">
@@ -112,6 +124,21 @@
 @endsection
 
 @push('scripts')
+    <script>
+        $(document).ready(function() {
+            if (sessionStorage.getItem("success") == "true") {
+                $('#success_div').removeAttr('hidden');
+                setInterval(() => {
+                    $('#success_div').attr('hidden', true);
+                    $('#danger_div').attr('hidden', true);
+                    sessionStorage.setItem("success", false);
+                }, 5000);
+            } else {
+                $('#success_div').attr('hidden', true);
+                $('#danger_div').attr('hidden', true);
+            }
+        });
+    </script>
     <script>
         function getCurrentLanguage() {
             var sessionLang = "{{ strtolower(session()->get('locale')) }}";
@@ -279,82 +306,6 @@
             table.draw();
         });
 
-        // $('body').on('click', '.show_max_part_price', function() {
-        //     var currBtn = $(this);
-        //     /// get max price
-        //     if (currBtn.text() == "Max Part Price") {
-        //         var td = $($(this).closest("tr")).find('td:eq(6)');
-        //         var elementId = $(this).attr('id');
-        //         var id = elementId.split("_")[0];
-        // var url = "@{{ route('get-max-part-price-for-element', '#id') }}";
-        //         url = url.replace('#id', id);
-        //         $.ajax({
-        //             url: url,
-        //             success: function(newValue) {
-        //                 td.html(newValue);
-        //                 td.css('color', 'black');
-        //                 currBtn.text("Current Part Price");
-        //             }
-        //         });
-        //     } else {
-        //         /////// get current price
-        //         var td = $($(this).closest("tr")).find('td:eq(6)');
-        //         var elementId = $(this).attr('id');
-        //         var id = elementId.split("_")[0];
-        //         var merchantId = elementId.split("_")[1];
-        //         var url = "@{{ route('get-current-part-price-for-element', ['#id', '#merchantId']) }}";
-        //         url = url.replace('#id', id);
-        //         url = url.replace('#merchantId', merchantId);
-        //         $.ajax({
-        //             url: url,
-        //             success: function(currValue) {
-        //                 td.html(currValue);
-        //                 td.css('color', 'red');
-        //                 currBtn.text("Max Part Price");
-        //             }
-        //         });
-
-        //     }
-        // });
-
-        // $('body').on('click', '.show_max_price', function() {
-        //     var currBtn = $(this);
-        //     /// get max price
-        //     if (currBtn.text() == "Max Price") {
-        //         var td = $($(this).closest("tr")).find('td:eq(4)');
-        //         var elementId = $(this).attr('id');
-        //         var id = elementId.split("_")[0];
-        //         var url = "@{{ route('get-max-price-for-element', '#id') }}";
-        //         url = url.replace('#id', id);
-        //         $.ajax({
-        //             url: url,
-        //             success: function(newValue) {
-        //                 td.html(newValue);
-        //                 td.css('color', 'black');
-        //                 currBtn.text("Current Price");
-        //             }
-        //         });
-        //     } else {
-        //         /////// get current price
-        //         var td = $($(this).closest("tr")).find('td:eq(4)');
-        //         var elementId = $(this).attr('id');
-        //         var id = elementId.split("_")[0];
-        //         var merchantId = elementId.split("_")[1];
-        //         var url = "@{{ route('get-current-price-for-element', ['#id', '#merchantId']) }}";
-        //         url = url.replace('#id', id);
-        //         url = url.replace('#merchantId', merchantId);
-        //         $.ajax({
-        //             url: url,
-        //             success: function(currValue) {
-        //                 td.html(currValue);
-        //                 td.css('color', 'red');
-        //                 currBtn.text("Max Price");
-        //             }
-        //         });
-
-        //     }
-        // });
-
         $('body').on('click', '.delete', function() {
             var title = '';
             var text = '';
@@ -363,7 +314,7 @@
                 title = "هل أنت متأكد من عملية الحذف؟";
                 text = "هذا المنتج وجميع المرفقات الخاصة به سيتم حذفها ولايمكن التراجع عن هذه العملية!";
                 buttons = ["إلغاء", "تأكيد"];
-            }else{
+            } else {
                 title = "Are you sure?";
                 text = "This record and it`s details will be permanantly deleted!";
                 buttons = ["Cancel", "Yes!"];
@@ -387,13 +338,12 @@
                     // ajax
                     $.ajax({
                         type: "POST",
-                        url: "{{ route('delete-item') }}",
+                        url: "{{ route('delete-product') }}",
                         data: {
                             id: id
                         },
                         dataType: 'json',
                         success: function(result) {
-                            console.log(result);
                             if (result.success) {
                                 $('.alert-success').empty();
                                 $('.alert-success').append(result.message);

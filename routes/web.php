@@ -91,6 +91,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('get_dat_ser', [HomeController::class, 'findBySerialCode'])->name('get-data-by-serial');
         Route::match(['post', 'get'], 'create', [HomeController::class, 'create'])->name('product-create');
         Route::match(['post', 'get'], 'list_products', [HomeController::class, 'listProducts'])->name('product-list');
-        Route::post('delte_itm', [HomeController::class, 'deleteitem'])->name('delete-item');
+        Route::post('delte_product', [HomeController::class, 'deleteProduct'])->name('delete-product');
+        Route::get('edit_product/{id}', [HomeController::class, 'editProduct'])->name('edit-product');
+        Route::post('update_product/{id}', [HomeController::class, 'editProduct'])->name('update-product');
+        Route::get('show_product/{id}', [HomeController::class, 'showProduct'])->name('show-product');
     });
 });
