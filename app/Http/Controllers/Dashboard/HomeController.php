@@ -1,35 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Dashboard;
 
-use App\Imports\CompaniesImport;
-use App\Imports\DataImport;
-use App\Imports\EffictMatImport;
-use App\Imports\ShapesImport;
-use App\Imports\TreatementGroupImport;
+use App\Http\Controllers\Controller;
 use App\Models\Amount;
 use App\Models\Company;
 use App\Models\Data;
 use App\Models\EffMaterial;
-use App\Models\Home;
 use App\Models\Invoice;
-use App\Models\ItemDate;
-use App\Models\Price;
 use App\Models\Shape;
 use App\Models\TreatementGroup;
 use App\Models\User;
 use App\Models\UserData;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use DataTables;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 use PDF;
-
-use function PHPUnit\Framework\returnSelf;
 
 class HomeController extends Controller
 {
@@ -179,6 +168,12 @@ class HomeController extends Controller
             }
             return Datatables::of($data)
                 ->addIndexColumn()
+                ->editColumn('merchant_type', function ($row) {
+                    if ($row->merchant_type == 1)
+                        return __('product/create_product.merchant_type_pharmacy');
+                    else  if ($row->merchant_type == 2)
+                        return __('product/create_product.merchant_type_market');
+                })
                 ->addColumn('action', function ($row) {
                     if ($this->getCurrentLanguage() == "en") {
                         $btn = '<a href=' . route('edit-product', $row->id) . ' class="edit btn btn-primary btn-sm mt-2 ml-3 mr-3"><i class="mdi mdi-square-edit-outline"></i></a>';

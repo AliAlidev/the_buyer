@@ -37,7 +37,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>{{ __('product/list_products.list_items') }}</h4>
+                            <h4>{{ __('company/list_comapnies.list_companies_title') }}</h4>
                         </div>
                         <div class="card-body">
                             @if ($errors->any())
@@ -54,59 +54,36 @@
                             </div>
                             <div class="row mb-5">
                                 <div class="col-md-3">
-                                    <label for="merchant_type">{{ __('product/list_products.merchant_type') }}</label>
+                                    <label for="merchant_type">{{ __('company/list_comapnies.merchant_type') }}</label>
                                     <select name="merchant_type" id="merchant_type" class="form-select">
                                         <option value=""></option>
-                                        <option value="1">{{ __('product/list_products.merchant_type_pharmacy') }}
+                                        <option value="1">{{ __('company/list_comapnies.merchant_type_pharmacy') }}
                                         </option>
-                                        <option value="2">{{ __('product/list_products.merchant_type_market') }}
+                                        <option value="2">{{ __('company/list_comapnies.merchant_type_market') }}
                                         </option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="shape_id">{{ __('product/list_products.shape') }}</label>
-                                    <select name="shape_id" id="shape_id" class="form-select">
-                                        <option value=""></option>
-                                        @foreach ($shapes as $shape)
-                                            <option value="{{ $shape->id }}">{{ $shape->ar_shape_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="company_id">{{ __('product/list_products.company') }}</label>
-                                    <select name="company_id" id="company_id" class="form-select">
-                                        <option value=""></option>
-                                        @foreach ($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->ar_comp_name }}</option>
-                                        @endforeach
                                     </select>
                                 </div>
                             </div>
-                            <table class="table table-bordered data-table" style="width: 150%">
+                            <table class="table table-bordered data-table" style="width: 100%">
                                 <thead style="background-color: #1b82ec; color: white">
                                     <tr>
-                                        <th style="text-align: center;">{{ __('product/list_products.table_header_id') }}
-                                        </th>
-                                        <th style="text-align: center">{{ __('product/list_products.table_header_code') }}
-                                        </th>
-                                        <th style="text-align: center">{{ __('product/list_products.table_header_name') }}
-                                        </th>
-                                        <th style="text-align: center">{{ __('product/list_products.table_header_shape') }}
-                                        </th>
-                                        <th style="text-align: center">{{ __('product/list_products.table_header_comp') }}
+                                        <th style="text-align: center;">{{ __('company/list_comapnies.table_header_id') }}
                                         </th>
                                         <th style="text-align: center">
-                                            {{ __('product/list_products.table_header_has_parts') }}</th>
+                                            {{ __('company/list_comapnies.list_companies_header_ar_name') }}
+                                        </th>
                                         <th style="text-align: center">
-                                            {{ __('product/list_products.table_header_parts_number') }}</th>
+                                            {{ __('company/list_comapnies.list_companies_header_en_name') }}
+                                        </th>
                                         <th style="text-align: center">
-                                            {{ __('product/list_products.table_header_description') }}</th>
+                                            {{ __('company/list_comapnies.merchant_type') }}
+                                        </th>
                                         <th style="text-align: center">
-                                            {{ __('product/list_products.table_header_merchant_type') }}</th>
+                                            {{ __('company/list_comapnies.list_companies_header_en_description') }}
+                                        </th>
                                         <th style="text-align: center">
-                                            {{ __('product/list_products.table_header_status') }}</th>
-                                        <th style="text-align: center">
-                                            {{ __('product/list_products.table_header_action') }}</th>
+                                            {{ __('company/list_comapnies.list_companies_header_en_action') }}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody style="text-align: center">
@@ -183,13 +160,11 @@
                 "pagingType": "full_numbers",
                 "autoWidth": false,
                 ajax: {
-                    "url": "{{ route('product-list') }}",
+                    "url": "{{ route('list-companies') }}",
                     "dataType": "json",
                     "type": "POST",
                     "data": function(d) {
                         d._token = "{{ csrf_token() }}";
-                        d.comp_id = $('#company_id').val();
-                        d.shape_id = $('#shape_id').val();
                         d.merchant_type = $('#merchant_type').val();
                     }
                 },
@@ -201,46 +176,13 @@
                         "width": "5%"
                     },
                     {
-                        data: 'code',
-                        name: 'code',
-                        orderable: false
-                    },
-                    {
-                        data: 'name',
-                        name: 'name',
-                        orderable: false
-                    },
-                    {
-                        data: 'ar_shape_name',
-                        name: 'ar_shape_name',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
                         data: 'ar_comp_name',
                         name: 'ar_comp_name',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'has_parts',
-                        name: 'has_parts',
-                        orderable: false,
-                        render: function(data) {
-                            if (data == 0)
-                                return 'No';
-                            else
-                                return 'Yes';
-                        }
-                    },
-                    {
-                        data: 'num_of_parts',
-                        name: 'num_of_parts',
                         orderable: false
                     },
                     {
-                        data: 'description',
-                        name: 'description',
+                        data: 'en_comp_name',
+                        name: 'en_comp_name',
                         orderable: false
                     },
                     {
@@ -250,18 +192,9 @@
                         searchable: false
                     },
                     {
-                        data: 'status',
-                        name: 'status',
-                        orderable: false,
-                        searchable: false,
-                        render: function(data) {
-                            if (data == 1)
-                                return 'Active';
-                            else if (data == 2)
-                                return 'In Active';
-                            else if (data == 3)
-                                return 'Under Inspection';
-                        }
+                        data: 'description',
+                        name: 'description',
+                        orderable: false
                     },
                     {
                         data: 'action',
@@ -271,8 +204,8 @@
                     },
                 ],
                 "lengthMenu": [
-                    [50, 100, 500, 1000, 2000, 5000, 10000],
-                    [50, 100, 500, 1000, 2000, 5000, 10000]
+                    [50, 100, 500, 1000, 2000],
+                    [50, 100, 500, 1000, 2000]
                 ],
                 "language": langOptions,
                 "dom": 'lBfrtipr'
@@ -286,14 +219,6 @@
                 }
             });
 
-        });
-
-        $('#company_id').change(function() {
-            table.draw();
-        });
-
-        $('#shape_id').change(function() {
-            table.draw();
         });
 
         $('#merchant_type').change(function() {
@@ -332,7 +257,7 @@
                     // ajax
                     $.ajax({
                         type: "POST",
-                        url: "{{ route('delete-product') }}",
+                        url: "{{ route('delete-company') }}",
                         data: {
                             id: id
                         },

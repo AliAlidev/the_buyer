@@ -41,13 +41,13 @@
              </a>
              <ul class="sub-menu" aria-expanded="false">
                  <li>
-                     <a href="{{ route('home') }}" class="waves-effect">
+                     <a href="{{ route('list-companies') }}" class="waves-effect">
                          <i class="fas fa-list"></i><span class="badge bg-primary float-end"></span>
                          <span>{{ __('layout/side_bar.list_companies') }}</span>
                      </a>
                  </li>
                  <li>
-                     <a href="{{ route('home') }}" class="waves-effect">
+                     <a href="{{ route('company-create') }}" class="waves-effect">
                          <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
                          <span>{{ __('layout/side_bar.create_company') }}</span>
                      </a>

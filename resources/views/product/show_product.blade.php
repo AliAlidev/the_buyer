@@ -186,7 +186,7 @@
                                                 <div class="col-md-12">
                                                     <input class="form-control result" type="text" name="code"
                                                         value="{{ old('code') == null ? $product->code : old('code') }}"
-                                                        placeholder="{{ __('product/show_product.code') }}">
+                                                        placeholder="{{ __('product/show_product.code') }}" readonly>
                                                 </div>
                                             </div>
                                             {{-- name --}}
@@ -198,7 +198,7 @@
                                                         value="{{ old('name') == null ? $product->name : old('name') }}"
                                                         type="text" class="form-control name"
                                                         placeholder="{{ __('product/show_product.product_name') }}"
-                                                        required>
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -209,7 +209,7 @@
                                                     <input id="dose" class="form-control" type="text"
                                                         value="{{ old('dose') == null ? $product->dose : old('dose') }}"
                                                         name="dose"
-                                                        placeholder="{{ __('product/show_product.dose') }}">
+                                                        placeholder="{{ __('product/show_product.dose') }}" readonly>
                                                 </div>
                                                 {{-- tab count --}}
                                                 <div class="col-md-3">
@@ -218,7 +218,7 @@
                                                     <input id="tab_count" class="form-control" type="text"
                                                         value="{{ old('tab_count') == null ? $product->tab_count : old('tab_count') }}"
                                                         name="tab_count"
-                                                        placeholder="{{ __('product/show_product.tab_counts') }}">
+                                                        placeholder="{{ __('product/show_product.tab_counts') }}" readonly>
                                                 </div>
                                                 {{-- shape --}}
                                                 <div class="col-md-3">
@@ -272,7 +272,7 @@
                                                     <input id="treatements" class="form-control" type="text"
                                                         value="{{ old('treatements') == null ? $product->treatements : old('treatements') }}"
                                                         name="treatements"
-                                                        placeholder="{{ __('product/show_product.treatement') }}">
+                                                        placeholder="{{ __('product/show_product.treatement') }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -283,7 +283,7 @@
                                                     <input id="special_alarms" class="form-control" type="text"
                                                         value="{{ old('special_alarms') == null ? $product->special_alarms : old('special_alarms') }}"
                                                         name="special_alarms"
-                                                        placeholder="{{ __('product/show_product.special_alarms') }}">
+                                                        placeholder="{{ __('product/show_product.special_alarms') }}" readonly>
                                                 </div>
                                                 {{-- interference --}}
                                                 <div class="col-md-6">
@@ -292,7 +292,7 @@
                                                     <input id="interference" class="form-control" type="text"
                                                         value="{{ old('interference') == null ? $product->interference : old('interference') }}"
                                                         name="interference"
-                                                        placeholder="{{ __('product/show_product.interference') }}">
+                                                        placeholder="{{ __('product/show_product.interference') }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -303,7 +303,7 @@
                                                     <input id="side_effects" class="form-control" type="text"
                                                         value="{{ old('side_effects') == null ? $product->side_effects : old('side_effects') }}"
                                                         name="side_effects"
-                                                        placeholder="{{ __('product/show_product.side_effects') }}">
+                                                        placeholder="{{ __('product/show_product.side_effects') }}" readonly>
                                                 </div>
                                                 {{-- has_parts --}}
                                                 <div class="col-md-2">
@@ -311,7 +311,7 @@
                                                         for="flexSwitchCheckDefault">{{ __('product/show_product.has_parts') }}</label>
                                                     <div class="form-check form-switch">
                                                         <input class="form-check-input hasparts" type="checkbox"
-                                                            name="hasparts">
+                                                            name="hasparts" readonly>
                                                     </div>
                                                 </div>
                                                 {{-- num_of_parts --}}
@@ -320,12 +320,12 @@
                                                         for="flexSwitchCheckDefault">{{ __('product/show_product.num_of_parts') }}</label>
                                                     <input type="number" class="form-control numofparts"
                                                         value="{{ old('numofparts') == null ? $product->num_of_parts : old('numofparts') }}"
-                                                        name="numofparts">
+                                                        name="numofparts" readonly>
                                                 </div>
                                             </div>
                                             {{-- Effect Materiald --}}
                                             <div class="row mt-3">
-                                                <div class="col-md-2">
+                                                <div class="col-md-3">
                                                     <label class="mt-3"
                                                         for="">{{ __('product/show_product.effect_materials') }}
                                                     </label>
@@ -361,7 +361,7 @@
                                                     <input id="minimum_amount" class="form-control" type="text"
                                                         value="{{ old('minimum_amount') == null ? $product->minimum_amount : old('minimum_amount') }}"
                                                         name="minimum_amount"
-                                                        placeholder="{{ __('product/show_product.minimum_amount') }}">
+                                                        placeholder="{{ __('product/show_product.minimum_amount') }}" readonly>
                                                 </div>
                                                 {{-- maximum_amount --}}
                                                 <div class="col-md-3">
@@ -370,7 +370,7 @@
                                                     <input id="maximum_amount" class="form-control" type="text"
                                                         value="{{ old('maximum_amount') == null ? $product->maximum_amount : old('maximum_amount') }}"
                                                         name="maximum_amount"
-                                                        placeholder="{{ __('product/show_product.maximum_amount') }}">
+                                                        placeholder="{{ __('product/show_product.maximum_amount') }}" readonly>
                                                 </div>
 
                                             </div>
@@ -378,7 +378,7 @@
                                                 <div class="col-md-12">
                                                     <label class="mt-3"
                                                         for="">{{ __('product/show_product.description') }}</label>
-                                                    <textarea id="description" class="form-control" name="description" id="" cols="30" rows="10">{{ old('description') == null ? $product->description : old('description') }}</textarea>
+                                                    <textarea readonly id="description" class="form-control" name="description" id="" cols="30" rows="10">{{ old('description') == null ? $product->description : old('description') }}</textarea>
                                                 </div>
                                             </div>
                                         </div>

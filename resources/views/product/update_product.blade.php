@@ -74,6 +74,23 @@
                                 <div id="alertsuccess" class="alert alert-success" hidden>
                                 </div>
 
+                                <div class="row d-flex justify-content-center mt-4">
+                                    <div class="col-md-2">
+                                        <label for="type">{{ __('product/update_product.merchant_type') }}</label>
+                                        <select name="type" id="type" class="form-select">
+                                            @if ($product->merchant_type == 1)
+                                                <option value="2">
+                                                    {{ __('product/update_product.merchant_type_pharmacy') }}
+                                                </option>
+                                            @elseif ($product->merchant_type == 2)
+                                                <option value="1">
+                                                    {{ __('product/update_product.merchant_type_market') }}
+                                                </option>
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div id="market_section" hidden>
                                     <form class="form" method="POST" style="margin: 5%">
                                         @csrf
@@ -180,7 +197,7 @@
                                             <div class="col-md-12 text-center">
                                                 <br />
                                                 <button class="btn btn-primary"
-                                                    type="submit">{{ __('product/update_product.add_btn') }}</button>
+                                                    type="submit">{{ __('product/update_product.update_btn') }}</button>
                                             </div>
                                         </div>
                                     </form>

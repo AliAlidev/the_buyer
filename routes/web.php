@@ -1,10 +1,8 @@
 <?php
 
-use App\Http\Controllers\Apis\ApiAuthController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\SellController;
+use App\Http\Controllers\Dashboard\ComapnyController;
+use App\Http\Controllers\Dashboard\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -80,11 +78,12 @@ Auth::routes();
 
 
 Route::group(['middleware' => 'auth'], function () {
-    
+
     Route::get('logout', [LoginController::class, 'logout']);
-    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::post('change-lang', [HomeController::class, 'change_lang'])->name('change_lang');
 
+    ////////////////////////////// Products //////////////////////////////
     Route::group(['prefix' => 'product'], function () {
         Route::get('get_itms_na', [HomeController::class, 'getItemsName'])->name('get-items-name');
         Route::post('get_dat_name', [HomeController::class, 'findByItemName'])->name('get-data-by-name');
@@ -95,5 +94,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('edit_product/{id}', [HomeController::class, 'editProduct'])->name('edit-product');
         Route::post('update_product/{id}', [HomeController::class, 'editProduct'])->name('update-product');
         Route::get('show_product/{id}', [HomeController::class, 'showProduct'])->name('show-product');
+    });
+
+    ////////////////////////////// Companies //////////////////////////////
+    Route::group(['prefix' => 'company'], function () {
+        Route::match(['get', 'post'], 'company_create', [ComapnyController::class, 'create'])->name('company-create');
+        Route::match(['post', 'get'], 'list_companies', [ComapnyController::class, 'list_companies'])->name('list-companies');
+        Route::get('show_company/{id}', [ComapnyController::class, 'show_company'])->name('show-company');
+        Route::match(['post','get'], 'update_company/{id}', [ComapnyController::class, 'update_company'])->name('update-company');
+        Route::post('delete_company', [ComapnyController::class, 'deleteCompany'])->name('delete-company');
     });
 });
