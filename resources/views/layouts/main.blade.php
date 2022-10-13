@@ -12,7 +12,6 @@
         <!-- App favicon -->
         <link rel="shortcut icon" href="{{ asset('assets/images/logo1.png') }}">
 
-
         <!-- Bootstrap Css -->
         <link href="{{ asset('assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet"
             type="text/css" />
@@ -26,7 +25,6 @@
         <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
         <link href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
         <link href="{{ asset('assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css') }}" rel="stylesheet">
-
 
         @stack('styles')
 
@@ -43,7 +41,7 @@
 
                         <!-- LOGO -->
                         <div class="navbar-brand-box">
-                            <a href="index.html" class="logo logo-dark">
+                            <a href="{{ route('home') }}" class="logo logo-dark">
                                 <span class="logo-sm">
                                     <img src="{{ asset('assets/images/logo-sm-dark.png') }}" alt=""
                                         height="22">
@@ -321,7 +319,7 @@
 
                         <!-- LOGO -->
                         <div class="navbar-brand-box">
-                            <a href="index.html" class="logo logo-dark">
+                            <a href="{{ route('home') }}" class="logo logo-dark">
                                 <span class="logo-sm">
                                     <img src="{{ asset('assets/images/logo-sm-dark.png') }}" alt=""
                                         height="22">
@@ -332,7 +330,7 @@
                                 </span>
                             </a>
 
-                            <a href="index.html" class="logo logo-light">
+                            <a href="{{ route('home') }}" class="logo logo-light">
                                 <span class="logo-sm">
                                     <img src="{{ asset('assets/images/logo1.png') }}" alt=""
                                         height="22">

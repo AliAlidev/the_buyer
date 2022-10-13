@@ -63,13 +63,13 @@
              </a>
              <ul class="sub-menu" aria-expanded="false">
                  <li>
-                     <a href="{{ route('home') }}" class="waves-effect">
+                     <a href="{{ route('list-shapes') }}" class="waves-effect">
                          <i class="fas fa-list"></i><span class="badge bg-primary float-end"></span>
                          <span>{{ __('layout/side_bar.list_shapes') }}</span>
                      </a>
                  </li>
                  <li>
-                     <a href="{{ route('home') }}" class="waves-effect">
+                     <a href="{{ route('shape-create') }}" class="waves-effect">
                          <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
                          <span>{{ __('layout/side_bar.create_shape') }}</span>
 

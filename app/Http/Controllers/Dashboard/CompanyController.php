@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use DataTables;
 use Exception;
 
-class ComapnyController extends Controller
+class CompanyController extends Controller
 {
     public function create(Request $request)
     {
@@ -47,13 +47,27 @@ class ComapnyController extends Controller
                 'ar_comp_name' => $request->company_name_ar,
                 'en_comp_name' => $request->company_name_en,
                 'merchant_type' => $request->type,
-                'description' => $request->description
+                'description' => $request->description,
+                'comp_id' => $this->get_unique_company_id()
             ]);
 
             session()->put('success', __('company/create_company.company_created_successfully'));
             return $this->sendResponse(__('company/create_company.company_created_successfully'));
         }
         return view('company.create_company');
+    }
+
+    public function get_unique_company_id()
+    {
+        $comp = Company::where('comp_id', '!=', null)->orderBy('id', 'desc')->first();
+        $comp_id = intval($comp->comp_id) + 1;
+        while (1) {
+            if (Company::where('comp_id', $comp_id)->count() == 0)
+                return $comp_id;
+            else {
+                $comp_id++;
+            }
+        }
     }
 
     public function list_companies(Request $request)

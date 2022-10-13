@@ -1,8 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Dashboard\ComapnyController;
+use App\Http\Controllers\Dashboard\CompanyController;
 use App\Http\Controllers\Dashboard\HomeController;
+use App\Http\Controllers\Dashboard\ShapeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -98,10 +99,19 @@ Route::group(['middleware' => 'auth'], function () {
 
     ////////////////////////////// Companies //////////////////////////////
     Route::group(['prefix' => 'company'], function () {
-        Route::match(['get', 'post'], 'company_create', [ComapnyController::class, 'create'])->name('company-create');
-        Route::match(['post', 'get'], 'list_companies', [ComapnyController::class, 'list_companies'])->name('list-companies');
-        Route::get('show_company/{id}', [ComapnyController::class, 'show_company'])->name('show-company');
-        Route::match(['post','get'], 'update_company/{id}', [ComapnyController::class, 'update_company'])->name('update-company');
-        Route::post('delete_company', [ComapnyController::class, 'deleteCompany'])->name('delete-company');
+        Route::match(['get', 'post'], 'company_create', [CompanyController::class, 'create'])->name('company-create');
+        Route::match(['post', 'get'], 'list_companies', [CompanyController::class, 'list_companies'])->name('list-companies');
+        Route::get('show_company/{id}', [CompanyController::class, 'show_company'])->name('show-company');
+        Route::match(['post','get'], 'update_company/{id}', [CompanyController::class, 'update_company'])->name('update-company');
+        Route::post('delete_company', [CompanyController::class, 'deleteCompany'])->name('delete-company');
+    });
+
+    ////////////////////////////// Shapes //////////////////////////////
+    Route::group(['prefix' => 'shape'], function () {
+        Route::match(['get', 'post'], 'shape_create', [ShapeController::class, 'create'])->name('shape-create');
+        Route::match(['post', 'get'], 'list_shapes', [ShapeController::class, 'list_shapes'])->name('list-shapes');
+        Route::get('show_shape/{id}', [ShapeController::class, 'show_shape'])->name('show-shape');
+        Route::match(['post','get'], 'update_shape/{id}', [ShapeController::class, 'update_shape'])->name('update-shape');
+        Route::post('delete_shape', [ShapeController::class, 'deleteshape'])->name('delete-shape');
     });
 });
