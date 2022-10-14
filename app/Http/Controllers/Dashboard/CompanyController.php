@@ -78,7 +78,7 @@ class CompanyController extends Controller
             if ($request->merchant_type) {
                 $companies = $companies->where('merchant_type', $request->merchant_type);
             }
-            return Datatables::of($companies)
+            return DataTables::of($companies)
                 ->addIndexColumn()
                 ->editColumn('merchant_type', function ($row) {
                     if ($row->merchant_type == 1)

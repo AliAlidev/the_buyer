@@ -1,0 +1,25 @@
+<?php
+return [
+    'title' => 'List Users',
+    'name' => 'الإسم',
+    'email' => 'الإيميل',
+    'password' => 'كلمة المرور',
+    'password_confirm' => 'تأكيد كلمة المرور',
+    'merchant_id' => 'اسم التاجر',
+    'role' => 'الصفة',
+    'role_merchant' => 'تاجر',
+    'role_employee' => 'موظف',
+    'phone' => 'رقم الهاتف',
+    'tel_phone' => 'رقم موبايل',
+    'province' => 'المحافظة',
+    'city' => 'المدينة',
+    'address' => 'العنوان',
+    'merchant_type' => 'نوع التاجر',
+    'merchant_type_market' => 'ماركت',
+    'merchant_type_pharmacy' => 'صيدلية',
+    'notes' => 'ملاحظات',
+    'language' => 'اللغة',
+    'language_ar' => 'عربي',
+    'language_en' => 'انكليزي',
+    'actions' => 'Actions'
+];

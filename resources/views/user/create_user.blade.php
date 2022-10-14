@@ -113,7 +113,7 @@
                                         {{-- role --}}
                                         <div class="col-md-4">
                                             <label for="">{{ __('user/create_user.role') }}</label>
-                                            <select name="role" id="role" class="form-control">
+                                            <select name="role" id="role" class="form-select">
                                                 <option value="1">{{ __('user/create_user.role_merchant') }}</option>
                                                 <option value="2">{{ __('user/create_user.role_employee') }}</option>
                                             </select>
@@ -121,7 +121,7 @@
                                         {{-- merchant name --}}
                                         <div class="col-md-4" id="merchant_id_div" hidden>
                                             <label for="">{{ __('user/create_user.merchant_id') }}</label>
-                                            <select name="merchant_id" id="merchant_id" class="form-control">
+                                            <select name="merchant_id" id="merchant_id" class="form-select">
                                                 <option value=""></option>
                                                 @foreach ($merchants as $merchant)
                                                     <option value="{{ $merchant->id }}">{{ $merchant->name }}</option>
@@ -131,7 +131,7 @@
                                         {{-- provinces --}}
                                         <div class="col-md-4">
                                             <label for="">{{ __('user/create_user.province') }}</label>
-                                            <select name="province" id="province" class="form-control">
+                                            <select name="province" id="province" class="form-select">
                                                 <option value=""></option>
                                                 @foreach ($provinces as $province)
                                                     @if (strtolower(session()->get('locale')) == 'ar')
@@ -150,7 +150,7 @@
                                         {{-- cities --}}
                                         <div class="col-md-4">
                                             <label for="">{{ __('user/create_user.city') }}</label>
-                                            <select name="city" id="city" class="form-control">
+                                            <select name="city" id="city" class="form-select">
 
                                             </select>
                                         </div>
@@ -240,6 +240,7 @@
                 dataType: 'json',
                 complete: function(result) {
                     $('#city').empty();
+                    $('#city').append("<option value=''></option>");
                     $.each(result.responseJSON, function(key, value) {
                         if (getCurrentLanguage() == 'ar') {
                             var row = "<option value=" + value.id + ">" + value.ar_name +
@@ -290,7 +291,7 @@
                         $('.numofpartsdiv').attr('hidden', 'hidden');
 
                         sessionStorage.success = true;
-                        // window.location.href = "{{ route('list-companies') }}";
+                        window.location.href = "{{ route('list-users') }}";
                     } else {
                         $('#alertsuccess').attr('hidden', true);
                         $('#alertdanger').attr('hidden', false);

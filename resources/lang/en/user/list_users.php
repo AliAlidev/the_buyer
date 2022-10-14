@@ -1,0 +1,26 @@
+<?php
+return [
+    'title' => 'List Users',
+    'table_header_id' => 'id',
+    'name' => 'Name',
+    'email' => 'Email',
+    'password' => 'Password',
+    'password_confirm' => 'Confirm Password',
+    'merchant_id' => 'Merchant',
+    'role' => 'Role',
+    'role_merchant' => 'Merchant',
+    'role_employee' => 'Employee',
+    'phone' => 'Phone',
+    'tel_phone' => 'Mobile',
+    'province' => 'Province',
+    'city' => 'City',
+    'address' => 'Address',
+    'merchant_type' => 'Merchant Type',
+    'merchant_type_market' => 'Market',
+    'merchant_type_pharmacy' => 'Pharmacy',
+    'notes' => 'Notes',
+    'language' => 'Language',
+    'language_ar' => 'Arabic',
+    'language_en' => 'English',
+    'actions' => 'Actions'
+];

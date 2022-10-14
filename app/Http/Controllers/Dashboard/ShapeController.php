@@ -78,7 +78,7 @@ class ShapeController extends Controller
             if ($request->merchant_type) {
                 $shapes = $shapes->where('merchant_type', $request->merchant_type);
             }
-            return Datatables::of($shapes)
+            return DataTables::of($shapes)
                 ->addIndexColumn()
                 ->editColumn('merchant_type', function ($row) {
                     if ($row->merchant_type == 1)

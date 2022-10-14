@@ -166,7 +166,7 @@ class HomeController extends Controller
             if ($request->merchant_type) {
                 $data = $data->where('data.merchant_type', $request->merchant_type);
             }
-            return Datatables::of($data)
+            return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('merchant_type', function ($row) {
                     if ($row->merchant_type == 1)
