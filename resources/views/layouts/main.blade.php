@@ -53,12 +53,10 @@
 
                             <a href="{{ route('home') }}" class="logo logo-light">
                                 <span class="logo-sm">
-                                    <img src="{{ asset('assets/images/logo1.png') }}" alt=""
-                                        height="22">
+                                    <img src="{{ asset('assets/images/logo1.png') }}" alt="" height="22">
                                 </span>
                                 <span class="logo-lg">
-                                    <img src="{{ asset('assets/images/logo1.png') }}" alt=""
-                                        height="40">
+                                    <img src="{{ asset('assets/images/logo1.png') }}" alt="" height="40">
                                 </span>
                             </a>
                         </div>
@@ -219,6 +217,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"
             integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="{{ asset('assets/libs/morris.js/morris.min.js') }}"></script>
 
         <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('assets/libs/metismenu/metisMenu.min.js') }}"></script>
@@ -234,8 +233,6 @@
         <!-- Peity JS -->
         <script src="{{ asset('assets/libs/peity/jquery.peity.min.js') }}"></script>
 
-        <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-        <script src="{{ asset('assets/libs/morris.js/morris.min.js') }}"></script>
         <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
 
         <script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
@@ -332,12 +329,10 @@
 
                             <a href="{{ route('home') }}" class="logo logo-light">
                                 <span class="logo-sm">
-                                    <img src="{{ asset('assets/images/logo1.png') }}" alt=""
-                                        height="22">
+                                    <img src="{{ asset('assets/images/logo1.png') }}" alt="" height="22">
                                 </span>
                                 <span class="logo-lg">
-                                    <img src="{{ asset('assets/images/logo1.png') }}" alt=""
-                                        height="40">
+                                    <img src="{{ asset('assets/images/logo1.png') }}" alt="" height="40">
                                 </span>
                             </a>
                         </div>
@@ -500,6 +495,8 @@
             integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+        <script src="{{ asset('assets/libs/morris.js/morris.min.js') }}"></script>
+
         <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('assets/libs/metismenu/metisMenu.min.js') }}"></script>
         <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
@@ -514,9 +511,7 @@
         <!-- Peity JS -->
         <script src="{{ asset('assets/libs/peity/jquery.peity.min.js') }}"></script>
 
-        <script src="https://unpkg.com/html5-qrcode" type="text/javascript">
-            < script src = "{{ asset('assets/libs/morris.js/morris.min.js') }}" >
-        </script>
+
         <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
 
         <script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>

@@ -90,18 +90,42 @@
                                     </div>
 
                                     <div class="row mt-4">
-                                        <div class="col-md-10">
-                                            <label for="">{{ __('shape/create_shape.shape_name_ar') }}</label>
-                                            <input type="text" id="shape_name_ar" name="shape_name_ar"
-                                                class="form-control">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <label for="">{{ __('shape/create_shape.shape_name_ar') }}</label>
+                                            </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <input type="text" id="shape_name_ar" name="shape_name_ar"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="button" id="translate_en"
+                                                    value="{{ __('shape/create_shape.translate') }}"
+                                                    class="btn btn-primary">
+                                            </div>
+                                        </div>
+
                                     </div>
                                     <div class="row mt-4">
-                                        <div class="col-md-10">
-                                            <label for="">{{ __('shape/create_shape.shape_name_en') }}</label>
-                                            <input type="text" id="shape_name_en" name="shape_name_en"
-                                                class="form-control">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <label for="">{{ __('shape/create_shape.shape_name_en') }}</label>
+                                            </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <input type="text" id="shape_name_en" name="shape_name_en"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="button" id="translate_ar"
+                                                    value="{{ __('shape/create_shape.translate') }}"
+                                                    class="btn btn-primary">
+                                            </div>
+                                        </div>
+
                                     </div>
                                     <div class="row mt-4">
                                         <div class="col-md-12 text-center">
@@ -125,6 +149,38 @@
 @endsection
 
 @push('scripts')
+    <script>
+        $('#translate_en').click(function() {
+            $.ajax({
+                url: "{{ route('translate_to_en') }}",
+                type: "post",
+                dataType: "json",
+                data: {
+                    '_token': "{{ csrf_token() }}",
+                    'word': $('#shape_name_ar').val()
+                },
+                complete: function(resutl) {
+                    $('#shape_name_en').val(resutl.responseText);
+                }
+            });
+        });
+
+        $('#translate_ar').click(function() {
+            $.ajax({
+                url: "{{ route('translate_to_ar') }}",
+                type: "post",
+                dataType: "json",
+                data: {
+                    '_token': "{{ csrf_token() }}",
+                    'word': $('#shape_name_en').val()
+                },
+                complete: function(resutl) {
+                    $('#shape_name_ar').val(resutl.responseText);
+                }
+            });
+        });
+    </script>
+
     <script>
         $('#main_form').submit(function(e) {
             e.preventDefault();

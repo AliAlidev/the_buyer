@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Http\Controllers\SendEmailsTriat;
+use App\Models\Province;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -19,10 +20,12 @@ class DatabaseSeeder extends Seeder
         // $this->call([UsersSeeder::class]);
         // $this->call([ShapesSeeder::class]);
         // $this->call([CompaniesSeeder::class]);
-        $this->call([TestDataSeeder::class]);
+        // $this->call([TestDataSeeder::class]);
         // $this->call([InvoiceSeeder::class]);
 
         // send email for admin
-        $this->sendEmailToAdmin();
+        // $this->sendEmailToAdmin();
+        $this->call([ProvinceSeeder::class]);
+        $this->call([CitySeeder::class]);
     }
 }

@@ -93,20 +93,45 @@
                                     </div>
 
                                     <div class="row mt-4">
-                                        <div class="col-md-10">
-                                            <label for="">{{ __('company/update_company.company_name_ar') }}</label>
-                                            <input type="text" id="company_name_ar" name="company_name_ar"
-                                                value="{{ old('company_name_ar') == null ? $company->ar_comp_name : old('company_name_ar') }}"
-                                                class="form-control">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <label
+                                                    for="">{{ __('company/update_company.company_name_ar') }}</label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <input type="text" id="company_name_ar" name="company_name_ar"
+                                                    value="{{ old('company_name_ar') == null ? $company->ar_comp_name : old('company_name_ar') }}"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="button" id="translate_en"
+                                                    value="{{ __('company/create_company.translate') }}"
+                                                    class="btn btn-primary">
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row mt-4">
-                                        <div class="col-md-10">
-                                            <label for="">{{ __('company/update_company.company_name_en') }}</label>
-                                            <input type="text" id="company_name_en" name="company_name_en"
-                                                value="{{ old('company_name_en') == null ? $company->en_comp_name : old('company_name_en') }}"
-                                                class="form-control">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <label
+                                                    for="">{{ __('company/update_company.company_name_en') }}</label>
+                                            </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <input type="text" id="company_name_en" name="company_name_en"
+                                                    value="{{ old('company_name_en') == null ? $company->en_comp_name : old('company_name_en') }}"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="button" id="translate_ar"
+                                                    value="{{ __('company/create_company.translate') }}"
+                                                    class="btn btn-primary">
+                                            </div>
+                                        </div>
+
                                     </div>
                                     <div class="row mt-4">
                                         <div class="col-md-10">
@@ -137,6 +162,38 @@
 @endsection
 
 @push('scripts')
+    <script>
+        $('#translate_en').click(function() {
+            $.ajax({
+                url: "{{ route('translate_to_en') }}",
+                type: "post",
+                dataType: "json",
+                data: {
+                    '_token': "{{ csrf_token() }}",
+                    'word': $('#company_name_ar').val()
+                },
+                complete: function(resutl) {
+                    $('#company_name_en').val(resutl.responseText);
+                }
+            });
+        });
+
+        $('#translate_ar').click(function() {
+            $.ajax({
+                url: "{{ route('translate_to_ar') }}",
+                type: "post",
+                dataType: "json",
+                data: {
+                    '_token': "{{ csrf_token() }}",
+                    'word': $('#company_name_en').val()
+                },
+                complete: function(resutl) {
+                    $('#company_name_ar').val(resutl.responseText);
+                }
+            });
+        });
+    </script>
+
     <script>
         $('#main_form').submit(function(e) {
             e.preventDefault();

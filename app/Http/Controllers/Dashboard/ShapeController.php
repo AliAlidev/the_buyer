@@ -7,6 +7,7 @@ use App\Models\Shape;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use DataTables;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 use Exception;
 
 class ShapeController extends Controller
@@ -164,6 +165,26 @@ class ShapeController extends Controller
             return redirect()->route('list-items')->withErrors('shape not found');
         } catch (Exception $th) {
             return $this->errors("ShapeController@deleteshape", $th->getMessage());
+        }
+    }
+
+    public function translate_to_ar(Request $request)
+    {
+        try {
+            $tr = new GoogleTranslate('ar');
+            return $tr->translate($request->word);
+        } catch (Exception $th) {
+            //throw $th;
+        }
+    }
+
+    public function translate_to_en(Request $request)
+    {
+        try {
+            $tr = new GoogleTranslate('en');
+            return $tr->translate($request->word);
+        } catch (Exception $th) {
+            //throw $th;
         }
     }
 }

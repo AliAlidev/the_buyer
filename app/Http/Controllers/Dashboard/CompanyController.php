@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 use DataTables;
 use Exception;
@@ -165,6 +166,26 @@ class CompanyController extends Controller
             return redirect()->route('list-items')->withErrors('Company not found');
         } catch (Exception $th) {
             return $this->errors("ComapnyController@deleteCompany", $th->getMessage());
+        }
+    }
+
+    public function translate_to_ar(Request $request)
+    {
+        try {
+            $tr = new GoogleTranslate('ar');
+            return $tr->translate($request->word);
+        } catch (Exception $th) {
+            //throw $th;
+        }
+    }
+
+    public function translate_to_en(Request $request)
+    {
+        try {
+            $tr = new GoogleTranslate('en');
+            return $tr->translate($request->word);
+        } catch (Exception $th) {
+            //throw $th;
         }
     }
 }

@@ -12,5 +12,6 @@ return [
     'you_should_add_company_data' => 'يجب إضافة بيانات الشركة',
     'company_name_ar_unique' => 'اسم الشركة العربي المدخل موجود سابقا',
     'company_name_en_unique' => 'اسم الشركة الأجنبي المدخل موجود سابقا',
-    'company_created_successfully' => 'تم إضافة الشركة بنجاح'
+    'company_created_successfully' => 'تم إضافة الشركة بنجاح',
+    'translate' =>'ترجمة'
 ];

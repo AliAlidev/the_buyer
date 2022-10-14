@@ -11,5 +11,6 @@ return [
     'you_should_add_shape_data' => 'يجب إضافة بيانات الشكل',
     'shape_name_ar_unique' => 'اسم الشكل العربي المدخل موجود سابقا',
     'shape_name_en_unique' => 'اسم الشكل الأجنبي المدخل موجود سابقا',
-    'shape_created_successfully' => 'تم إضافة الشكل بنجاح'
+    'shape_created_successfully' => 'تم إضافة الشكل بنجاح',
+    'translate' => 'ترجمة'
 ];

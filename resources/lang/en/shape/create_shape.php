@@ -11,5 +11,6 @@ return [
     'you_should_add_shape_data' => 'You should add shape data',
     'shape_name_ar_unique' => 'shape arabic name already used',
     'shape_name_en_unique' => 'shape english name already used',
-    'shape_created_successfully' => 'shape Created Successfully'
+    'shape_created_successfully' => 'shape Created Successfully',
+    'translate' => 'Translate'
 ];
