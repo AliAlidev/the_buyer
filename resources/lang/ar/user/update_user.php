@@ -1,6 +1,6 @@
 <?php
 return [
-    'title' => 'قائمة المستخدمين',
+    'title' => 'تعديل مستخدم',
     'name' => 'الإسم',
     'email' => 'الإيميل',
     'password' => 'كلمة المرور',
@@ -21,6 +21,13 @@ return [
     'language' => 'اللغة',
     'language_ar' => 'عربي',
     'language_en' => 'انكليزي',
-    'actions' => 'الإجرائيات',
-    'user_deleted_successfully' => 'تم حذف المستخدم بنجاح'
+    'update_btn' => 'تعديل',
+    'user_updated_successfully' => 'تم تعديل المستخدم بنجاح',
+    'name_required' => 'يجب اختيار اسم المستخدم',
+    'email_required' => 'يجب ادخال الإيميل',
+    'email_email' => 'يجب اختيار بريد الكتروني صحيح',
+    'unique_email' => 'البريد الالكتروني مستخدم مسبقاً يجب اختيار بريد جديد',
+    'password_required' => 'يجب ادخال كلمة المرور',
+    'password_gt' => 'كلمة المرور يجب أن تكون كحد أدنى 5 محارف',
+    'password_confirm_same' => 'يجب أن تكون كلمة المرور وتأكيدها متطابقتين'
 ];

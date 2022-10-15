@@ -1,7 +1,6 @@
 <?php
 return [
-    'title' => 'List Users',
-    'table_header_id' => 'id',
+    'title' => 'Show User',
     'name' => 'Name',
     'email' => 'Email',
     'password' => 'Password',
@@ -22,6 +21,5 @@ return [
     'language' => 'Language',
     'language_ar' => 'Arabic',
     'language_en' => 'English',
-    'actions' => 'Actions',
-    'user_deleted_successfully' => 'User deleted successfully'
+    'back_btn' => 'Back'
 ];

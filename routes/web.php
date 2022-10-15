@@ -122,9 +122,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'user'], function () {
         Route::match(['get', 'post'], 'user_create', [UserController::class, 'create'])->name('user-create');
         Route::match(['post', 'get'], 'list_users', [UserController::class, 'list_users'])->name('list-users');
-        // Route::get('show_shape/{id}', [ShapeController::class, 'show_shape'])->name('show-shape');
-        // Route::match(['post','get'], 'update_shape/{id}', [ShapeController::class, 'update_shape'])->name('update-shape');
-        // Route::post('delete_shape', [ShapeController::class, 'deleteshape'])->name('delete-shape');
+        Route::get('show_user/{id}', [UserController::class, 'show_user'])->name('show-user');
+        Route::match(['post','get'], 'update_user/{id}', [UserController::class, 'update_user'])->name('update-user');
+        Route::post('delete_user', [UserController::class, 'delete_user'])->name('delete-user');
     });
 
     ////////////////////////////// Cities //////////////////////////////

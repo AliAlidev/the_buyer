@@ -1,7 +1,6 @@
 <?php
 return [
-    'title' => 'List Users',
-    'table_header_id' => 'id',
+    'title' => 'Update User',
     'name' => 'Name',
     'email' => 'Email',
     'password' => 'Password',
@@ -22,6 +21,13 @@ return [
     'language' => 'Language',
     'language_ar' => 'Arabic',
     'language_en' => 'English',
-    'actions' => 'Actions',
-    'user_deleted_successfully' => 'User deleted successfully'
+    'update_btn' => 'Update',
+    'user_updated_successfully' => 'User updated successfully',
+    'name_required' => 'You should add user name',
+    'email_required' => 'You should add user email',
+    'email_email' => 'The email must be a valid email address',
+    'unique_email' => 'The email has already been taken',
+    'password_required' => 'The password field is required',
+    'password_gt' => 'The password must be greater than 5',
+    'password_confirm_same' => 'The password confirm and password must match'
 ];

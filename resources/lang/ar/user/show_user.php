@@ -1,6 +1,6 @@
 <?php
 return [
-    'title' => 'قائمة المستخدمين',
+    'title' => 'تفاصيل المستخدم',
     'name' => 'الإسم',
     'email' => 'الإيميل',
     'password' => 'كلمة المرور',
@@ -21,6 +21,5 @@ return [
     'language' => 'اللغة',
     'language_ar' => 'عربي',
     'language_en' => 'انكليزي',
-    'actions' => 'الإجرائيات',
-    'user_deleted_successfully' => 'تم حذف المستخدم بنجاح'
+    'back_btn' => 'رجوع'
 ];

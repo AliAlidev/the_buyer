@@ -375,7 +375,7 @@
                     // ajax
                     $.ajax({
                         type: "POST",
-                        url: "{{ route('delete-shape') }}",
+                        url: "{{ route('delete-user') }}",
                         data: {
                             id: id
                         },
