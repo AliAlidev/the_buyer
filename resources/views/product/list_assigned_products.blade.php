@@ -58,16 +58,6 @@
                             </div>
                             <div class="row mb-5">
                                 <div class="col-md-3">
-                                    <label for="merchant_type">{{ __('product/list_products.merchant_type') }}</label>
-                                    <select name="merchant_type" id="merchant_type" class="form-select">
-                                        <option value=""></option>
-                                        <option value="1">{{ __('product/list_products.merchant_type_pharmacy') }}
-                                        </option>
-                                        <option value="2">{{ __('product/list_products.merchant_type_market') }}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
                                     <label for="shape_id">{{ __('product/list_products.shape') }}</label>
                                     <select name="shape_id" id="shape_id" class="form-select">
                                         <option value=""></option>
@@ -176,6 +166,8 @@
                         "sLast": "الأخير"
                     }
                 };
+            var url = "{{ route('list_assigned_products', '#id') }}";
+            url = url.replace("#id", "{{ request()->id }}");
             table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
@@ -187,7 +179,7 @@
                 "pagingType": "full_numbers",
                 "autoWidth": false,
                 ajax: {
-                    "url": "{{ route('product-list') }}",
+                    "url": url,
                     "dataType": "json",
                     "type": "POST",
                     "data": function(d) {
@@ -297,10 +289,6 @@
         });
 
         $('#shape_id').change(function() {
-            table.draw();
-        });
-
-        $('#merchant_type').change(function() {
             table.draw();
         });
 

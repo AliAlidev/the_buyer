@@ -3,31 +3,9 @@
     <html lang="en">
 
     <head>
-        <meta charset="utf-8" />
-        <title>Buyer Dashboard</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
-        <meta content="Themesbrand" name="author" />
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <!-- App favicon -->
-        <link rel="shortcut icon" href="{{ asset('assets/images/logo1.png') }}">
-
-        <!-- Bootstrap Css -->
-        <link href="{{ asset('assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet"
-            type="text/css" />
-        <!-- Icons Css -->
-        <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
-        <!-- App Css-->
-        <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-        <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
-        <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-        <link href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
-        <link href="{{ asset('assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css') }}" rel="stylesheet">
+        @include('layouts.main_head')
 
         @stack('styles')
-
     </head>
 
     <body data-topbar="dark" data-sidebar-user="false" data-sidebar="dark">
@@ -117,9 +95,8 @@
 
                         {{-- language --}}
                         <div class="dropdown d-inline-block">
-                            <button type="button" class="btn header-item waves-effect"
-                                id="page-header-user-dropdown1" data-bs-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
+                            <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown1"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {{ session()->get('locale') }}
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
@@ -213,40 +190,7 @@
         <div class="rightbar-overlay"></div>
 
         <!-- JAVASCRIPT -->
-        <script src="{{ asset('assets/libs/jquery/jquery.min.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"
-            integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="{{ asset('assets/libs/morris.js/morris.min.js') }}"></script>
-
-        <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-        <script src="{{ asset('assets/libs/metismenu/metisMenu.min.js') }}"></script>
-        <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
-        <script src="{{ asset('assets/libs/node-waves/waves.min.js') }}"></script>
-        <script src="{{ asset('assets/libs/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
-        <script src="{{ asset('assets/js/pages/form-validation.init.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script src="{{ asset('assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js') }}"></script>
-        <script src="{{ asset('assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js') }}"></script>
-        <script src="{{ asset('assets/js/pages/form-advanced.init.js') }}"></script>
-
-        <!-- Peity JS -->
-        <script src="{{ asset('assets/libs/peity/jquery.peity.min.js') }}"></script>
-
-        <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
-
-        <script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
-
-        <!-- App js -->
-        <script src="{{ asset('assets/js/app.js') }}"></script>
-
-
-        <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
-        <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-        {{-- swal alert --}}
-        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        @include('layouts.main_scripts')
 
         <script>
             $(".dropdown-item11").click(function() {
@@ -270,36 +214,11 @@
 
     </body>
 @else
-    <html lang="en" dir="rtl">
+    <html lang="ar" dir="rtl">
 
     <head>
 
-        <meta charset="utf-8" />
-        <title>Buyer Dashboard</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
-        <meta content="Themesbrand" name="author" />
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <!-- App favicon -->
-        <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
-
-
-        <!-- Bootstrap Css -->
-        <link href="{{ asset('assets/css/bootstrap-rtl.min.css') }}" id="bootstrap-style" rel="stylesheet"
-            type="text/css" />
-        <!-- Icons Css -->
-        <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
-        <!-- App Css-->
-        <link href="{{ asset('assets/css/app-rtl.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-        <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
-        <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-        <link href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
-        <link href="{{ asset('assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css') }}"
-            rel="stylesheet">
-
+        @include('layouts.main_head')
 
         @stack('styles')
 
@@ -489,43 +408,7 @@
         <!-- Right bar overlay-->
         <div class="rightbar-overlay"></div>
 
-        <!-- JAVASCRIPT -->
-        <script src="{{ asset('assets/libs/jquery/jquery.min.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"
-            integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-        <script src="{{ asset('assets/libs/morris.js/morris.min.js') }}"></script>
-
-        <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-        <script src="{{ asset('assets/libs/metismenu/metisMenu.min.js') }}"></script>
-        <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
-        <script src="{{ asset('assets/libs/node-waves/waves.min.js') }}"></script>
-        <script src="{{ asset('assets/libs/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
-        <script src="{{ asset('assets/js/pages/form-validation.init.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script src="{{ asset('assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js') }}"></script>
-        <script src="{{ asset('assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js') }}"></script>
-        <script src="{{ asset('assets/js/pages/form-advanced.init.js') }}"></script>
-
-        <!-- Peity JS -->
-        <script src="{{ asset('assets/libs/peity/jquery.peity.min.js') }}"></script>
-
-
-        <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
-
-        <script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
-
-        <!-- App js -->
-        <script src="{{ asset('assets/js/app.js') }}"></script>
-
-
-        <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
-        <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-        {{-- swal alert --}}
-        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        @include('layouts.main_scripts')
 
         <script>
             $(".dropdown-item11").click(function() {

@@ -12,5 +12,6 @@ return [
     'user_management' => 'User Management',
     'list_users' => 'List Users',
     'create_user' => 'Create User',
-    'home_page' => 'Home Page'
+    'home_page' => 'Home Page',
+    'assign_products' => 'Assign Products'
 ];

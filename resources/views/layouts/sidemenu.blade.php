@@ -98,6 +98,13 @@
 
                      </a>
                  </li>
+                 <li>
+                     <a href="{{ route('products-assign') }}" class="waves-effect">
+                         <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
+                         <span>{{ __('layout/side_bar.assign_products') }}</span>
+
+                     </a>
+                 </li>
              </ul>
          </li>
 

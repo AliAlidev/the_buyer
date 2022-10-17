@@ -6,6 +6,10 @@
             font-size: 16px;
             font-weight: 900;
         }
+        .dt-buttons{
+            margin-left: 15%;
+            margin-right: 15%;
+        }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x"></script>

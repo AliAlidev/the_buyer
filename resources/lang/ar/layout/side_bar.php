@@ -12,5 +12,6 @@ return [
     'user_management' => 'إدارة المستخدمين',
     'list_users' => 'عرض المستخدمين',
     'create_user' => 'إضافة مستخدم',
-    'home_page' => 'الصفحة الرئيسية'
+    'home_page' => 'الصفحة الرئيسية',
+    'assign_products' => 'تخصيص مواد'
 ];

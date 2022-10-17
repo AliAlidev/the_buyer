@@ -123,8 +123,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::match(['get', 'post'], 'user_create', [UserController::class, 'create'])->name('user-create');
         Route::match(['post', 'get'], 'list_users', [UserController::class, 'list_users'])->name('list-users');
         Route::get('show_user/{id}', [UserController::class, 'show_user'])->name('show-user');
-        Route::match(['post','get'], 'update_user/{id}', [UserController::class, 'update_user'])->name('update-user');
+        Route::match(['post', 'get'], 'update_user/{id}', [UserController::class, 'update_user'])->name('update-user');
         Route::post('delete_user', [UserController::class, 'delete_user'])->name('delete-user');
+        Route::match(['get', 'post'], 'products_assign', [UserController::class, 'products_assign'])->name('products-assign');
+        Route::post('assing_user_products', [UserController::class, 'assing_user_products'])->name('assing_user_products');
+        Route::match(['get', 'post'], 'list_assigned_products/{id}', [UserController::class, 'list_assigned_products'])->name('list_assigned_products');
     });
 
     ////////////////////////////// Cities //////////////////////////////
