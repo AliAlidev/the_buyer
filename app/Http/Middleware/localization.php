@@ -23,7 +23,7 @@ class localization
             App::setLocale(Session::get('locale'));
         } else {
             if (Auth::check())
-                App::setLocale(Auth::user()->language);
+                App::setLocale('en');
         }
         return $next($request);
     }
