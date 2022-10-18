@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\City;
+use App\Models\Province;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -20,6 +22,8 @@ class UsersSeeder extends Seeder
             2 merchant
             3 user
         */
+        $province = Province::where('en_name','tartous')->first();
+        $city = City::where('en_name', 'Sheikh Badr')->first();
         User::updateOrCreate(
             ['email' => 'admin@buyer.com'],
             [
@@ -30,8 +34,8 @@ class UsersSeeder extends Seeder
                 'password' => Hash::make('12345678'),
                 "phone" => "+963936566977",
                 "tel_phone" => "0431234567",
-                "country" => "syria",
-                "city" => "tartous",
+                "province" => $province->id,
+                "city" => $city->id,
                 "address" => "alshekh saad"
             ]
         );
