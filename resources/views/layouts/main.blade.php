@@ -1,5 +1,5 @@
 <!doctype html>
-@if (session()->get('locale') == 'EN')
+@if (session()->get('locale') == 'en')
     <html lang="en">
 
     <head>

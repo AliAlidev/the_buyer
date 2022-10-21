@@ -25,9 +25,6 @@ class HomeController extends Controller
 
     public function change_lang(Request $request)
     {
-        $user = User::find(Auth::user()->id);
-        $user->language = $request->language;
-        $user->save();
         session()->put('locale', $request->language);
         return $request->language;
     }
