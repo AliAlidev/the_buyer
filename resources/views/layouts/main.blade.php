@@ -97,7 +97,7 @@
                         <div class="dropdown d-inline-block">
                             <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown1"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{ session()->get('locale') }}
+                                {{ strtoupper(session()->get('locale')) }}
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <!-- item-->
@@ -317,7 +317,7 @@
                             <button type="button" class="btn header-item waves-effect"
                                 id="page-header-user-dropdown1" data-bs-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
-                                {{ session()->get('locale') != null ? session()->get('locale') : strtoupper(Auth::user()->language) }}
+                                {{ session()->get('locale') != null ? strtoupper(session()->get('locale')) : strtoupper(Auth::user()->language) }}
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <!-- item-->
@@ -420,7 +420,7 @@
                         language: $(this).text()
                     },
                     complete: function(resutl) {
-                        $('#page-header-user-dropdown1').text(resutl.responseText);
+                        $('#page-header-user-dropdown1').text(resutl.responseText.toUpperCase());
                         location.reload();
                     }
                 });

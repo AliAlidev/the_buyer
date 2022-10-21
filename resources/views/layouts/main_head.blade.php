@@ -7,8 +7,7 @@
 <!-- App favicon -->
 <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
 
-
-@if (session()->get('locale') == 'AR')
+@if (session()->get('locale') == 'ar')
     <link href="{{ asset('assets/css/bootstrap-rtl.min.css') }}" id="bootstrap-style" rel="stylesheet"
         type="text/css" />
     <link href="{{ asset('assets/css/app-rtl.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />

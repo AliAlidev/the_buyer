@@ -25,7 +25,7 @@ class HomeController extends Controller
 
     public function change_lang(Request $request)
     {
-        session()->put('locale', $request->language);
+        session()->put('locale', strtolower($request->language));
         return $request->language;
     }
 
