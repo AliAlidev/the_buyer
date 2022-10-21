@@ -61,7 +61,7 @@ class DataSeeder extends Seeder
                 $effMaterials[] = $this->faker->randomElement($effMaterials_array);
             }
 
-            $newData->effMaterial()->attach($effMaterials);
+            // $newData->effMaterial()->attach($effMaterials);
         }
     }
 }

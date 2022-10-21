@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Dashboard\CompanyController;
 use App\Http\Controllers\Dashboard\HomeController;
+use App\Http\Controllers\Dashboard\InvoiceController;
 use App\Http\Controllers\Dashboard\ShapeController;
 use App\Http\Controllers\Dashboard\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -59,12 +60,12 @@ Route::get('recover-password/{token}/{user_id}', [HomeController::class, 'recove
 //     });
 
 //     ////////////////////////////////////////// sell invoices
-//     Route::group(['prefix' => 'sell'], function () {
-//         Route::get('create_sell_inv', [InvoiceController::class, 'sell_index'])->name('create-sell-invoice');
-//         Route::post('create_sell_inv', [InvoiceController::class, 'store'])->name('store-sell-invoice');
-//         Route::post('sell_get_dat_name', [InvoiceController::class, 'findByItemName'])->name('sell-get-data-by-name');
-//         Route::post('sell_get_dat_code', [InvoiceController::class, 'findByItemCode'])->name('sell-get-data-by-code');
-//     });
+    Route::group(['prefix' => 'sell'], function () {
+        Route::get('create_sell_inv', [InvoiceController::class, 'sell_index'])->name('create-sell-invoice');
+        Route::post('create_sell_inv', [InvoiceController::class, 'store'])->name('store-sell-invoice');
+        Route::post('sell_get_dat_name', [InvoiceController::class, 'findByItemName'])->name('sell-get-data-by-name');
+        Route::post('sell_get_dat_code', [InvoiceController::class, 'findByItemCode'])->name('sell-get-data-by-code');
+    });
 
 //     ////////////////////////////////////////// buy invoices
 //     Route::group(['prefix' => 'buy'], function () {

@@ -56,9 +56,9 @@ class TestDataSeeder extends Seeder
         Customer::truncate();
 
         // $this->call(MerchantsSeeder::class); // 100 merchant and 3 user for each one
-        // $this->call(DataSeeder::class); // 9000 product
+        $this->call(DataSeeder::class); // 9000 product
         // $this->call(AttachDataToMerchantSeeder::class);
-        $this->call(BuyInvoiceSeeder::class); // daily 1000 invoice for 30 day
-        $this->call(SellInvoiceSeeder::class); // daily 1000 invoice for 30 day
+        // $this->call(BuyInvoiceSeeder::class); // daily 1000 invoice for 30 day
+        // $this->call(SellInvoiceSeeder::class); // daily 1000 invoice for 30 day
     }
 }

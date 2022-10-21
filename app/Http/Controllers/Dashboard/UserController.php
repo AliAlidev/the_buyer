@@ -284,7 +284,9 @@ class UserController extends Controller
             if ($request->merchant_id) {
                 $merchant = User::find($request->merchant_id);
                 $exp .= ' and data.merchant_type=' . $merchant->merchant_type;
-                $exp .= ' and data.id not in (' . implode(',', $merchant->data()->pluck('data.id')->toArray()) . ')';
+                $merchantData = $merchant->data()->pluck('data.id')->toArray();
+                if (count($merchantData) > 0)
+                    $exp .= ' and data.id not in (' . implode(',', $merchantData) . ')';
             }
             $data = DB::select(DB::raw($exp));
 
@@ -334,6 +336,9 @@ class UserController extends Controller
         $assign_type = $request->assign_type;
         $merchant_id = $request->merchant_id;
         $data = json_decode($request->data);
+        if (count($data) == 0)
+            return $this->sendErrorResponse("Validation errors", [__('user/assign_products.no_data_to_assign')]);
+
         $merchant = User::find($merchant_id);
         if ($assign_type == 1) {
             $data = Data::pluck('id')->toArray();

@@ -13,5 +13,8 @@ return [
     'list_users' => 'List Users',
     'create_user' => 'Create User',
     'home_page' => 'Home Page',
-    'assign_products' => 'Assign Products'
+    'assign_products' => 'Assign Products',
+    'invoice_management' => 'Invoice Management',
+    'create_invoice' => 'Create Invoice',
+    'list_invoice' => 'List Invoices',
 ];

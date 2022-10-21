@@ -29,4 +29,5 @@ return [
     'product_type_market' => 'All Market Products',
     'product_type_custome' => 'Custome',
     'products_assigned_successfully' => 'Products assigned successfully',
+    'no_data_to_assign' => 'No products to assign'
 ];

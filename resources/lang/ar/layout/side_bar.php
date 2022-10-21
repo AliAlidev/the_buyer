@@ -13,5 +13,8 @@ return [
     'list_users' => 'عرض المستخدمين',
     'create_user' => 'إضافة مستخدم',
     'home_page' => 'الصفحة الرئيسية',
-    'assign_products' => 'تخصيص مواد'
+    'assign_products' => 'تخصيص مواد',
+    'invoice_management' => 'إدارة الفواتير',
+    'create_invoice' => 'إضافة فاتورة',
+    'list_invoice' => 'عرض الفواتير',
 ];

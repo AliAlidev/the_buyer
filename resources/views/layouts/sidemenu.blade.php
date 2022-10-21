@@ -108,6 +108,29 @@
              </ul>
          </li>
 
+         {{-- Invoice Management --}}
+         <li>
+             <a href="javascript: void(0);" class="has-arrow waves-effect">
+                 <i class="fas fa-file-invoice"></i>
+                 <span>{{ __('layout/side_bar.invoice_management') }}</span>
+             </a>
+             <ul class="sub-menu" aria-expanded="false">
+                 <li>
+                     <a href="{{ route('list-users') }}" class="waves-effect">
+                         <i class="fas fa-list"></i><span class="badge bg-primary float-end"></span>
+                         <span>{{ __('layout/side_bar.list_invoice') }}</span>
+                     </a>
+                 </li>
+                 <li>
+                     <a href="{{ route('user-create') }}" class="waves-effect">
+                         <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
+                         <span>{{ __('layout/side_bar.create_invoice') }}</span>
+
+                     </a>
+                 </li>
+             </ul>
+         </li>
+
      </ul>
  </div>
  <!-- Sidebar -->

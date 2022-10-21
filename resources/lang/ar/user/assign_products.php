@@ -29,4 +29,5 @@ return [
     'product_type_market' => 'جميع مواد الماركت',
     'product_type_custome' => 'مخصص',
     'products_assigned_successfully' => 'تم تخصيص المواد بنجاح',
+    'no_data_to_assign' => 'لايوجد مواد لتخصيصها'
 ];

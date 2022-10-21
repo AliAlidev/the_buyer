@@ -459,9 +459,6 @@
                         $('#alertsuccess').attr('hidden', false);
                         $('#alertsuccess').empty();
                         $('#alertsuccess').append(result.message);
-                        setInterval(() => {
-                            $('#alertsuccess').attr('hidden', true);
-                        }, 5000);
                         table.draw();
                     } else {
                         $('#alertsuccess').attr('hidden', true);
@@ -484,6 +481,7 @@
                 setInterval(() => {
                     $('#success_div').attr('hidden', true);
                     $('#danger_div').attr('hidden', true);
+                    $('#alertdanger').attr('hidden', true);
                     sessionStorage.setItem("success", false);
                 }, 5000);
             } else {
@@ -492,6 +490,7 @@
             }
 
             $('#merchant_email').select2();
+
         });
     </script>
     <script>
