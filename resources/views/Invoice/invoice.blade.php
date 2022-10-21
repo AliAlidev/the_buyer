@@ -175,13 +175,18 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div class="row" style="margin-top: 5%">
+                        <div class="col-md-12">
+                            <label for=""><b>Notes:</b></label>
+                            <p>
+                                <small>{{ $invoice->notes }}</small>
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.col -->
             </div>
             <br><br><br>
-            <div>
-                <small><small>NOTE: This is system generate invoice no need of signature</small></small>
-            </div>
         </div>
     </div>
 </body>

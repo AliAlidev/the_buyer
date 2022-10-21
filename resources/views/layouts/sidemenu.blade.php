@@ -122,9 +122,16 @@
                      </a>
                  </li>
                  <li>
-                     <a href="{{ route('user-create') }}" class="waves-effect">
+                     <a href="{{ route('create-sell-invoice') }}" class="waves-effect">
                          <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
-                         <span>{{ __('layout/side_bar.create_invoice') }}</span>
+                         <span>{{ __('layout/side_bar.create_sell_invoice') }}</span>
+
+                     </a>
+                 </li>
+                 <li>
+                     <a href="{{ route('create-buy-invoice') }}" class="waves-effect">
+                         <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
+                         <span>{{ __('layout/side_bar.create_buy_invoice') }}</span>
 
                      </a>
                  </li>

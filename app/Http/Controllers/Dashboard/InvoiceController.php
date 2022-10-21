@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Apis\ApiOrderController;
+use App\Http\Controllers\Apis\ApiProductController;
 use App\Http\Controllers\Controller;
 use App\Models\Amount;
 use App\Models\BuyInvoice;
+use App\Models\Customer;
 use App\Models\Data;
 use App\Models\Invoice;
 use App\Models\InvoiceItems;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Nette\Utils\Random;
 
 class InvoiceController extends Controller
 {
@@ -27,170 +33,142 @@ class InvoiceController extends Controller
         return view('buy.create_buy_invoice');
     }
 
-    public function store(Request $request)
+    public function sell(Request $request)
     {
-        try {
-            $user = Auth::user();
-            if (!$user) {
-                return response()->json(['success' => false, 'message' => 'User not found']);
+        $result = app()->call('App\Http\Controllers\Apis\ApiOrderController@sell', ['source' => 'web']);
+        return json_decode($result->content(), true);
+    }
+
+    public function generateOrderNumber()
+    {
+        while (1) {
+            $rand = Random::generate(6, '0-9');
+            $year = now()->year;
+            $month = now()->month;
+            $day = now()->day;
+            if (strlen($month) == 1)
+                $month = '0' . $month;
+            if (strlen($day) == 1)
+                $day = '0' . $day;
+            $final_rand = $year . $month . $day . $rand;
+            $is_found = Invoice::where('order_number', $final_rand)->first();
+            if (!$is_found) {
+                return $final_rand;
             }
+        }
+    }
 
-
-            $discount = $request->discount;
-            $total_amount = trim(str_replace("sp", "", $request->total_invoice_value));
-            $paid_amount = $request->paid_amount;
-
-            if ($paid_amount == 0) {
-                $paid_amount = $total_amount;
-            }
-
-            if ($discount > 0) {
-                $paid_amount =  $paid_amount - (($paid_amount * $discount) / 100);
-            }
-            $invoice = Invoice::create([
-                'merchant_id' => $user->role == 3 ? $user->merchant_id : $user->id,
-                'user_id' => $user->id,
-                'total_amount' => $total_amount,
-                'discount' => $discount,
-                'paid_amount' => $paid_amount,
-                'invoice_type' => $request->invoice_type,
-                'notes' => $request->notes
+    public function getCustomerId($name)
+    {
+        if ($name == null) {
+            $customer = Customer::firstOrCreate(['name' => 'general customer'], [
+                'name' => 'general customer'
             ]);
-
-            $invoiceItems = json_decode($request->items);
-            $items = [];
-            foreach ($invoiceItems as $key => $item) {
-                $totalQuantityPrice = $item->quantity * $item->price;
-                $totalQuantityPartPrice = $item->quantityP * $item->priceP;
-                $total = $totalQuantityPartPrice + $totalQuantityPrice;
-
-                $items[] = new InvoiceItems([
-                    "data_id" => $item->data_id,
-                    "quantity" =>  $item->quantity,
-                    "quantity_parts" => $item->quantityP,
-                    "price" => $item->price,
-                    "price_part" => $item->priceP,
-                    "total_quantity_price" => $totalQuantityPrice,
-                    "total_parts_price" => $totalQuantityPartPrice,
-                    "total_price" =>  $total
+        } else {
+            $customer = Customer::where('name', $name)->first();
+            if (!$customer) {
+                $customer = Customer::create([
+                    'name' => $name
                 ]);
             }
-
-            $res =  $invoice->invoiceItems()->saveMany($items);
-
-            if ($res) {
-                return response()->json(['success' => true, 'message' => 'Invoice addedd successfully']);
-            } else {
-                return response()->json(['success' => false, 'message' => 'Invoice not totaly stored']);
-            }
-        } catch (Exception $th) {
-            dd($th->getMessage());
-            return $this->errors("BuyController@store", $th->getMessage());
         }
+        return $customer->id;
     }
 
     public function findByItemCode(Request $request)
     {
         $merchantId = Auth::user()->role == 3 ? Auth::user()->merchant_id : Auth::user()->id;
         $data = Data::where('code', $request->code)->first();
-        if ($data) {
-            $hasGreaterThanPrice = $this->hasGreaterPriceFromAnotherUser($data->id, $merchantId);
-            $hasGreaterThanPartPrice = $this->hasGreaterPartPriceFromAnotherUser($data->id, $merchantId);
+        $amounts = app()->call('App\Http\Controllers\Apis\ApiProductController@getProductAmounts', ['dataId' => $data->id, 'source' => 'web']);
+        $prices = app()->call('App\Http\Controllers\Apis\ApiProductController@getCurrentPriceForElement', ['dataId' => $data->id, 'source' => 'web']);
+        $hasGreaterThanPrice = app()->call('App\Http\Controllers\Apis\ApiProductController@hasGreaterPriceFromAnotherUser', ['dataId' => $data->id, 'merchantId' => $merchantId]);
+        $hasGreaterThanPartPrice = app()->call('App\Http\Controllers\Apis\ApiProductController@hasGreaterPartPriceFromAnotherUser', ['dataId' => $data->id, 'merchantId' => $merchantId]);
 
-            $max_price = 0;
-            $price = 0;
-            $max_part_price = 0;
-            $partprice = 0;
-            if ($hasGreaterThanPrice) {
-                $max_price = $this->getMaxPriceForElement($data->id);
-                $price = $this->getCurrentPriceForElement($data->id, $merchantId);
-            } else {
-                $price = $this->getCurrentPriceForElement($data->id, $merchantId);
-            }
-            if ($hasGreaterThanPartPrice) {
-                $max_part_price = $this->getMaxPartPriceForElement($data->id);
-                $partprice = $this->getCurrentPartPriceForElement($data->id, $merchantId);
-            } else {
-                $partprice = $this->getCurrentPartPriceForElement($data->id, $merchantId);
-            }
+        $price = 0;
+        $max_price = 0;
+        $partprice = 0;
+        $max_part_price = 0;
 
-            $expiry_date = Amount::where('data_id', $data->id)->where('merchant_id', $merchantId)->where('expiry_date', '!=', '')->orderBy('expiry_date')->first();
-            $expiry_date = $expiry_date != null ? $expiry_date->expiry_date : '';
-
-            $hasMultipleExpiryDate = $this->hasMultipleExpiryDate($data->id, $merchantId);
-
-            return response()->json(
-                [
-                    'success' => true,
-                    'hasMultipleExpiryDate' => $hasMultipleExpiryDate,
-                    'data' => $data,
-                    'expiry_date' => $expiry_date,
-                    'prices' => ['price' => $price, 'partprice' => $partprice],
-                    'amounts' => $this->getElementAmounts($data->id, $merchantId),
-                    'has_greater_price' => $hasGreaterThanPrice,
-                    'has_greater_part_price' => $hasGreaterThanPartPrice,
-                    'max_price' => $max_price,
-                    'max_part_price' => $max_part_price
-                ],
-                200
-            );
+        if ($hasGreaterThanPrice) {
+            $max_price = app()->call('App\Http\Controllers\Apis\ApiProductController@getMaxPriceForElement', ['dataId' => $data->id, 'source' => 'web']);
+            $price = app()->call('App\Http\Controllers\Apis\ApiProductController@getCurrentPriceForElement', ['dataId' => $data->id, 'merchant_id' => $merchantId, 'source' => 'web']);
         } else {
-            return response()->json(['success' => false, 'message' => 'Data not found'], 400);
+            $price = app()->call('App\Http\Controllers\Apis\ApiProductController@getCurrentPriceForElement', ['dataId' => $data->id, 'merchant_id' => $merchantId, 'source' => 'web']);
         }
+        if ($hasGreaterThanPartPrice) {
+            $max_part_price = app()->call('App\Http\Controllers\Apis\ApiProductController@getMaxPartPriceForElement', ['dataId' => $data->id, 'source' => 'web']);
+            $partprice = app()->call('App\Http\Controllers\Apis\ApiProductController@getCurrentPartPriceForElement', ['dataId' => $data->id, 'userId' => $merchantId, 'source' => 'web']);
+        } else {
+            $partprice = app()->call('App\Http\Controllers\Apis\ApiProductController@getCurrentPartPriceForElement', ['dataId' => $data->id, 'userId' => $merchantId, 'source' => 'web']);
+        }
+
+        $expiry_date = Amount::where('data_id', $data->id)->where('merchant_id', $merchantId)->where('expiry_date', '!=', '')->orderBy('expiry_date')->first();
+        $expiry_date = $expiry_date != null ? $expiry_date->expiry_date : '';
+
+        $hasMultipleExpiryDate = app()->call('App\Http\Controllers\Apis\ApiProductController@hasMultipleExpiryDate', ['dataId' => $data->id, 'merchantId' => $merchantId, 'source' => 'web']);
+
+        return $this->sendResponse(
+            'Proccess completed successfully',
+            [
+                'amounts' => $amounts,
+                'prices' => $prices,
+                'data' => $data,
+                'hasMultipleExpiryDate' => $hasMultipleExpiryDate,
+                'expiry_date' => Carbon::parse($expiry_date)->toDateString(),
+                'has_greater_price' => $hasGreaterThanPrice,
+                'has_greater_part_price' => $hasGreaterThanPartPrice,
+                'max_price' => $max_price,
+                'max_part_price' => $max_part_price
+            ]
+        );
     }
 
     public function findByItemName(Request $request)
     {
-        try {
-            $merchantId = Auth::user()->role == 3 ? Auth::user()->merchant_id : Auth::user()->id;
-            $data = Data::where('name', $request->name)->first();
-            if ($data) {
-                $hasGreaterThanPrice = $this->hasGreaterPriceFromAnotherUser($data->id, $merchantId);
-                $hasGreaterThanPartPrice = $this->hasGreaterPartPriceFromAnotherUser($data->id, $merchantId);
+        $merchantId = Auth::user()->role == 3 ? Auth::user()->merchant_id : Auth::user()->id;
+        $data = Data::where('name', $request->name)->first();
+        $amounts = app()->call('App\Http\Controllers\Apis\ApiProductController@getProductAmounts', ['dataId' => $data->id, 'source' => 'web']);
+        $prices = app()->call('App\Http\Controllers\Apis\ApiProductController@getCurrentPriceForElement', ['dataId' => $data->id, 'source' => 'web']);
+        $hasGreaterThanPrice = app()->call('App\Http\Controllers\Apis\ApiProductController@hasGreaterPriceFromAnotherUser', ['dataId' => $data->id, 'merchantId' => $merchantId]);
+        $hasGreaterThanPartPrice = app()->call('App\Http\Controllers\Apis\ApiProductController@hasGreaterPartPriceFromAnotherUser', ['dataId' => $data->id, 'merchantId' => $merchantId]);
 
-                $max_price = 0;
-                $price = 0;
-                $max_part_price = 0;
-                $partprice = 0;
-                if ($hasGreaterThanPrice) {
-                    $max_price = $this->getMaxPriceForElement($data->id);
-                    $price = $this->getCurrentPriceForElement($data->id, $merchantId);
-                } else {
-                    $price = $this->getCurrentPriceForElement($data->id, $merchantId);
-                }
-                if ($hasGreaterThanPartPrice) {
-                    $max_part_price = $this->getMaxPartPriceForElement($data->id);
-                    $partprice = $this->getCurrentPartPriceForElement($data->id, $merchantId);
-                } else {
-                    $partprice = $this->getCurrentPartPriceForElement($data->id, $merchantId);
-                }
+        $price = 0;
+        $max_price = 0;
+        $partprice = 0;
+        $max_part_price = 0;
 
-                $expiry_date = Amount::where('data_id', $data->id)->where('merchant_id', $merchantId)->where('expiry_date', '!=', '')->orderBy('expiry_date')->first();
-                $expiry_date = $expiry_date != null ? $expiry_date->expiry_date : '';
-
-                $hasMultipleExpiryDate = $this->hasMultipleExpiryDate($data->id, $merchantId);
-
-                return response()->json(
-                    [
-                        'success' => true,
-                        'hasMultipleExpiryDate' => $hasMultipleExpiryDate,
-                        'data' => $data,
-                        'expiry_date' => $expiry_date,
-                        'prices' => ['price' => $price, 'partprice' => $partprice],
-                        'amounts' => $this->getElementAmounts($data->id, $merchantId),
-                        'has_greater_price' => $hasGreaterThanPrice,
-                        'has_greater_part_price' => $hasGreaterThanPartPrice,
-                        'max_price' => $max_price,
-                        'max_part_price' => $max_part_price
-                    ],
-                    200
-                );
-            } else {
-                return response()->json(['success' => false, 'message' => 'Data not found'], 400);
-            }
-        } catch (Exception $th) {
-            dd($th->getMessage());
+        if ($hasGreaterThanPrice) {
+            $max_price = app()->call('App\Http\Controllers\Apis\ApiProductController@getMaxPriceForElement', ['dataId' => $data->id, 'source' => 'web']);
+            $price = app()->call('App\Http\Controllers\Apis\ApiProductController@getCurrentPriceForElement', ['dataId' => $data->id, 'merchant_id' => $merchantId, 'source' => 'web']);
+        } else {
+            $price = app()->call('App\Http\Controllers\Apis\ApiProductController@getCurrentPriceForElement', ['dataId' => $data->id, 'merchant_id' => $merchantId, 'source' => 'web']);
         }
+        if ($hasGreaterThanPartPrice) {
+            $max_part_price = app()->call('App\Http\Controllers\Apis\ApiProductController@getMaxPartPriceForElement', ['dataId' => $data->id, 'source' => 'web']);
+            $partprice = app()->call('App\Http\Controllers\Apis\ApiProductController@getCurrentPartPriceForElement', ['dataId' => $data->id, 'userId' => $merchantId, 'source' => 'web']);
+        } else {
+            $partprice = app()->call('App\Http\Controllers\Apis\ApiProductController@getCurrentPartPriceForElement', ['dataId' => $data->id, 'userId' => $merchantId, 'source' => 'web']);
+        }
+
+        $expiry_date = Amount::where('data_id', $data->id)->where('merchant_id', $merchantId)->where('expiry_date', '!=', '')->orderBy('expiry_date')->first();
+        $expiry_date = $expiry_date != null ? $expiry_date->expiry_date : '';
+
+        $hasMultipleExpiryDate = app()->call('App\Http\Controllers\Apis\ApiProductController@hasMultipleExpiryDate', ['dataId' => $data->id, 'merchantId' => $merchantId, 'source' => 'web']);
+
+        return $this->sendResponse(
+            'Proccess completed successfully',
+            [
+                'amounts' => $amounts,
+                'prices' => $prices,
+                'data' => $data,
+                'hasMultipleExpiryDate' => $hasMultipleExpiryDate,
+                'expiry_date' => Carbon::parse($expiry_date)->toDateString(),
+                'has_greater_price' => $hasGreaterThanPrice,
+                'has_greater_part_price' => $hasGreaterThanPartPrice,
+                'max_price' => $max_price,
+                'max_part_price' => $max_part_price
+            ]
+        );
     }
 
     public function hasMultipleExpiryDate($dataId, $merchantId)

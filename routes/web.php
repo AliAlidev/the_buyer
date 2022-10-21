@@ -60,11 +60,13 @@ Route::get('recover-password/{token}/{user_id}', [HomeController::class, 'recove
 //     });
 
 //     ////////////////////////////////////////// sell invoices
-    Route::group(['prefix' => 'sell'], function () {
+    Route::group(['prefix' => 'invoice'], function () {
         Route::get('create_sell_inv', [InvoiceController::class, 'sell_index'])->name('create-sell-invoice');
-        Route::post('create_sell_inv', [InvoiceController::class, 'store'])->name('store-sell-invoice');
+        Route::post('create_sell_inv', [InvoiceController::class, 'sell'])->name('store-sell-invoice');
         Route::post('sell_get_dat_name', [InvoiceController::class, 'findByItemName'])->name('sell-get-data-by-name');
         Route::post('sell_get_dat_code', [InvoiceController::class, 'findByItemCode'])->name('sell-get-data-by-code');
+        Route::get('create_buy_inv', [InvoiceController::class, 'buy_index'])->name('create-buy-invoice');
+        Route::post('create_buy_inv', [InvoiceController::class, 'buy'])->name('store-buy-invoice');
     });
 
 //     ////////////////////////////////////////// buy invoices

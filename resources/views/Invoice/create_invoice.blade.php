@@ -154,64 +154,65 @@
 @endsection
 
 @push('scripts')
-    <script>
-        $('#main_form').submit(function(e) {
-            e.preventDefault();
-            var currForm = $(this);
-            var formData = new FormData($(this)['0']);
-            formData.append("_token", "{{ csrf_token() }}");
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript">
+        < script >
+            $('#main_form').submit(function(e) {
+                e.preventDefault();
+                var currForm = $(this);
+                var formData = new FormData($(this)['0']);
+                formData.append("_token", "{{ csrf_token() }}");
 
 
-            $.ajax({
-                url: "{{ route('company-create') }}",
-                type: "post",
-                cache: false,
-                dataType: "json",
-                processData: false,
-                contentType: false,
-                data: formData,
-                success: function(value) {
-                    if (value.success) {
-                        $('#alertdanger').attr('hidden', true);
-                        $('#alertsuccess').attr('hidden', false);
-                        $('#alertsuccess').empty();
-                        $('#alertsuccess').append(value.message);
-                        $(currForm)[0].reset();
-                        $('#effict_materials_table tr').remove();
-                        $('.result').removeClass(
-                            'is-valid  was-validated form-control:valid');
-                        $('.result').removeClass(
-                            'is-invalid  was-validated form-control:invalid');
-                        $('.name').removeClass(
-                            'is-valid  was-validated form-control:valid');
-                        $('.name').removeClass(
-                            'is-invalid  was-validated form-control:invalid');
+                $.ajax({
+                    url: "{{ route('company-create') }}",
+                    type: "post",
+                    cache: false,
+                    dataType: "json",
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function(value) {
+                        if (value.success) {
+                            $('#alertdanger').attr('hidden', true);
+                            $('#alertsuccess').attr('hidden', false);
+                            $('#alertsuccess').empty();
+                            $('#alertsuccess').append(value.message);
+                            $(currForm)[0].reset();
+                            $('#effict_materials_table tr').remove();
+                            $('.result').removeClass(
+                                'is-valid  was-validated form-control:valid');
+                            $('.result').removeClass(
+                                'is-invalid  was-validated form-control:invalid');
+                            $('.name').removeClass(
+                                'is-valid  was-validated form-control:valid');
+                            $('.name').removeClass(
+                                'is-invalid  was-validated form-control:invalid');
 
-                        $('.numofpartsdiv').attr('hidden', 'hidden');
+                            $('.numofpartsdiv').attr('hidden', 'hidden');
 
-                        sessionStorage.success = true;
-                        window.location.href = "{{ route('list-companies') }}";
-                    } else {
-                        console.log(value);
+                            sessionStorage.success = true;
+                            window.location.href = "{{ route('list-companies') }}";
+                        } else {
+                            console.log(value);
+                            $('#alertsuccess').attr('hidden', true);
+                            $('#alertdanger').attr('hidden', false);
+                            $('#alertdanger').empty();
+                            $('#alertdanger').append(value.data);
+                        }
+                    },
+                    'error': function(xhr, status, error) {
                         $('#alertsuccess').attr('hidden', true);
                         $('#alertdanger').attr('hidden', false);
                         $('#alertdanger').empty();
-                        $('#alertdanger').append(value.data);
+                        $('#alertdanger').append("<ul>");
+                        $.each(xhr.responseJSON.data, function(index, value) {
+                            $('#alertdanger').append("<li>" + value + "</li>");
+                        });
+                        $('#alertdanger').append("</ul>");
                     }
-                },
-                'error': function(xhr, status, error) {
-                    $('#alertsuccess').attr('hidden', true);
-                    $('#alertdanger').attr('hidden', false);
-                    $('#alertdanger').empty();
-                    $('#alertdanger').append("<ul>");
-                    $.each(xhr.responseJSON.data, function(index, value) {
-                        $('#alertdanger').append("<li>" + value + "</li>");
-                    });
-                    $('#alertdanger').append("</ul>");
-                }
-            });
+                });
 
-        });
+            });
     </script>
 
     <script>

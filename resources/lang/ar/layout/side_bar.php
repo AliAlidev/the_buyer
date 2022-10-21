@@ -15,6 +15,7 @@ return [
     'home_page' => 'الصفحة الرئيسية',
     'assign_products' => 'تخصيص مواد',
     'invoice_management' => 'إدارة الفواتير',
-    'create_invoice' => 'إضافة فاتورة',
+    'create_sell_invoice' => 'إضافة فاتورة مبيع',
+    'create_buy_invoice' => 'إضافة فاتورة شراء',
     'list_invoice' => 'عرض الفواتير',
 ];

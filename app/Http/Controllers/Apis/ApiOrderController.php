@@ -229,7 +229,7 @@ class ApiOrderController extends Controller
         return abort(404);
     }
 
-    public function sell(Request $request)
+    public function sell(Request $request, $source = 'api')
     {
         $items = null;
         if (!is_array($request->data)) {
@@ -238,12 +238,10 @@ class ApiOrderController extends Controller
             $items = $request->data;
         }
         if (!$items) {
-            return $this->sendErrorResponse("Validation error", "You should add order items");
+            return $this->sendErrorResponse("Validation error", ["You should add order items"]);
         }
 
-        $apiProductController = new ApiProductController();
-
-        $user = Auth::guard('api')->user();
+        $user = Auth::guard($source)->user();
 
         $total_invoice = 0;
 
@@ -280,7 +278,7 @@ class ApiOrderController extends Controller
             }
 
             // check amounts
-            $currVal = $apiProductController->getProductAmounts($item['data_id']);
+            $currVal = app()->call('App\Http\Controllers\Apis\ApiProductController@getProductAmounts', ['dataId' => $item['data_id'], 'source' => 'web']);
 
             if (!$this->enoughAmounts($currVal['amounts'], $currVal['part_amounts'], $currVal['num_of_parts'], $item['amount'], $item['part_amount'])) {
                 return $this->sendErrorResponse("Validation error", "Amounts not enough for item " . $key + 1);
@@ -334,7 +332,7 @@ class ApiOrderController extends Controller
 
         return $this->sendResponse("Invoice created successfully", [
             'order_number' => $order_number,
-            'pdf_link' => $this->saveSellInvoice($order_number), 'view_link' => route('view.invoice', $order_number)
+            'pdf_link' => $this->saveSellInvoice($order_number, $source), 'view_link' => route('view.invoice', $order_number)
         ]);
     }
 
@@ -355,7 +353,7 @@ class ApiOrderController extends Controller
         return $customer->id;
     }
 
-    public static function saveSellInvoice($order_number)
+    public static function saveSellInvoice($order_number, $source = 'api')
     {
         $invoice = Invoice::where('order_number', $order_number)->first();
         if ($invoice) {
@@ -363,7 +361,7 @@ class ApiOrderController extends Controller
             $from = $invoice->merchant->name;
             $customer = $invoice->customer->name;
             $pdf = PDF::loadView('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
-            $user = Auth::guard('api')->user();
+            $user = Auth::guard($source)->user();
             $invoiceName = 'Invoice_' . $user->id . '.pdf';
             /** Here you can use the path you want to save */
             $pdf->save(public_path('uploads/invoices/' . $invoiceName));

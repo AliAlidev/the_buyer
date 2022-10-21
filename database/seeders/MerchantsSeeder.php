@@ -51,8 +51,8 @@ class MerchantsSeeder extends Seeder
                     'password' => Hash::make('12345678'),
                     "phone" => $this->faker->phoneNumber,
                     "tel_phone" => $this->faker->e164PhoneNumber,
-                    "country" => $this->faker->country,
-                    "city" => $this->faker->city,
+                    // "country" => $this->faker->country,
+                    // "city" => $this->faker->city,
                     "address" => $this->faker->address
                 ]
             );

@@ -49,22 +49,8 @@
                         <div class="card-body">
                             <!-- Demo purpose only -->
                             <div style="min-height: 300px;">
-                                <form>
+                                <form id="main_form" method="POST" action="{{ route('store-sell-invoice') }}">
                                     @csrf
-                                    @if ($errors->any())
-                                        <div class="alert alert-danger">
-                                            <ul>
-                                                @foreach ($errors->all() as $error)
-                                                    <li>{{ $error }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
-                                    @if (session()->has('success'))
-                                        <div class="alert alert-success">
-                                            {{ session()->get('success') }}
-                                        </div>
-                                    @endif
 
                                     <div class="row">
                                         <div class="col-md-2"></div>
@@ -73,6 +59,12 @@
                                                 <div class="col-md-2">
                                                     <input id="start_cam" type="button" value="Start Cam" data-id="1"
                                                         onclick="startBarcodePicker()" class="btn btn-primary">
+                                                </div>
+                                                <div class="col-md-6"></div>
+                                                <div class="col-md-4">
+                                                    <label for="customer_name">Customer Name</label>
+                                                    <input type="text" id="customer_name" name="customer_name"
+                                                        class="form-control">
                                                 </div>
                                             </div>
                                             <div class="row mb-4">
@@ -93,7 +85,7 @@
                                             <div class="row">
                                                 <label for="result">Code</label>
                                                 <div class="col-md-10">
-                                                    <input class="form-control" id="result" type="text" name="code"
+                                                    <input class="form-control" id="result" type="text"
                                                         value="{{ old('code') }}" placeholder="SCAN CODE">
                                                 </div>
                                                 <div class="col-md-2">
@@ -104,9 +96,8 @@
                                             <div class="row">
                                                 <div class="col-md-12 mt-3">
                                                     <label for="name"> Element Name</label>
-                                                    <input id="name" name="name" value="{{ old('name') }}"
-                                                        type="text" class="form-control" placeholder="ENTER ELEMENT NAME"
-                                                        required>
+                                                    <input id="name" value="{{ old('name') }}" type="text"
+                                                        class="form-control" placeholder="ENTER ELEMENT NAME">
                                                 </div>
                                             </div>
                                             <label for="square-switch1" class="mt-3">Current Amounts</label>
@@ -122,13 +113,13 @@
                                                     <div class="col-md-2">
                                                         <label class="mt-3" for="">Quantity</label>
                                                         <input id="quantity" class="form-control" type="number"
-                                                            value="0" name="quantity" placeholder="" readonly
+                                                            value="0" placeholder="" readonly
                                                             style="text-align: center">
                                                     </div>
                                                     <div class="col-md-2">
                                                         <label class="mt-3" for="">Price</label>
                                                         <input id="price" class="form-control" type="number"
-                                                            value="0" name="price" placeholder="" readonly
+                                                            value="0" placeholder="" readonly
                                                             style="text-align: center">
                                                         <div style="text-align: center">
                                                             <small id="max_price_from_another_merchants" hidden></small>
@@ -137,13 +128,13 @@
                                                     <div class="col-md-2">
                                                         <label class="mt-3" for="">Quantity P</label>
                                                         <input id="quantityparts" class="form-control" type="number"
-                                                            value="0" name="quantityparts" placeholder="" readonly
+                                                            value="0" placeholder="" readonly
                                                             style="text-align: center">
                                                     </div>
                                                     <div class="col-md-2">
                                                         <label class="mt-3" for="">Price P</label>
                                                         <input id="partprice" class="form-control" type="number"
-                                                            value="0" name="partprice" placeholder="" readonly
+                                                            value="0" placeholder="" readonly
                                                             style="text-align: center">
                                                         <div style="text-align: center">
                                                             <small id="max_part_price_from_another_merchants"
@@ -153,7 +144,7 @@
                                                     <div class="col-md-3">
                                                         <label class="mt-3" for="">Expiry Date</label>
                                                         <input id="expiry_date" class="form-control" type="date"
-                                                            value="{{ old('expiry_date') }}" name="expiry_date" readonly
+                                                            value="{{ old('expiry_date') }}" readonly
                                                             style="text-align: center">
                                                     </div>
                                                 </div>
@@ -166,8 +157,7 @@
                                                     <div
                                                         class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
                                                         <input id="selected_quantity" data-toggle="touchspin"
-                                                            type="text" value="0" class="form-control"
-                                                            name="quantity" required>
+                                                            type="text" value="0" class="form-control" required>
                                                     </div>
                                                 </div>
 
@@ -176,8 +166,7 @@
                                                     <div
                                                         class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
                                                         <input id="selected_quantityparts" data-toggle="touchspin"
-                                                            type="text" value="0" class="form-control"
-                                                            name="quantityparts" required>
+                                                            type="text" value="0" class="form-control" required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -189,7 +178,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
 
                                         <div class="row mt-5">
                                             <div class="col-md-2"></div>
@@ -237,28 +225,32 @@
                                                     <div class="row">
                                                         <div class="col-md-3">
                                                             <label for="" class="mt-3"
-                                                                style="font-size: 110%; font-weight: 600">Discount
+                                                                style="font-size: 110%; font-weight: 600">Payment
                                                                 Type</label>
-                                                            <select name="" id="discount_type"
+                                                            <select name="payment_type" id="payment_type"
                                                                 class="form-control">
-                                                                <option value="perc">Perc</option>
-                                                                <option value="val">Val</option>
+                                                                <option value="1">Cash</option>
+                                                                <option value="2">Debt</option>
+                                                                <option value="3">Free</option>
                                                             </select>
                                                         </div>
-                                                        <div id="discount_value_div" class="col-md-3">
+                                                        <div class="col-md-3">
+                                                            <label for="" class="mt-3"
+                                                                style="font-size: 110%; font-weight: 600">Discount
+                                                                Type</label>
+                                                            <select name="discount_type" id="discount_type"
+                                                                class="form-control">
+                                                                <option value="0"></option>
+                                                                <option value="2">Perc</option>
+                                                                <option value="1">Val</option>
+                                                            </select>
+                                                        </div>
+                                                        <div id="paid_amount_div" class="col-md-3">
                                                             <label class="mt-3" for=""
-                                                                style="font-size: 110%; font-weight: 600">Percentage%</label>
+                                                                style="font-size: 110%; font-weight: 600">Value</label>
                                                             <input id="discount" class="form-control" type="number"
                                                                 value="0" name="discount" style="text-align: center"
-                                                                step="0.1" min="0" max="100">
-                                                        </div>
-                                                        <div id="paid_amount_div" class="col-md-3" hidden>
-                                                            <label class="mt-3" for=""
-                                                                style="font-size: 110%; font-weight: 600">Paid
-                                                                Amount</label>
-                                                            <input id="paid_amount" class="form-control" type="number"
-                                                                value="0" name="paid_amount"
-                                                                style="text-align: center" min="0">
+                                                                min="0">
                                                         </div>
                                                     </div>
 
@@ -273,10 +265,11 @@
 
                                             <div class="col-md-12 text-center pb-5">
                                                 <br />
-                                                <button id="sell_button" class="btn btn-primary btn-lg"
-                                                    type="button">Sell</button>
+                                                <button class="btn btn-primary btn-lg" type="submit">Sell</button>
                                             </div>
                                         </div>
+                                    </div>
+
                                 </form>
                             </div>
                         </div>
@@ -290,41 +283,47 @@
 @endsection
 
 @push('scripts')
+    <script type="text/javascript" src="instascan.min.js"></script>
+    {{-- <script src="https://unpkg.com/html5-qrcode"></script> --}}
+    <script src="{{ asset('assets/js/custome_validation.js') }}"></script>
+
     {{-- sell button --}}
     <script>
-        $('#sell_button').click(function(e) {
+        $('#main_form').submit(function(e) {
             e.preventDefault();
+            var formData = new FormData($(this)[0]);
             var arrItems = [];
             $("#table_data > tbody  > tr").each(function() {
                 var self = $(this);
                 arrItems.push({
                     data_id: self.find("td:eq(0)").text().trim(),
-                    code: self.find("td:eq(1)").text().trim(),
-                    name: self.find("td:eq(2)").text().trim(),
-                    quantity: self.find("td:eq(3)").text().trim(),
+                    amount: self.find("td:eq(3)").text().trim(),
+                    part_amount: self.find("td:eq(5)").text().trim(),
                     price: self.find("td:eq(4)").text().trim(),
-                    quantityP: self.find("td:eq(5)").text().trim(),
-                    priceP: self.find("td:eq(6)").text().trim()
+                    part_price: self.find("td:eq(6)").text().trim()
                 });
             });
+            formData.append('data', JSON.stringify(arrItems));
+            formData.append('discount', $('#discount').val());
+            formData.append('invoice_type', 1);
+            formData.append('notes', $('#notes').val());
             $.ajax({
-                url: "{{ route('store-sell-invoice') }}",
-                type: "post",
-                dataType: 'JSON',
-                data: {
-                    "_token": "{{ csrf_token() }}",
-                    "items": JSON.stringify(arrItems),
-                    "total_invoice_value": $('#total_price').text(),
-                    "paid_amount": $('#paid_amount').val(),
-                    "discount": $('#discount').val(),
-                    "invoice_type": 1,
-                    "notes": $('#notes').val()
-                },
-                success: function(data) {
+                processData: false,
+                contentType: false,
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: formData,
+                complete: function(data) {
+                    data = data.responseJSON;
+                    showMessage(data, 'main_form');
                     if (data.success) {
                         $("#table_data tbody").empty();
                         $("#total_price").text('0');
                         $('#notes').val('');
+                        $('#main_form')[0].reset();
+                        $('input').each(function(element) {
+                            clearValidation($(this));
+                        });
                     }
                 }
             });
@@ -339,17 +338,17 @@
             var dataId = $('#data_id').val();
             var code = $('#result').val();
             var name = $('#name').val();
-            var quantity = $('#selected_quantity').val();
-            var quantityP = $('#selected_quantityparts').val();
-            if (dataId  != 0 && (quantity != 0 || quantityP != 0)) {
+            var amount = $('#selected_quantity').val();
+            var part_amount = $('#selected_quantityparts').val();
+            if (dataId != 0 && (amount != 0 || part_amount != 0)) {
                 var price = $('#price').val();
-                var priceP = $('#partprice').val();
-                var total = price * quantity + quantityP * priceP;
+                var part_price = $('#partprice').val();
+                var total = price * amount + part_amount * part_price;
                 var deleteRow =
                     "<button class='btn btn-danger btn-sm delete_table_row' type='button'> X </button>";
 
                 var tableitem = "<tr><td hidden>" + dataId + "</td><td>" + code + "</td><td>" + name + "</td><td>" +
-                    quantity + "</td><td>" + price + "</td><td>" + quantityP + "</td><td>" + priceP +
+                    amount + "</td><td>" + price + "</td><td>" + part_amount + "</td><td>" + part_price +
                     "</td><td>" + total + "</td><td> " + deleteRow + " </td></tr>";
                 $('#table_items').append(tableitem);
 
@@ -373,8 +372,6 @@
                 $('#max_part_price_from_another_merchants').text('');
 
                 calcTotalPrice();
-
-
             }
         });
 
@@ -390,19 +387,6 @@
             });
             $('#total_price').text(total + ' ' + 'sp');
         }
-    </script>
-
-    {{-- select discount type --}}
-    <script>
-        $('#discount_type').change(function() {
-            if ($(this).val() == "perc") {
-                $('#paid_amount_div').attr('hidden', true);
-                $('#discount_value_div').attr('hidden', false);
-            } else {
-                $('#paid_amount_div').attr('hidden', false);
-                $('#discount_value_div').attr('hidden', true);
-            }
-        });
     </script>
 
     {{-- get items count and parts count inside current invoice --}}
@@ -489,12 +473,12 @@
                             'is-invalid  was-validated form-control:invalid');
                         $('#name').removeClass(
                             'is-valid  was-validated form-control:valid');
-                        data = data.responseJSON;
-                        if (data.success) {
+                        data = data.responseJSON.data;
+                        if (data) {
+                            console.log(data);
                             var itemQuantityInCurrInvoice = getItemAmountsInInvoice(data.data.id);
                             var itemPartQuantityInCurrInvoice = getItemPartAmountsInInvoice(data
                                 .data.id);
-
                             $('#selected_quantity').val('0');
                             $('#selected_quantity').attr('max', data.amounts.amounts -
                                 itemQuantityInCurrInvoice);
@@ -505,7 +489,7 @@
                             $('#quantityparts').val(data.amounts.part_amounts -
                                 itemPartQuantityInCurrInvoice);
                             $('#price').val(data.prices.price);
-                            $('#partprice').val(data.prices.partprice);
+                            $('#partprice').val(data.prices.part_price);
                             $('#expiry_date').val(data.expiry_date);
                             $('#data_id').val(data.data.id);
                             $('#result').val(data.data.code);
@@ -517,7 +501,7 @@
                             if (data.has_greater_price) {
                                 $('#price').css('color', 'red');
                                 $('#max_price_from_another_merchants').attr('hidden', false);
-                                $('#max_price_from_another_merchants').text(data.max_price);
+                                $('#max_price_from_another_merchants').text(data.max_price.price);
                             } else {
                                 $('#price').css('color', 'black');
                                 $('#max_price_from_another_merchants').attr('hidden', true);
@@ -527,7 +511,7 @@
                                 $('#partprice').css('color', 'red');
                                 $('#max_part_price_from_another_merchants').attr('hidden', false);
                                 $('#max_part_price_from_another_merchants').text(data
-                                    .max_part_price);
+                                    .max_price.part_price);
                             } else {
                                 $('#partprice').css('color', 'black');
                                 $('#max_part_price_from_another_merchants').attr('hidden', true);
@@ -574,8 +558,8 @@
                             'is-invalid  was-validated form-control:invalid');
                         $('#result').removeClass(
                             'is-valid  was-validated form-control:valid');
-                        data = data.responseJSON;
-                        if (data.success) {
+                        data = data.responseJSON.data;
+                        if (data) {
                             var itemQuantityInCurrInvoice = getItemAmountsInInvoice(data.data.id);
                             var itemPartQuantityInCurrInvoice = getItemPartAmountsInInvoice(data.data.id);
                             $('#selected_quantity').val('0');
@@ -592,7 +576,7 @@
                             $('#quantity').val(data.amounts.amounts);
                             $('#quantityparts').val(data.amounts.part_amounts);
                             $('#price').val(data.prices.price);
-                            $('#partprice').val(data.prices.partprice);
+                            $('#partprice').val(data.prices.part_price);
                             $('#expiry_date').val(data.expiry_date);
                             $('#data_id').val(data.data.id);
                             if (data.hasMultipleExpiryDate) {
@@ -603,7 +587,7 @@
                             if (data.has_greater_price) {
                                 $('#price').css('color', 'red');
                                 $('#max_price_from_another_merchants').attr('hidden', false);
-                                $('#max_price_from_another_merchants').text(data.max_price);
+                                $('#max_price_from_another_merchants').text(data.max_price.price);
                             } else {
                                 $('#price').css('color', 'black');
                                 $('#max_price_from_another_merchants').attr('hidden', true);
@@ -612,7 +596,7 @@
                             if (data.has_greater_part_price) {
                                 $('#partprice').css('color', 'red');
                                 $('#max_part_price_from_another_merchants').attr('hidden', false);
-                                $('#max_part_price_from_another_merchants').text(data.max_part_price);
+                                $('#max_part_price_from_another_merchants').text(data.max_price.part_price);
                             } else {
                                 $('#partprice').css('color', 'black');
                                 $('#max_part_price_from_another_merchants').attr('hidden', true);

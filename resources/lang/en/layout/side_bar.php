@@ -15,6 +15,7 @@ return [
     'home_page' => 'Home Page',
     'assign_products' => 'Assign Products',
     'invoice_management' => 'Invoice Management',
-    'create_invoice' => 'Create Invoice',
+    'create_sell_invoice' => 'Create Sell Invoice',
+    'create_buy_invoice' => 'Create Buy Invoice',
     'list_invoice' => 'List Invoices',
 ];

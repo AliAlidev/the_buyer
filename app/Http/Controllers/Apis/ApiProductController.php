@@ -493,10 +493,10 @@ class ApiProductController extends Controller
         return $this->sendResponse('Proccess completed successfully', TreatementGroupResource::collection($treatementGroups));
     }
 
-    public function getProductAmounts($dataId, $merchant_id = null)
+    public function getProductAmounts($dataId, $merchant_id = null, $source = 'api')
     {
         if (!$merchant_id)
-            $merchant_id = Auth::guard('api')->user()->merchant_id;
+            $merchant_id = Auth::guard($source)->user()->merchant_id;
 
         $general_amounts = DB::table('amounts')->leftJoin('data', 'amounts.data_id', '=', 'data.id')->where('merchant_id', $merchant_id)->where('data_id', $dataId)->get();
         $num_of_parts = 0;
@@ -526,10 +526,10 @@ class ApiProductController extends Controller
         return ['amounts' => 0, 'part_amounts' => 0, 'num_of_parts' => $num_of_parts];
     }
 
-    public function getCurrentPriceForElement($dataId, $merchant_id = null)
+    public function getCurrentPriceForElement($dataId, $merchant_id = null, $source = 'api')
     {
         if (!$merchant_id)
-            $merchant_id = Auth::guard('api')->user()->merchant_id;
+            $merchant_id = Auth::guard($source)->user()->merchant_id;
         // get max price for product
         $max_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchant_id)->where('amount_type', '1')->orderBy('created_at', 'desc')->first();
         if ($max_price != null) {
@@ -543,21 +543,95 @@ class ApiProductController extends Controller
         }
     }
 
-    public function getMaxPriceForElement($dataId, $merchant_id = null)
+    public function getMaxPriceForElement($dataId, $merchant_id = null, $source = 'api')
     {
         if (!$merchant_id)
-            $merchant_id = Auth::guard('api')->user()->merchant_id;
+            $merchant_id = Auth::guard($source)->user()->merchant_id;
         // get max price for product
-        $max_price = DB::select("SELECT MAX(price) as price from (select MAX(created_at)as maxdatevalue, price from (select data_id, amounts.merchant_id, price, amounts.created_at from amounts left join users on users.id = amounts.merchant_id where data_id = $dataId and amounts.merchant_id != $merchant_id and users.merchant_type=" . Auth::guard('api')->user()->role . " group by data_id, amounts.merchant_id,price ORDER BY amounts.created_at DESC) as t1 GROUP BY data_id, merchant_id) as t2;");
+        $max_price = DB::select("SELECT MAX(price) as price from (select MAX(created_at)as maxdatevalue, price from (select data_id, amounts.merchant_id, price, amounts.created_at from amounts left join users on users.id = amounts.merchant_id where data_id = $dataId and amounts.merchant_id != $merchant_id and users.merchant_type=" . Auth::guard($source)->user()->merchant_type . " group by data_id, amounts.merchant_id,price ORDER BY amounts.created_at DESC) as t1 GROUP BY data_id, merchant_id) as t2;");
         $max_price = $max_price != null ? $max_price[0]->price : 0;
 
         // get max part price for product
-        $max_part_price = DB::select("SELECT MAX(price_part) as price_part from (select MAX(created_at)as maxdatevalue, price_part from (select data_id, amounts.merchant_id, price_part, amounts.created_at from amounts left join users on users.id = amounts.merchant_id where data_id = $dataId and amounts.merchant_id != $merchant_id and users.merchant_type=" . Auth::guard('api')->user()->role . " group by data_id, amounts.merchant_id,price_part ORDER BY amounts.created_at DESC) as t1 GROUP BY data_id, merchant_id) as t2;");
+        $max_part_price = DB::select("SELECT MAX(price_part) as price_part from (select MAX(created_at)as maxdatevalue, price_part from (select data_id, amounts.merchant_id, price_part, amounts.created_at from amounts left join users on users.id = amounts.merchant_id where data_id = $dataId and amounts.merchant_id != $merchant_id and users.merchant_type=" . Auth::guard($source)->user()->merchant_type . " group by data_id, amounts.merchant_id,price_part ORDER BY amounts.created_at DESC) as t1 GROUP BY data_id, merchant_id) as t2;");
         $max_part_price = $max_part_price != null ? $max_part_price[0]->price_part : 0;
         if ($max_part_price != null) {
             return ['price' => $max_price, 'part_price' => $max_part_price];
         } else {
             return ['price' => 0, 'part_price' => 0];
+        }
+    }
+
+    public function hasGreaterPriceFromAnotherUser($dataId, $merchantId)
+    {
+        // get max price for product
+        $max_price = DB::select("SELECT MAX(price) as price from (select MAX(created_at)as maxdatevalue, price from (select data_id, merchant_id, price, created_at from amounts where data_id = $dataId and merchant_id != $merchantId group by data_id, merchant_id,price ORDER BY created_at DESC) as t1 GROUP BY data_id, merchant_id) as t2;");
+        $max_price = $max_price != null ? $max_price[0]->price : '';
+
+        // get price for prouct for specifc user
+        $user_price = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->orderBy('created_at', 'desc')->first();
+
+        if ($max_price != null && $user_price != null) {
+            if ($user_price->price < $max_price) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function hasGreaterPartPriceFromAnotherUser($dataId, $merchantId)
+    {
+        // get max price for product
+        $max_price = DB::select("SELECT MAX(price_part) as price_part from (select MAX(created_at)as maxdatevalue, price_part from (select data_id, merchant_id, price_part, created_at from amounts where data_id = $dataId and merchant_id != $merchantId group by data_id, merchant_id,price_part ORDER BY created_at DESC) as t1 GROUP BY data_id, merchant_id) as t2;");
+        $max_price = $max_price != null ? $max_price[0]->price_part : '';
+
+        // get price for prouct for specifc user
+        $user_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->where('merchant_id', $merchantId)->first();
+
+        if ($max_price != null && $user_price != null) {
+            if ($user_price->price_part < $max_price) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function getMaxPartPriceForElement($dataId)
+    {
+        // get max price for product
+        $max_price = Amount::where('data_id', $dataId)->orderBy('created_at', 'desc')->first();
+
+        if ($max_price != null) {
+            return $max_price->price_part;
+        } else {
+            return 0;
+        }
+    }
+
+    public function getCurrentPartPriceForElement($dataId, $userId)
+    {
+        // get max price for product
+        $max_price = Amount::where('data_id', $dataId)->where('merchant_id', $userId)->orderBy('created_at', 'desc')->first();
+
+        if ($max_price != null) {
+            return $max_price->price_part;
+        } else {
+            return 0;
+        }
+    }
+
+    public function hasMultipleExpiryDate($dataId, $merchantId)
+    {
+        $has_multpleExpiryDate = Amount::where('data_id', $dataId)->where('merchant_id', $merchantId)->where('expiry_date', '!=', '')->count();
+        if ($has_multpleExpiryDate > 1)
+            return true;
+        else {
+            return false;
         }
     }
 }
