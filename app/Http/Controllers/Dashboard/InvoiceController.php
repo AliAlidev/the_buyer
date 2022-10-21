@@ -102,9 +102,8 @@ class InvoiceController extends Controller
             $partprice = app()->call('App\Http\Controllers\Apis\ApiProductController@getCurrentPartPriceForElement', ['dataId' => $data->id, 'userId' => $merchantId, 'source' => 'web']);
         }
 
-        $expiry_date = Amount::where('data_id', $data->id)->where('merchant_id', $merchantId)->where('expiry_date', '!=', '')->orderBy('expiry_date')->first();
+        $expiry_date = Amount::where('data_id', $data->id)->where('merchant_id', $merchantId)->where('expiry_date', '!=', '')->orderBy('expiry_date', 'desc')->first();
         $expiry_date = $expiry_date != null ? $expiry_date->expiry_date : '';
-
         $hasMultipleExpiryDate = app()->call('App\Http\Controllers\Apis\ApiProductController@hasMultipleExpiryDate', ['dataId' => $data->id, 'merchantId' => $merchantId, 'source' => 'web']);
 
         return $this->sendResponse(
@@ -114,7 +113,7 @@ class InvoiceController extends Controller
                 'prices' => $prices,
                 'data' => $data,
                 'hasMultipleExpiryDate' => $hasMultipleExpiryDate,
-                'expiry_date' => Carbon::parse($expiry_date)->toDateString(),
+                'expiry_date' => $expiry_date != '' ? Carbon::parse($expiry_date)->toDateString() : '',
                 'has_greater_price' => $hasGreaterThanPrice,
                 'has_greater_part_price' => $hasGreaterThanPartPrice,
                 'max_price' => $max_price,
@@ -162,7 +161,7 @@ class InvoiceController extends Controller
                 'prices' => $prices,
                 'data' => $data,
                 'hasMultipleExpiryDate' => $hasMultipleExpiryDate,
-                'expiry_date' => Carbon::parse($expiry_date)->toDateString(),
+                'expiry_date' => $expiry_date != '' ? Carbon::parse($expiry_date)->toDateString() : '',
                 'has_greater_price' => $hasGreaterThanPrice,
                 'has_greater_part_price' => $hasGreaterThanPartPrice,
                 'max_price' => $max_price,

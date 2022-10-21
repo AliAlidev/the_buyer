@@ -44,7 +44,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Create Sell Invoice</h4>
+                            <h4>{{ __('invoice/invoice.create.labels.create_sell_invoice') }}</h4>
                         </div>
                         <div class="card-body">
                             <!-- Demo purpose only -->
@@ -57,12 +57,15 @@
                                         <div class="col-md-8 mt-3">
                                             <div class="row">
                                                 <div class="col-md-2">
-                                                    <input id="start_cam" type="button" value="Start Cam" data-id="1"
-                                                        onclick="startBarcodePicker()" class="btn btn-primary">
+                                                    <input id="start_cam" type="button"
+                                                        value="{{ __('invoice/invoice.create.labels.start_cam') }}"
+                                                        data-id="1" onclick="startBarcodePicker()"
+                                                        class="btn btn-primary">
                                                 </div>
                                                 <div class="col-md-6"></div>
                                                 <div class="col-md-4">
-                                                    <label for="customer_name">Customer Name</label>
+                                                    <label
+                                                        for="customer_name">{{ __('invoice/invoice.create.labels.customer_name') }}</label>
                                                     <input type="text" id="customer_name" name="customer_name"
                                                         class="form-control">
                                                 </div>
@@ -83,24 +86,26 @@
                                             </div>
                                             <input type="text" name="" value="0" id="data_id" hidden>
                                             <div class="row">
-                                                <label for="result">Code</label>
+                                                <label for="result">{{ __('invoice/invoice.create.labels.code') }}</label>
                                                 <div class="col-md-10">
                                                     <input class="form-control" id="result" type="text"
-                                                        value="{{ old('code') }}" placeholder="SCAN CODE">
+                                                        value="{{ old('code') }}" placeholder="{{ __('invoice/invoice.create.labels.scan_code') }}">
                                                 </div>
                                                 <div class="col-md-2">
                                                     <input id="getdata" onclick="getItemDetailsByCode()" type="button"
-                                                        class="btn btn-primary" value="Check">
+                                                        class="btn btn-primary" value="{{ __('invoice/invoice.create.labels.check') }}">
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12 mt-3">
-                                                    <label for="name"> Element Name</label>
+                                                    <label for="name">
+                                                        {{ __('invoice/invoice.create.labels.element_name') }}</label>
                                                     <input id="name" value="{{ old('name') }}" type="text"
-                                                        class="form-control" placeholder="ENTER ELEMENT NAME">
+                                                        class="form-control" placeholder="{{ __('invoice/invoice.create.labels.enter_element_name') }}">
                                                 </div>
                                             </div>
-                                            <label for="square-switch1" class="mt-3">Current Amounts</label>
+                                            <label for="square-switch1"
+                                                class="mt-3">{{ __('invoice/invoice.create.labels.current_amounts') }}</label>
                                             <div class="square-switch">
                                                 <input type="checkbox" id="square-switch1" switch="none">
                                                 <label class="form-label" for="square-switch1" data-on-label="On"
@@ -111,13 +116,15 @@
                                                 {{-- fixed values --}}
                                                 <div class="row">
                                                     <div class="col-md-2">
-                                                        <label class="mt-3" for="">Quantity</label>
+                                                        <label class="mt-3"
+                                                            for="">{{ __('invoice/invoice.create.labels.quantity') }}</label>
                                                         <input id="quantity" class="form-control" type="number"
                                                             value="0" placeholder="" readonly
                                                             style="text-align: center">
                                                     </div>
                                                     <div class="col-md-2">
-                                                        <label class="mt-3" for="">Price</label>
+                                                        <label class="mt-3"
+                                                            for="">{{ __('invoice/invoice.create.labels.price') }}</label>
                                                         <input id="price" class="form-control" type="number"
                                                             value="0" placeholder="" readonly
                                                             style="text-align: center">
@@ -126,13 +133,15 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2">
-                                                        <label class="mt-3" for="">Quantity P</label>
+                                                        <label class="mt-3"
+                                                            for="">{{ __('invoice/invoice.create.labels.quantity_p') }}</label>
                                                         <input id="quantityparts" class="form-control" type="number"
                                                             value="0" placeholder="" readonly
                                                             style="text-align: center">
                                                     </div>
                                                     <div class="col-md-2">
-                                                        <label class="mt-3" for="">Price P</label>
+                                                        <label class="mt-3"
+                                                            for="">{{ __('invoice/invoice.create.labels.price_p') }}</label>
                                                         <input id="partprice" class="form-control" type="number"
                                                             value="0" placeholder="" readonly
                                                             style="text-align: center">
@@ -142,7 +151,8 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <label class="mt-3" for="">Expiry Date</label>
+                                                        <label class="mt-3"
+                                                            for="">{{ __('invoice/invoice.create.labels.expiry_date') }}</label>
                                                         <input id="expiry_date" class="form-control" type="date"
                                                             value="{{ old('expiry_date') }}" readonly
                                                             style="text-align: center">
@@ -153,7 +163,8 @@
                                             {{-- selected values --}}
                                             <div class="row mt-4">
                                                 <div class="col-md-3">
-                                                    <label class="form-label">Amounts</label>
+                                                    <label
+                                                        class="form-label">{{ __('invoice/invoice.create.labels.amounts') }}</label>
                                                     <div
                                                         class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
                                                         <input id="selected_quantity" data-toggle="touchspin"
@@ -162,7 +173,8 @@
                                                 </div>
 
                                                 <div class="col-md-3">
-                                                    <label class="form-label">Quantity Parts</label>
+                                                    <label
+                                                        class="form-label">{{ __('invoice/invoice.create.labels.quantity_parts') }}</label>
                                                     <div
                                                         class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
                                                         <input id="selected_quantityparts" data-toggle="touchspin"
@@ -173,8 +185,7 @@
                                             <div class="row mt-3">
                                                 <div class="col-md-4">
                                                     <button id="add_table_item" class="btn btn-primary"
-                                                        type="button">Add
-                                                        Item</button>
+                                                        type="button">{{ __('invoice/invoice.create.labels.add_item') }}</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -182,20 +193,21 @@
                                         <div class="row mt-5">
                                             <div class="col-md-2"></div>
                                             <div class="col-md-8">
-                                                <h4>Items</h4>
+                                                <h4>{{ __('invoice/invoice.create.labels.items') }}</h4>
                                                 <div class="panel-body table-responsive">
                                                     <table id="table_data" class="table table-striped" cellspacing="0">
                                                         <thead>
                                                             <div class="tr">
                                                                 <th hidden>id</th>
-                                                                <th>Code</th>
-                                                                <th>Name</th>
-                                                                <th>Quantity</th>
-                                                                <th>Price</th>
-                                                                <th>QuantityP</th>
-                                                                <th>PriceP</th>
-                                                                <th>Total</th>
-                                                                <th>Action</th>
+                                                                <th>{{ __('invoice/invoice.create.labels.code') }}</th>
+                                                                <th>{{ __('invoice/invoice.create.labels.name') }}</th>
+                                                                <th>{{ __('invoice/invoice.create.labels.quantity') }}</th>
+                                                                <th>{{ __('invoice/invoice.create.labels.price') }}</th>
+                                                                <th>{{ __('invoice/invoice.create.labels.quantity_p') }}
+                                                                </th>
+                                                                <th>{{ __('invoice/invoice.create.labels.price_p') }}</th>
+                                                                <th>{{ __('invoice/invoice.create.labels.total') }}</th>
+                                                                <th>{{ __('invoice/invoice.create.labels.action') }}</th>
                                                             </div>
                                                         </thead>
                                                         <tbody id="table_items">
@@ -204,7 +216,7 @@
                                                 </div>
                                                 <div class="row mt-3">
                                                     <div class="col-md-3 mt-4" style="font-weight: 800; font-size: 200%">
-                                                        Total:
+                                                        {{ __('invoice/invoice.create.labels.total') }}:
                                                     </div>
 
                                                     <div class="col-md-3 mt-4"
@@ -214,8 +226,8 @@
                                                     </div>
                                                 </div>
 
-                                                <label for="invoice_options_checkbox" class="mt-5">Invoice
-                                                    Options</label>
+                                                <label for="invoice_options_checkbox"
+                                                    class="mt-5">{{ __('invoice/invoice.create.labels.invoice_options') }}</label>
                                                 <div class="square-switch">
                                                     <input type="checkbox" id="invoice_options_checkbox" switch="none">
                                                     <label class="form-label" for="invoice_options_checkbox"
@@ -225,29 +237,37 @@
                                                     <div class="row">
                                                         <div class="col-md-3">
                                                             <label for="" class="mt-3"
-                                                                style="font-size: 110%; font-weight: 600">Payment
-                                                                Type</label>
+                                                                style="font-size: 110%; font-weight: 600">{{ __('invoice/invoice.create.labels.payment_type') }}</label>
                                                             <select name="payment_type" id="payment_type"
                                                                 class="form-control">
-                                                                <option value="1">Cash</option>
-                                                                <option value="2">Debt</option>
-                                                                <option value="3">Free</option>
+                                                                <option value="1">
+                                                                    {{ __('invoice/invoice.create.labels.payment_type_cash') }}
+                                                                </option>
+                                                                <option value="2">
+                                                                    {{ __('invoice/invoice.create.labels.payment_type_dept') }}
+                                                                </option>
+                                                                <option value="3">
+                                                                    {{ __('invoice/invoice.create.labels.payment_type_free') }}
+                                                                </option>
                                                             </select>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <label for="" class="mt-3"
-                                                                style="font-size: 110%; font-weight: 600">Discount
-                                                                Type</label>
+                                                                style="font-size: 110%; font-weight: 600">{{ __('invoice/invoice.create.labels.discount_type') }}</label>
                                                             <select name="discount_type" id="discount_type"
                                                                 class="form-control">
                                                                 <option value="0"></option>
-                                                                <option value="2">Perc</option>
-                                                                <option value="1">Val</option>
+                                                                <option value="2">
+                                                                    {{ __('invoice/invoice.create.labels.discount_type_perc') }}
+                                                                </option>
+                                                                <option value="1">
+                                                                    {{ __('invoice/invoice.create.labels.discount_type_val') }}
+                                                                </option>
                                                             </select>
                                                         </div>
                                                         <div id="paid_amount_div" class="col-md-3">
                                                             <label class="mt-3" for=""
-                                                                style="font-size: 110%; font-weight: 600">Value</label>
+                                                                style="font-size: 110%; font-weight: 600">{{ __('invoice/invoice.create.labels.value') }}</label>
                                                             <input id="discount" class="form-control" type="number"
                                                                 value="0" name="discount" style="text-align: center"
                                                                 min="0">
@@ -256,7 +276,8 @@
 
                                                     <div class="row mt-5">
                                                         <div class="col-md-12">
-                                                            <label for="notes">Notes</label>
+                                                            <label
+                                                                for="notes">{{ __('invoice/invoice.create.labels.notes') }}</label>
                                                             <textarea id="notes" class="form-control" name="notes" id="" cols="30" rows="2"></textarea>
                                                         </div>
                                                     </div>
@@ -265,7 +286,8 @@
 
                                             <div class="col-md-12 text-center pb-5">
                                                 <br />
-                                                <button class="btn btn-primary btn-lg" type="submit">Sell</button>
+                                                <button class="btn btn-primary btn-lg"
+                                                    type="submit">{{ __('invoice/invoice.create.labels.sell') }}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -385,7 +407,7 @@
                 var priceP = self.find("td:eq(6)").text().trim();
                 total += quantity * price + quantityP * priceP;
             });
-            $('#total_price').text(total + ' ' + 'sp');
+            $('#total_price').text(total + ' ' + '{{ __("invoice/invoice.create.labels.currency") }}');
         }
     </script>
 

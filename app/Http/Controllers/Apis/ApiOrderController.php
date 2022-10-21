@@ -238,7 +238,7 @@ class ApiOrderController extends Controller
             $items = $request->data;
         }
         if (!$items) {
-            return $this->sendErrorResponse("Validation error", ["You should add order items"]);
+            return $this->sendErrorResponse("Validation error", [__('invoice/invoice.create.labels.you_should_add_order_items')]);
         }
 
         $user = Auth::guard($source)->user();
@@ -268,20 +268,28 @@ class ApiOrderController extends Controller
                 'amount' => 'required_without:part_amount|integer',
                 'part_amount' => 'required_without:amount|integer',
                 'price' => 'required|numeric|gt:0'
+            ], [
+                'data_id.required' => __('invoice/invoice.create.labels.you_should_select_data'),
+                'data_id.exists' => __('invoice/invoice.create.labels.data_not_found'),
+                'amount.required_without' => __('invoice/invoice.create.labels.you_should_select_amount'),
+                'part_amount.required_without' => __('invoice/invoice.create.labels.you_should_select_part_amount'),
+                'price.required' => __('invoice/invoice.create.labels.you_should_select_price'),
+                'price.numeric' => __('invoice/invoice.create.labels.you_should_select_numeric_price'),
+                'price.gt' => __('invoice/invoice.create.labels.you_should_select_gt_price'),
             ]);
             if ($validator->fails()) {
                 return $this->sendErrorResponse("Validation error", $validator->getMessageBag());
             }
 
             if ($item['data_id'] && $this->missingMedPartCount('id', $item['data_id'], $item['part_amount'])) {
-                return $this->sendErrorResponse("Validation error", "You should add element parts count for item " . $key + 1);
+                return $this->sendErrorResponse("Validation error", __('invoice/invoice.create.labels.you_should_add_element_parts_count_for_item', ['item' => $key + 1]));
             }
 
             // check amounts
             $currVal = app()->call('App\Http\Controllers\Apis\ApiProductController@getProductAmounts', ['dataId' => $item['data_id'], 'source' => 'web']);
 
             if (!$this->enoughAmounts($currVal['amounts'], $currVal['part_amounts'], $currVal['num_of_parts'], $item['amount'], $item['part_amount'])) {
-                return $this->sendErrorResponse("Validation error", "Amounts not enough for item " . $key + 1);
+                return $this->sendErrorResponse("Validation error",  __('invoice/invoice.create.labels.amounts_not_enough_for_item', ['item' => $key + 1]));
             }
 
             DB::table('amounts')->insert([
@@ -330,7 +338,7 @@ class ApiOrderController extends Controller
         dB::table('invoices')->where('id', $invoiceId)->update(['total_amount' => $total_invoice, 'paid_amount' => $paid_amount]);
         DB::commit();
 
-        return $this->sendResponse("Invoice created successfully", [
+        return $this->sendResponse(__('invoice/invoice.create.labels.invoice_created_successfully'), [
             'order_number' => $order_number,
             'pdf_link' => $this->saveSellInvoice($order_number, $source), 'view_link' => route('view.invoice', $order_number)
         ]);

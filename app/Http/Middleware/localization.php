@@ -19,11 +19,14 @@ class localization
      */
     public function handle(Request $request, Closure $next)
     {
+        // dd(Session::get('locale'));
         if (Session::has('locale')) {
             App::setLocale(Session::get('locale'));
         } else {
-            if (Auth::check())
-                App::setLocale('EN');
+            if (Auth::check()){
+                App::setLocale('AR');
+                Session::put('locale','AR');
+            }
         }
         return $next($request);
     }
