@@ -122,14 +122,22 @@ class ApiProductController extends Controller
         }
     }
 
-    public function store(Request $request, $source='api')
+    public function store(Request $request, $source = 'api')
     {
         try {
             if ($request->code != null) {
-                $validator = Validator::make($request->all(), [
-                    'code' => 'unique:data,code',
-                    'name' => 'required|unique:data,name'
-                ]);
+                $validator = Validator::make(
+                    $request->all(),
+                    [
+                        'code' => 'unique:data,code',
+                        'name' => 'required|unique:data,name'
+                    ],
+                    [
+                        'code.unique' => __('product/create_product.you_should_select_unique_product_code'),
+                        'name.required' => __('product/create_product.you_should_select_product_name'),
+                        'name.unique' => __('product/create_product.you_should_select_unique_product_name')
+                    ]
+                );
             } else {
                 $validator = Validator::make($request->all(), [
                     'name' => 'required|unique:data,name'
@@ -165,7 +173,7 @@ class ApiProductController extends Controller
             // }
 
             if (isset($request->hasparts) && $request->numofparts == 0) {
-                return $this->sendErrorResponse('Validation error', ['amount' => 'You should enter the number of parts for this item']);
+                return $this->sendErrorResponse('Validation errors', ['amount' => [__('product/create_product.you_should_enter_the_number_of_parts_for_this_item')]]);
             }
 
             $user = Auth::guard($source)->user();
@@ -309,7 +317,7 @@ class ApiProductController extends Controller
                 DB::commit();
             }
 
-            return response()->json(['success' => true, 'message' => 'Product addedd successfully']);
+            return response()->json(['success' => true, 'message' => [__('product/create_product.product_created_successfully')]]);
         } catch (Exception $th) {
             return $this->errors("HomeController@store", $th->getMessage());
         }

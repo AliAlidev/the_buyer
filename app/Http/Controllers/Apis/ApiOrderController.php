@@ -167,7 +167,7 @@ class ApiOrderController extends Controller
         DB::table('invoices')->where('id', $invoiceId)->update(['paid_amount' => $paid_amount, 'total_amount' => $total_invoice]);
         DB::commit();
 
-        return $this->sendResponse("Invoice created successfully", [
+        return $this->sendResponse(__('invoice/invoice.create.labels.invoice_created_successfully'), [
             'order_number' => $order_number,
             'pdf_link' => $this->saveBuyInvoice($order_number, $source), 'view_link' => route('view.invoice', $order_number)
         ]);

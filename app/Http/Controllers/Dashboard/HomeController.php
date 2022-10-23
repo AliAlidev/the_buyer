@@ -37,68 +37,13 @@ class HomeController extends Controller
     public function create(Request $request)
     {
         if ($request->ajax()) {
-            if ($request->code != null) {
-                $request->validate([
-                    'code' => 'unique:data,code',
-                    'name' => 'required|unique:data,name'
-                ]);
-            } else {
-                $request->validate([
-                    'name' => 'required|unique:data,name'
-                ]);
-            }
-
-            try {
-                $has_parts = isset($request->hasparts) ? 1 : 0;
-                $minimum_amount = $request->minimum_amount == null ? 0 : $request->minimum_amount;
-                $maximum_amount = $request->maximum_amount == null ? 0 : $request->maximum_amount;
-
-                DB::beginTransaction();
-
-                $dataId = DB::table('data')->insertGetId([
-                    'code' => $request->code,
-                    'name' => $request->name,
-                    'shape_id' => $request->shape_id == null ? 0 : $request->shape_id,
-                    'comp_id' => $request->comp_id == null ? 0 : $request->comp_id,
-                    'has_parts' => $has_parts,
-                    'num_of_parts' => $request->numofparts,
-                    'description' => $request->description,
-                    'minimum_amount' => $minimum_amount,
-                    'maximum_amount' => $maximum_amount,
-                    'dose' => $request->dose,
-                    'tab_count' => $request->tab_count,
-                    'treatements' => $request->treatements,
-                    'special_alarms' => $request->special_alarms,
-                    'interference' => $request->interference,
-                    'side_effects' => $request->side_effects,
-                    'treatement_group' => $request->treatement_group,
-                    'merchant_type' => $request->merchant_type,
-                    'created_by' => Auth::guard('web')->user()->id,
-                    'created_at' => now()->toDateTimeString(),
-                    'updated_at' => now()->toDateTimeString(),
-                    'status' => '1' // active
-                ]);
-
-                $materials = json_decode($request->eff_materials, true);
-                if ($materials) {
-                    foreach ($materials as $key => $material) {
-                        DB::table('data_effmaterials')->insert([
-                            'data_id' => $dataId,
-                            'effict_matterials_id' => $material->mat,
-                            'dose' => $material->dose,
-                            'unit' => $material->unit
-                        ]);
-                    }
-                }
-
-                DB::commit();
-
+            $result = app()->call('App\Http\Controllers\Apis\ApiProductController@store', ['source' => 'web', 'request' => $request]);
+            $result = $result->content();
+            $data = json_decode($result);
+            if ($data->success) {
                 session()->put('success', __('product/create_product.product_created_successfully'));
-                return $this->sendResponse(__('product/create_product.product_created_successfully'));
-            } catch (Exception $th) {
-                dd($th->getMessage());
-                return $this->errors("HomeController@createitem", $th->getMessage());
             }
+            return $data;
         }
         $shapes_market = Shape::where('merchant_type', 2)->get();
         $shapes_pharmacy = Shape::where('merchant_type', 1)->get();
@@ -136,7 +81,8 @@ class HomeController extends Controller
 
     public function getItemsName(Request $request)
     {
-        $data = Data::where('name', 'like', $request->get('searchText') . '%')->skip(0)->take(25)->get();
+        $merchant_type = Auth::user()->merchant_type;
+        $data = Data::where('merchant_type', $merchant_type)->where('name', 'like', $request->get('searchText') . '%')->skip(0)->take(25)->get();
         return $data;
     }
 
@@ -153,11 +99,11 @@ class HomeController extends Controller
     public function listProducts(Request $request)
     {
         if ($request->ajax()) {
-            if(Auth::user()->isAdmin()){
+            if (Auth::user()->isAdmin()) {
                 $data = Data::with(['shapes', 'companies']);
-            }else{
+            } else {
                 $assigned_data = Auth::user()->assigned_data->pluck('id');
-                $data = Data::with(['shapes', 'companies'])->whereIn('data.id',$assigned_data);
+                $data = Data::with(['shapes', 'companies'])->whereIn('data.id', $assigned_data);
             }
 
             if ($request->comp_id) {
@@ -190,7 +136,7 @@ class HomeController extends Controller
                         return '';
                 })
                 ->addColumn('action', function ($row) {
-                    if(Auth::user()->isAdmin()){
+                    if (Auth::user()->isAdmin()) {
                         if ($this->getCurrentLanguage() == "en") {
                             $btn = '<a href=' . route('edit-product', $row->id) . ' class="edit btn btn-primary btn-sm mt-2 ml-3 mr-3"><i class="mdi mdi-square-edit-outline"></i></a>';
                             $btn .= '<a id=' . $row->id . ' class="delete btn btn-danger btn-sm mt-2" style="margin-left:4%"><i class="mdi mdi-delete"></i></a>';
@@ -200,7 +146,7 @@ class HomeController extends Controller
                             $btn .= '<a id=' . $row->id . ' class="delete btn btn-danger waves-effect waves-light btn-sm mt-2" style="margin-right:4%"><i class="mdi mdi-delete"></i></a>';
                             $btn .= '<a href=' . route('show-product', $row->id) . ' class="btn btn-info btn-sm mt-2" style="margin-right:4%"><i class="far fa-eye"></i></a>';
                         }
-                    }else{
+                    } else {
                         if ($this->getCurrentLanguage() == "en") {
                             $btn = '<a href=' . route('show-product', $row->id) . ' class="btn btn-info btn-sm mt-2" style="margin-left:4%"><i class="far fa-eye"></i></a>';
                         } else if ($this->getCurrentLanguage() == "ar") {

@@ -146,6 +146,7 @@
             }
         });
     </script>
+    
     <script>
         function getCurrentLanguage() {
             var sessionLang = "{{ strtolower(session()->get('locale')) }}";

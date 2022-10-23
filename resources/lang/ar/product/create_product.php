@@ -31,5 +31,9 @@ return [
     'effect_materials_table_dose' => 'عيار المادة',
     'effect_materials_table_unit' => 'الواحدة',
     'effect_materials_table_action' => 'خيارات',
-    'product_created_successfully' => 'تم إضافة المنتج بنجاح'
+    'product_created_successfully' => 'تم إضافة المنتج بنجاح',
+    'you_should_select_unique_product_code' => 'كود المادة مستخدم مسبقاً',
+    'you_should_select_unique_product_name' => 'اسم المادة مستخدم مسبقاً',
+    'you_should_select_product_name' => 'يجب ادخال اسم المادة',
+    'you_should_enter_the_number_of_parts_for_this_item' => 'يجب ادخال عدد الأجزاء لهذه المادة'
 ];

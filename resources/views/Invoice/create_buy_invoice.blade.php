@@ -167,7 +167,8 @@
                                                 <label class="mt-3"
                                                     for="">{{ __('invoice/invoice.create.labels.expiry_value') }}</label>
                                                 <input id="expiry_date" class="form-control" type="date">
-                                                <input id="expiry_value" class="form-control" type="number" value="0" hidden>
+                                                <input id="expiry_value" class="form-control" type="number"
+                                                    value="0" hidden>
                                             </div>
                                         </div>
 
@@ -326,10 +327,10 @@
                 contentType: false,
                 url: $(this).attr('action'),
                 type: $(this).attr('method'),
+                dataType:"json",
                 data: formData,
-                complete: function(data) {
-                    data = data.responseJSON;
-                    showMessage(data, 'main_form');
+                success: function(data) {
+                    showInvoiceMessage(data, 'main_form');
                     if (data.success) {
                         $("#table_data tbody").empty();
                         $("#total_price").text('0');
@@ -339,6 +340,10 @@
                             clearValidation($(this));
                         });
                     }
+                },
+                error: function(reject, status) {
+                    reject = reject.responseJSON;
+                    showValidationMessage(reject, $(this).attr('id'));
                 }
             });
         });
@@ -366,7 +371,7 @@
             }
 
             if (name == '') {
-                showShortMessage('danger', ['{{ __("invoice/invoice.create.labels.you_should_select_product") }}'],
+                showShortMessage('danger', ['{{ __('invoice/invoice.create.labels.you_should_select_product') }}'],
                     'table_data');
                 return false;
             }
@@ -380,20 +385,20 @@
 
             if (amount == 0 && part_amount == 0) {
                 showShortMessage('danger', [
-                    '{{ __("invoice/invoice.create.labels.you_should_select_amount_or_part_amount") }}'
+                    '{{ __('invoice/invoice.create.labels.you_should_select_amount_or_part_amount') }}'
                 ], 'table_data');
                 return false;
             }
 
             if (price == 0) {
-                showShortMessage('danger', ['{{ __("invoice/invoice.create.labels.you_should_select_price") }}'],
+                showShortMessage('danger', ['{{ __('invoice/invoice.create.labels.you_should_select_price') }}'],
                     'table_data');
                 return false;
             }
 
             if (real_price == 0) {
                 showShortMessage('danger', [
-                    '{{ __("invoice/invoice.create.labels.you_should_select_real_price") }}'
+                    '{{ __('invoice/invoice.create.labels.you_should_select_real_price') }}'
                 ], 'table_data');
                 return false;
             }

@@ -31,5 +31,9 @@ return [
     'effect_materials_table_dose' => 'Dose',
     'effect_materials_table_unit' => 'Unit',
     'effect_materials_table_action' => 'Action',
-    'product_created_successfully' => 'Product created successfully'
+    'product_created_successfully' => 'Product created successfully',
+    'you_should_select_unique_product_code' => 'Code already used',
+    'you_should_select_unique_product_name' => 'Name already used',
+    'you_should_select_product_name' => 'You should select product name',
+    'you_should_enter_the_number_of_parts_for_this_item' => 'You should enter the number of parts for this item'
 ];

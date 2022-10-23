@@ -303,7 +303,6 @@
 
 @push('scripts')
     <script type="text/javascript" src="instascan.min.js"></script>
-    {{-- <script src="https://unpkg.com/html5-qrcode"></script> --}}
     <script src="{{ asset('assets/js/custome_validation.js') }}"></script>
 
     {{-- sell button --}}
@@ -332,9 +331,9 @@
                 url: $(this).attr('action'),
                 type: $(this).attr('method'),
                 data: formData,
-                complete: function(data) {
-                    data = data.responseJSON;
-                    showMessage(data, 'main_form');
+                dataType:"json",
+                success: function(data) {
+                    showInvoiceMessage(data, 'main_form');
                     if (data.success) {
                         $("#table_data tbody").empty();
                         $("#total_price").text('0');
@@ -344,13 +343,16 @@
                             clearValidation($(this));
                         });
                     }
+                },
+                error: function(reject, status) {
+                    reject = reject.responseJSON;
+                    showValidationMessage(reject, $(this).attr('id'));
                 }
             });
         });
     </script>
 
     {{-- add item to invoice table --}}
-    <script src="{{ asset('assets/js/custome_validation.js') }}"></script>
     <script>
         $('#add_table_item').click(function(e) {
             e.preventDefault();

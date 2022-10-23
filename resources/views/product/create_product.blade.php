@@ -74,21 +74,24 @@
                                 <div id="alertsuccess" class="alert alert-success" hidden>
                                 </div>
                                 {{-- merchant type --}}
-                                <div class="row d-flex justify-content-center mt-4">
-                                    <div class="col-md-2">
-                                        <label for="type">{{ __('product/create_product.merchant_type') }}</label>
-                                        <select name="type" id="type" class="form-select">
-                                            <option value="1">
-                                                {{ __('product/create_product.merchant_type_pharmacy') }}
-                                            </option>
-                                            <option value="2">
-                                                {{ __('product/create_product.merchant_type_market') }}
-                                            </option>
-                                        </select>
+                                @if (Auth::user()->isAdmin())
+                                    <div class="row d-flex justify-content-center mt-4">
+                                        <div class="col-md-2">
+                                            <label for="type">{{ __('product/create_product.merchant_type') }}</label>
+                                            <select name="type" id="type" class="form-select">
+                                                <option value="1">
+                                                    {{ __('product/create_product.merchant_type_pharmacy') }}
+                                                </option>
+                                                <option value="2">
+                                                    {{ __('product/create_product.merchant_type_market') }}
+                                                </option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
+
                                 <div id="market_section" hidden>
-                                    <form class="form" method="POST" style="margin: 5%">
+                                    <form class="form" id="form1" method="POST" style="margin: 5%">
                                         @csrf
                                         <div class="row mt-5 pl-5 pr-5 d-flex justify-content-center">
                                             {{-- code --}}
@@ -111,8 +114,7 @@
                                                 <div class="col-md-10">
                                                     <input name="name" value="{{ old('name') }}" type="text"
                                                         class="form-control name"
-                                                        placeholder="{{ __('product/create_product.product_name') }}"
-                                                        required>
+                                                        placeholder="{{ __('product/create_product.product_name') }}">
                                                 </div>
                                                 <div class="col-md-2">
                                                     <input type="button" class="btn btn-primary getdatabyname"
@@ -199,7 +201,7 @@
                                     </form>
                                 </div>
                                 <div id="pharmacy_section" hidden>
-                                    <form class="form" method="POST" style="margin: 5%">
+                                    <form class="form" id="form2" method="POST" style="margin: 5%">
                                         @csrf
                                         <div class="row mt-5 pl-5 pr-5 d-flex justify-content-center">
                                             {{-- code --}}
@@ -222,8 +224,7 @@
                                                 <div class="col-md-10">
                                                     <input name="name" value="{{ old('name') }}" type="text"
                                                         class="form-control name"
-                                                        placeholder="{{ __('product/create_product.product_name') }}"
-                                                        required>
+                                                        placeholder="{{ __('product/create_product.product_name') }}">
                                                 </div>
                                                 <div class="col-md-2">
                                                     <input type="button" class="btn btn-primary getdatabyname"
@@ -474,7 +475,15 @@
         });
 
         $(document).ready(function() {
-            merchantType(1);
+            if ("{{ Auth::user()->isAdmin() }}" == true) {
+                merchantType(1);
+            } else {
+                var merchant_type = "{{ Auth::user()->merchant_type }}";
+                if (merchant_type == 1)
+                    merchantType(1);
+                else if (merchant_type == 2)
+                    merchantType(2);
+            }
         });
 
         function merchantType(merchant) {
@@ -642,71 +651,86 @@
         })
     </script>
 
+    <script src="{{ asset('assets/js/custome_validation.js') }}"></script>
     <script>
         $('.form').submit(function(e) {
             e.preventDefault();
-            var currForm = $(this);
-            var formData = new FormData($(this)['0']);
-            formData.append("_token", "{{ csrf_token() }}");
-            formData.append('merchant_type', $('#type').val());
+            var element_id = $(this).attr('id');
 
-            var eff_materials = [];
-            $('#effict_materials_table tr:not(:first)').each(function() {
-                if ($(this).find("td").eq(2).html() != null) {
-                    var tt = {
-                        "mat_name": $(this).find("td").eq(1).html(),
-                        "dose": $(this).find("td").eq(2).html()
-                    };
-                    eff_materials.push(tt);
-                }
+            var Errors = [];
+            var hasErros = false;
+            var tmp;
+
+            tmp = validationError($('#' + element_id + ' input[name="name"]'), [{
+                'type': 'required',
+                'message': "{{ __('product/create_product.you_should_select_product_name') }}"
+            }]);
+            Errors.push(tmp);
+
+            Errors.forEach(item => {
+                if (item == true)
+                    hasErros = true;
             });
 
-            formData.append('eff_materials_var', JSON.stringify(eff_materials));
+            if (!hasErros) {
+                var currForm = $(this);
+                var formData = new FormData($(this)['0']);
+                formData.append("_token", "{{ csrf_token() }}");
+                formData.append('merchant_type', $('#type').val());
 
-            $.ajax({
-                url: "{{ route('product-create') }}",
-                type: "post",
-                cache: false,
-                dataType: "json",
-                processData: false,
-                contentType: false,
-                data: formData,
-                success: function(value) {
-                    console.log(currForm);
-                    if (value.success) {
-                        $('#alertdanger').attr('hidden', true);
-                        $('#alertsuccess').attr('hidden', false);
-                        $('#alertsuccess').empty();
-                        $('#alertsuccess').append(value.message);
-                        $(currForm)[0].reset();
-                        $('#effict_materials_table tr').remove();
-                        $('.result').removeClass(
-                            'is-valid  was-validated form-control:valid');
-                        $('.result').removeClass(
-                            'is-invalid  was-validated form-control:invalid');
-                        $('.name').removeClass(
-                            'is-valid  was-validated form-control:valid');
-                        $('.name').removeClass(
-                            'is-invalid  was-validated form-control:invalid');
-
-                        $('.numofpartsdiv').attr('hidden', 'hidden');
-
-                        sessionStorage.success = true;
-                        window.location.href = "{{ route('product-list') }}";
+                var eff_materials = [];
+                $('#effict_materials_table tr:not(:first)').each(function() {
+                    if ($(this).find("td").eq(2).html() != null) {
+                        var tt = {
+                            "mat_name": $(this).find("td").eq(1).html(),
+                            "dose": $(this).find("td").eq(2).html()
+                        };
+                        eff_materials.push(tt);
                     }
-                },
-                'error': function(xhr, status, error) {
-                    $('#alertsuccess').attr('hidden', true);
-                    $('#alertdanger').attr('hidden', false);
-                    $('#alertdanger').empty();
-                    $('#alertdanger').append("<ul>");
-                    $.each(xhr.responseJSON.errors, function(index, value) {
-                        $('#alertdanger').append("<li>" + value + "</li>");
-                    });
-                    $('#alertdanger').append("</ul>");
-                }
-            });
+                });
 
+                formData.append('eff_materials_var', JSON.stringify(eff_materials));
+
+                $.ajax({
+                    url: "{{ route('product-create') }}",
+                    type: "post",
+                    cache: false,
+                    dataType: "json",
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function(value) {
+                        showMessage(value, element_id);
+                        if (value.success) {
+                            $(currForm)[0].reset();
+                            $('#effict_materials_table tr').remove();
+                            $('.result').removeClass(
+                                'is-valid  was-validated form-control:valid');
+                            $('.result').removeClass(
+                                'is-invalid  was-validated form-control:invalid');
+                            $('.name').removeClass(
+                                'is-valid  was-validated form-control:valid');
+                            $('.name').removeClass(
+                                'is-invalid  was-validated form-control:invalid');
+
+                            $('.numofpartsdiv').attr('hidden', 'hidden');
+
+                            sessionStorage.success = true;
+                            window.location.href = "{{ route('product-list') }}";
+                        }
+                    },
+                    error: function(reject, status) {
+                        reject = reject.responseJSON;
+                        showValidationMessage(reject, $(this).attr('id'));
+                    }
+                });
+
+            }
+            
+        });
+        
+        $('input').on('keyup', function() {
+            clearValidation($(this));
         });
     </script>
 @endpush
