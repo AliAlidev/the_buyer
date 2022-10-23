@@ -65,11 +65,24 @@ return [
             'you_should_select_real_price' => 'You should select price',
             'you_should_select_numeric_real_price' => 'You should select valid numeric price',
             'you_should_select_gt_real_price' => 'Price should be greater than 0',
+            'part_price' => 'Part price',
+            'invoice_details' => 'Invoice details'
         ]
     ],
     'list' => [
         'labels' => [
-            ''
+            'list_invoices' => 'List invoices',
+            'table_header_id' => 'id',
+            'merchant_name' => 'Merchant name',
+            'user_name' => 'User name',
+            'total_amount' => 'Total amount',
+            'discount' => 'Discount',
+            'paid_amount' => 'Paid amount',
+            'invoice_type' => 'Invoice type',
+            'notes' => 'Notes',
+            'payment_type' => 'Payment type',
+            'store_name' => 'Store name',
+            'customer_name' => 'Customer name'
         ]
     ]
 ];

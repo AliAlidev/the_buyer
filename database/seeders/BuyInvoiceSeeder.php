@@ -75,7 +75,7 @@ class BuyInvoiceSeeder extends Seeder
             'discount' => $discount,
             'invoice_type' => "1",
             'payment_type' => "1",
-            "drug_store_id" => $this->getDrugStoreId($drug_store),
+            "store_id" => $this->getDrugStoreId($drug_store),
             'notes' => '',
             'order_number' => $this->generateOrderNumber(),
             'created_at' =>  $date,

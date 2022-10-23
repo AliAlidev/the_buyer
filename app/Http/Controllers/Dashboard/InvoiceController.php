@@ -19,9 +19,108 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Nette\Utils\Random;
+use DataTables;
 
 class InvoiceController extends Controller
 {
+    public function list_invoices(Request $request)
+    {
+        if ($request->ajax()) {
+            if (Auth::user()->isAdmin()) {
+                $invoices = Invoice::with(['merchant', 'customer', 'user'])->orderBy('created_at', 'desc');
+            } else {
+                $invoices = Invoice::where('merchant_id', Auth::user()->merchant_id)->with(['merchant', 'customer', 'user'])->orderBy('created_at', 'desc');
+            }
+            // if ($request->merchant_type) {
+            //     $users = $users->where('merchant_type', $request->merchant_type);
+            // }
+            // if ($request->province) {
+            //     $users = $users->where('province', $request->province);
+            // }
+            // if ($request->city) {
+            //     $users = $users->where('city', $request->city);
+            // }
+            // if ($request->role) {
+            //     $users = $users->where('role', $request->role);
+            // }
+            // if ($request->language) {
+            //     $users = $users->where('language', $request->language);
+            // }
+            // if ($request->merchant_type) {
+            //     $users = $users->where('merchant_type', $request->merchant_type);
+            // }
+            return DataTables::of($invoices)
+                ->addIndexColumn()
+                ->editColumn('merchant_name', function ($row) {
+                    return $row->merchant != null ? $row->merchant->name : '';
+                })
+                ->editColumn('user_name', function ($row) {
+                    return $row->user != null ? $row->user->name : '';
+                })
+                ->editColumn('store_name', function ($row) {
+                    return $row->Store != null ? $row->Store->name : '';
+                })
+                ->editColumn('customer_name', function ($row) {
+                    return $row->customer != null ? $row->customer->name : '';
+                })
+                ->addColumn('action', function ($row) {
+                    if ($this->getCurrentLanguage() == "en") {
+                        $btn = '<a href=' . route('invoice-details', $row->order_number) . ' class="btn btn-info btn-sm mt-2" style="margin-left:4%"><i class="far fa-eye"></i></a>';
+                    } else if ($this->getCurrentLanguage() == "ar") {
+                        $btn = '<a href=' . route('invoice-details', $row->order_number) . ' class="btn btn-info btn-sm mt-2" style="margin-right:4%"><i class="far fa-eye"></i></a>';
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('Invoice.list_invoices');
+    }
+
+    public function invoice_details(Request $request, $order_number)
+    {
+        if ($request->ajax()) {
+            $invoice = Invoice::where('order_number', $order_number)->first();
+            $invoiceItems = $invoice->invoiceItems()->with('data');
+            // if ($request->merchant_type) {
+            //     $users = $users->where('merchant_type', $request->merchant_type);
+            // }
+            // if ($request->province) {
+            //     $users = $users->where('province', $request->province);
+            // }
+            // if ($request->city) {
+            //     $users = $users->where('city', $request->city);
+            // }
+            // if ($request->role) {
+            //     $users = $users->where('role', $request->role);
+            // }
+            // if ($request->language) {
+            //     $users = $users->where('language', $request->language);
+            // }
+            // if ($request->merchant_type) {
+            //     $users = $users->where('merchant_type', $request->merchant_type);
+            // }
+            return DataTables::of($invoiceItems)
+                ->addIndexColumn()
+                ->editColumn('code', function ($row) {
+                    return $row->data != null ? $row->data->code : '';
+                })
+                ->editColumn('name', function ($row) {
+                    return $row->data != null ? $row->data->name : '';
+                })
+                ->addColumn('action', function ($row) {
+                    // if ($this->getCurrentLanguage() == "en") {
+                    //     $btn = '<a href=' . route('show-user', $row->id) . ' class="btn btn-info btn-sm mt-2" style="margin-left:4%"><i class="far fa-eye"></i></a>';
+                    // } else if ($this->getCurrentLanguage() == "ar") {
+                    //     $btn = '<a href=' . route('show-user', $row->id) . ' class="btn btn-info btn-sm mt-2" style="margin-right:4%"><i class="far fa-eye"></i></a>';
+                    // }
+                    return '';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('Invoice.invoice_details');
+    }
 
     public function sell_index()
     {

@@ -838,7 +838,7 @@ class HomeController extends Controller
         if ($invoice) {
             $invoice_type = $invoice->invoice_type == 1 ? 'BUY' : ($invoice->invoice_type == 2 ? 'SELL' : '');
             $from = $invoice->merchant->name;
-            $customer = $invoice->invoice_type == 1 ? $invoice->drugStore->name : $invoice->customer->name;
+            $customer = $invoice->invoice_type == 1 ? $invoice->Store->name : $invoice->customer->name;
             return view('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
         }
         return abort(404);
@@ -850,7 +850,7 @@ class HomeController extends Controller
         if ($invoice) {
             $invoice_type = $invoice->invoice_type == 1 ? 'BUY' : ($invoice->invoice_type == 2 ? 'SELL' : '');
             $from = $invoice->merchant->name;
-            $customer = $invoice->invoice_type == 1 ? $invoice->drugStore->name : $invoice->customer->name;
+            $customer = $invoice->invoice_type == 1 ? $invoice->Store->name : $invoice->customer->name;
             $pdf = PDF::loadView('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
             $invoiceName = 'Invoice1.pdf';
             /** Here you can use the path you want to save */
@@ -865,7 +865,7 @@ class HomeController extends Controller
         if ($invoice) {
             $invoice_type = $invoice->invoice_type == 1 ? 'BUY' : ($invoice->invoice_type == 2 ? 'SELL' : '');
             $from = $invoice->merchant->name;
-            $customer = $invoice->invoice_type == 1 ? $invoice->drugStore->name : $invoice->customer->name;
+            $customer = $invoice->invoice_type == 1 ? $invoice->Store->name : $invoice->customer->name;
             $pdf = PDF::loadView('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
             $invoiceName = 'Invoice1.pdf';
             /** Here you can use the path you want to save */

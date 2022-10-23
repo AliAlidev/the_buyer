@@ -43,7 +43,7 @@ class ApiOrderController extends Controller
             'discount' => $request->discount,
             'invoice_type' => "1",
             'payment_type' => $request->payment_type,
-            "drug_store_id" => $this->getDrugStoreId($request->store_name),
+            "store_id" => $this->getDrugStoreId($request->store_name),
             'notes' => $request->notes,
             'order_number' => $order_number,
             'created_at' => now()->toDateTimeString(),
@@ -241,7 +241,7 @@ class ApiOrderController extends Controller
         if ($invoice) {
             $invoice_type = $invoice->invoice_type == 1 ? 'BUY' : ($invoice->invoice_type == 2 ? 'SELL' : '');
             $from = $invoice->merchant->name;
-            $customer = $invoice->drugStore->name;
+            $customer = $invoice->Store->name;
             $pdf = PDF::loadView('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
             $user = Auth::guard($source)->user();
             $invoiceName = 'Invoice_' . $user->id . '.pdf';
@@ -518,7 +518,7 @@ class ApiOrderController extends Controller
                     "merchant_id" => $amount->merchant_id,
                     "user_id" => $amount->user_id,
                     "return_type" => $amount->amount_type,
-                    "return_side_id" => $invoiceData->invoice_type == 1 ? $invoiceData->drug_store_id : ($invoiceData->invoice_type == 2 ? $invoiceData->customer_id : ''),
+                    "return_side_id" => $invoiceData->invoice_type == 1 ? $invoiceData->store_id : ($invoiceData->invoice_type == 2 ? $invoiceData->customer_id : ''),
                     "created_at" => now()->toDateTimeString(),
                     "updated_at" => now()->toDateTimeString()
                 ]);

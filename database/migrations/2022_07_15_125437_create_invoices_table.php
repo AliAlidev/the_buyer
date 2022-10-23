@@ -32,7 +32,7 @@ class CreateInvoicesTable extends Migration
             $table->enum("payment_type", [1, 2, 3])->default(1);
             $table->string("notes")->nullable(true);
             // if pass drug_store as null then add it to general store
-            $table->string("drug_store_id")->default(0);
+            $table->string("store_id")->default(0);
             $table->text('order_number');
             $table->integer('customer_id')->nullable();
             $table->timestamps();

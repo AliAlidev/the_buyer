@@ -65,11 +65,24 @@ return [
             'you_should_select_real_price' => 'يجب ادخال السعر الحقيقي',
             'you_should_select_numeric_real_price' => 'يجب اختيار قيمة عددية صحيحة للسعر الحقيقي',
             'you_should_select_gt_real_price' => 'قيمة السعر الحقيقي يجب ان تكون اكبر من صفر',
+            'part_price' => 'سعر الجزء',
+            'invoice_details' => 'تفاصيل الفاتورة'
         ]
     ],
     'list' => [
         'labels' => [
-            ''
+            'list_invoices' => 'عرض الفواتير',
+            'table_header_id' => 'م',
+            'merchant_name' => 'اسم التاجر',
+            'user_name' => 'لسم الموظف',
+            'total_amount' => 'القيمة الإجمالية',
+            'discount' => 'قيمة الخصم',
+            'paid_amount' => 'المبلغ المدفوع',
+            'invoice_type' => 'نوع الفاتورة',
+            'notes' => 'ملاحظات',
+            'payment_type' => 'نوع الدفع',
+            'store_name' => 'اسم المستودع',
+            'customer_name' => 'اسم الموظف'
         ]
     ]
 ];
