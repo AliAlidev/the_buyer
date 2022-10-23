@@ -9,8 +9,8 @@ return [
     'role' => 'Role',
     'role_merchant' => 'Merchant',
     'role_employee' => 'Employee',
-    'phone' => 'Phone',
-    'tel_phone' => 'Mobile',
+    'phone' => 'Mobile',
+    'tel_phone' => 'Phone',
     'province' => 'Province',
     'city' => 'City',
     'address' => 'Address',
@@ -29,5 +29,6 @@ return [
     'unique_email' => 'The email has already been taken',
     'password_required' => 'The password field is required',
     'password_gt' => 'The password must be greater than 5',
-    'password_confirm_same' => 'The password confirm and password must match'
+    'password_confirm_same' => 'The password confirm and password must match',
+    'phone_required' => 'You should seelct phone number'
 ];

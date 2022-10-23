@@ -25,17 +25,23 @@ class InvoiceController extends Controller
 
     public function sell_index()
     {
-        return view('sell.create_sell_invoice');
-    }
-
-    public function buy_index()
-    {
-        return view('buy.create_buy_invoice');
+        return view('Invoice.create_sell_invoice');
     }
 
     public function sell(Request $request)
     {
         $result = app()->call('App\Http\Controllers\Apis\ApiOrderController@sell', ['source' => 'web']);
+        return json_decode($result->content(), true);
+    }
+
+    public function buy_index()
+    {
+        return view('Invoice.create_buy_invoice');
+    }
+
+    public function buy(Request $request)
+    {
+        $result = app()->call('App\Http\Controllers\Apis\ApiOrderController@buy', ['source' => 'web']);
         return json_decode($result->content(), true);
     }
 

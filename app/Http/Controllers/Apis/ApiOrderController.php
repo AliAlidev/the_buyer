@@ -18,7 +18,7 @@ use PDF;
 
 class ApiOrderController extends Controller
 {
-    public function buy(Request $request)
+    public function buy(Request $request, $source = 'api')
     {
         $items = null;
         if (!is_array($request->data)) {
@@ -27,10 +27,10 @@ class ApiOrderController extends Controller
             $items = $request->data;
         }
         if (!$items) {
-            return $this->sendErrorResponse("Validation error", "You should add order items");
+            return $this->sendErrorResponse("Validation error", [__('invoice/invoice.create.labels.you_should_add_order_items')]);
         }
 
-        $user = Auth::guard('api')->user();
+        $user = Auth::guard($source)->user();
         $total_invoice = 0;
 
         DB::beginTransaction();
@@ -43,7 +43,7 @@ class ApiOrderController extends Controller
             'discount' => $request->discount,
             'invoice_type' => "1",
             'payment_type' => $request->payment_type,
-            "drug_store_id" => $this->getDrugStoreId($request->drug_store),
+            "drug_store_id" => $this->getDrugStoreId($request->store_name),
             'notes' => $request->notes,
             'order_number' => $order_number,
             'created_at' => now()->toDateTimeString(),
@@ -51,23 +51,31 @@ class ApiOrderController extends Controller
         ]);
 
         foreach ($items as $key => $item) {
-
             $validator = Validator::make($item, [
-                'code' => 'required_if:name,!=,null',
-                'name' => 'required_if:code,!=,null',
+                'name' => 'required',
                 'amount' => 'required_without:part_amount|integer',
                 'part_amount' => 'required_without:amount|integer',
                 'price' => 'required|numeric|gt:0',
                 'real_price' => 'required|numeric|gt:0'
+            ], [
+                'name.required' => __('invoice/invoice.create.labels.you_should_select_product_name'),
+                'amount.required_without' => __('invoice/invoice.create.labels.you_should_select_amount'),
+                'part_amount.required_without' => __('invoice/invoice.create.labels.you_should_select_part_amount'),
+                'price.required' => __('invoice/invoice.create.labels.you_should_select_price'),
+                'price.numeric' => __('invoice/invoice.create.labels.you_should_select_numeric_price'),
+                'price.gt' => __('invoice/invoice.create.labels.you_should_select_gt_price'),
+                'real_price.required' => __('invoice/invoice.create.labels.you_should_select_real_price'),
+                'real_price.numeric' => __('invoice/invoice.create.labels.you_should_select_numeric_real_price'),
+                'real_price.gt' => __('invoice/invoice.create.labels.you_should_select_gt_real_price'),
             ]);
             if ($validator->fails()) {
                 return $this->sendErrorResponse("Validation error", $validator->getMessageBag());
             }
-            if ($item['code'] && !$this->itemExists('code', $item['code'])) {
-                return $this->sendErrorResponse("Validation error", "You should enter valid code for item " . $key + 1);
-            }
-            if ($item['name'] && !$this->itemExists('name', $item['name'])) {
+            if (!$item['name']) {
                 return $this->sendErrorResponse("Validation error", "You should enter valid name for item " . $key + 1);
+            }
+            if ($item['code'] && $this->isCodeAlreadyUsed($item['code'], $item['name'])) {
+                return $this->sendErrorResponse("Validation error", "You should enter valid code for item " . $key + 1);
             }
             if ($item['code'] && $this->missingMedPartCount('code', $item['code'], $item['part_amount'])) {
                 return $this->sendErrorResponse("Validation error", "You should add element parts count for item " . $key + 1);
@@ -85,6 +93,13 @@ class ApiOrderController extends Controller
 
             $part_price = 0;
             $real_part_price = 0;
+
+            // insert new data
+            if ($data == null) {
+                app()->call('App\Http\Controllers\Apis\ApiProductController@store', ['source' => 'web', 'request' => $request->merge(["name" => $item['name'], "code" => $item['code'], 'merchant_type' => $user->merchant_type])]);
+                $data = Data::where('name', $item['name'])->first();
+            }
+
             if ($data['num_of_parts'] && intval($data['num_of_parts']) > 0) {
                 $part_price = intval($item['price']) / intval($data['num_of_parts']);
                 $real_part_price = intval($item['real_price']) / intval($data['num_of_parts']);
@@ -154,13 +169,21 @@ class ApiOrderController extends Controller
 
         return $this->sendResponse("Invoice created successfully", [
             'order_number' => $order_number,
-            'pdf_link' => $this->saveBuyInvoice($order_number), 'view_link' => route('view.invoice', $order_number)
+            'pdf_link' => $this->saveBuyInvoice($order_number, $source), 'view_link' => route('view.invoice', $order_number)
         ]);
     }
 
     public function itemExists($col, $val)
     {
         if (Data::where($col, $val)->exists())
+            return true;
+        else
+            return false;
+    }
+
+    public function isCodeAlreadyUsed($code, $name)
+    {
+        if (Data::where('code', $code)->where('name', '!=',  $name)->exists())
             return true;
         else
             return false;
@@ -212,7 +235,7 @@ class ApiOrderController extends Controller
         }
     }
 
-    public static function saveBuyInvoice($order_number)
+    public static function saveBuyInvoice($order_number, $source='api')
     {
         $invoice = Invoice::where('order_number', $order_number)->first();
         if ($invoice) {
@@ -220,7 +243,7 @@ class ApiOrderController extends Controller
             $from = $invoice->merchant->name;
             $customer = $invoice->drugStore->name;
             $pdf = PDF::loadView('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
-            $user = Auth::guard('api')->user();
+            $user = Auth::guard($source)->user();
             $invoiceName = 'Invoice_' . $user->id . '.pdf';
             /** Here you can use the path you want to save */
             $pdf->save(public_path('uploads/invoices/' . $invoiceName));

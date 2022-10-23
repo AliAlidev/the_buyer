@@ -59,15 +59,15 @@ Route::get('recover-password/{token}/{user_id}', [HomeController::class, 'recove
 //         Route::post('get_dat_name', [HomeController::class, 'findByItemName'])->name('get-data-by-name');
 //     });
 
-//     ////////////////////////////////////////// sell invoices
-    Route::group(['prefix' => 'invoice'], function () {
-        Route::get('create_sell_inv', [InvoiceController::class, 'sell_index'])->name('create-sell-invoice');
-        Route::post('create_sell_inv', [InvoiceController::class, 'sell'])->name('store-sell-invoice');
-        Route::post('sell_get_dat_name', [InvoiceController::class, 'findByItemName'])->name('sell-get-data-by-name');
-        Route::post('sell_get_dat_code', [InvoiceController::class, 'findByItemCode'])->name('sell-get-data-by-code');
-        Route::get('create_buy_inv', [InvoiceController::class, 'buy_index'])->name('create-buy-invoice');
-        Route::post('create_buy_inv', [InvoiceController::class, 'buy'])->name('store-buy-invoice');
-    });
+////////////////////////////////////////// sell invoices
+Route::group(['prefix' => 'invoice'], function () {
+    Route::get('create_sell_inv', [InvoiceController::class, 'sell_index'])->name('create-sell-invoice');
+    Route::post('create_sell_inv', [InvoiceController::class, 'sell'])->name('store-sell-invoice');
+    Route::post('sell_get_dat_name', [InvoiceController::class, 'findByItemName'])->name('sell-get-data-by-name');
+    Route::post('sell_get_dat_code', [InvoiceController::class, 'findByItemCode'])->name('sell-get-data-by-code');
+    Route::get('create_buy_inv', [InvoiceController::class, 'buy_index'])->name('create-buy-invoice');
+    Route::post('create_buy_inv', [InvoiceController::class, 'buy'])->name('store-buy-invoice');
+});
 
 //     ////////////////////////////////////////// buy invoices
 //     Route::group(['prefix' => 'buy'], function () {
@@ -110,8 +110,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('delete_company', [CompanyController::class, 'deleteCompany'])->name('delete-company');
         Route::post('translate_to_ar', [CompanyController::class, 'translate_to_ar'])->name('translate_to_ar');
         Route::post('translate_to_en', [CompanyController::class, 'translate_to_en'])->name('translate_to_en');
+        Route::get('get_companies/{merchant_type}', [HomeController::class,'get_companies'])->name('get-companies');
     });
-
+    
     ////////////////////////////// Shapes //////////////////////////////
     Route::group(['prefix' => 'shape'], function () {
         Route::match(['get', 'post'], 'shape_create', [ShapeController::class, 'create'])->name('shape-create');
@@ -119,6 +120,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('show_shape/{id}', [ShapeController::class, 'show_shape'])->name('show-shape');
         Route::match(['post', 'get'], 'update_shape/{id}', [ShapeController::class, 'update_shape'])->name('update-shape');
         Route::post('delete_shape', [ShapeController::class, 'deleteshape'])->name('delete-shape');
+        Route::get('get_shapes/{merchant_type}', [HomeController::class,'get_shapes'])->name('get-shapes');
     });
 
     ////////////////////////////// Users //////////////////////////////

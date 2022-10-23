@@ -49,237 +49,234 @@
                         <div class="card-body">
                             <!-- Demo purpose only -->
                             <div style="min-height: 300px;">
-                                <form id="main_form" method="POST" action="{{ route('store-sell-invoice') }}">
+                                <form id="main_form" method="POST" action="{{ route('store-sell-invoice') }}" style="margin: 5%">
                                     @csrf
 
                                     <div class="row">
-                                        <div class="col-md-2"></div>
-                                        <div class="col-md-8 mt-3">
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <input id="start_cam" type="button"
+                                                    value="{{ __('invoice/invoice.create.labels.start_cam') }}"
+                                                    data-id="1" onclick="startBarcodePicker()"
+                                                    class="btn btn-primary">
+                                            </div>
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-4">
+                                                <label
+                                                    for="customer_name">{{ __('invoice/invoice.create.labels.customer_name') }}</label>
+                                                <input type="text" id="customer_name" name="customer_name"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-4">
+                                            <div class="col-md-2"></div>
+                                            <div id="barcode-result" class="result-text">&nbsp;</div>
+                                            <div class="col-md-8">
+                                                <scandit-barcode-picker id="barcode-picker" class="scanner"
+                                                    style="width: 100%; height: 80%;"
+                                                    configure.licenseKey="{{ config('services.bar_code_key') }}"
+                                                    configure.engineLocation="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x/build/"
+                                                    accessCamera="false" visible="false" playSoundOnScan="true"
+                                                    vibrateOnScan="true",
+                                                    scanSettings.enabledSymbologies='["ean8", "ean13", "upca", "upce"]'>
+                                                </scandit-barcode-picker>
+                                            </div>
+                                        </div>
+                                        <input type="text" name="" value="0" id="data_id" hidden>
+                                        <div class="row">
+                                            <label for="result">{{ __('invoice/invoice.create.labels.code') }}</label>
+                                            <div class="col-md-10">
+                                                <input class="form-control" id="result" type="text"
+                                                    value="{{ old('code') }}"
+                                                    placeholder="{{ __('invoice/invoice.create.labels.scan_code') }}">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input id="getdata" onclick="getItemDetailsByCode()" type="button"
+                                                    class="btn btn-primary"
+                                                    value="{{ __('invoice/invoice.create.labels.check') }}">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 mt-3">
+                                                <label for="name">
+                                                    {{ __('invoice/invoice.create.labels.element_name') }}</label>
+                                                <input id="name" value="{{ old('name') }}" type="text"
+                                                    class="form-control"
+                                                    placeholder="{{ __('invoice/invoice.create.labels.enter_element_name') }}">
+                                            </div>
+                                        </div>
+                                        <label for="square-switch1"
+                                            class="mt-3">{{ __('invoice/invoice.create.labels.current_amounts') }}</label>
+                                        <div class="square-switch">
+                                            <input type="checkbox" id="square-switch1" switch="none">
+                                            <label class="form-label" for="square-switch1" data-on-label="On"
+                                                data-off-label="Off"></label>
+                                        </div>
+
+                                        <div id="description" hidden>
+                                            {{-- fixed values --}}
                                             <div class="row">
                                                 <div class="col-md-2">
-                                                    <input id="start_cam" type="button"
-                                                        value="{{ __('invoice/invoice.create.labels.start_cam') }}"
-                                                        data-id="1" onclick="startBarcodePicker()"
-                                                        class="btn btn-primary">
-                                                </div>
-                                                <div class="col-md-6"></div>
-                                                <div class="col-md-4">
-                                                    <label
-                                                        for="customer_name">{{ __('invoice/invoice.create.labels.customer_name') }}</label>
-                                                    <input type="text" id="customer_name" name="customer_name"
-                                                        class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="row mb-4">
-                                                <div class="col-md-2"></div>
-                                                <div id="barcode-result" class="result-text">&nbsp;</div>
-                                                <div class="col-md-8">
-                                                    <scandit-barcode-picker id="barcode-picker" class="scanner"
-                                                        style="width: 100%; height: 80%;"
-                                                        configure.licenseKey="{{ config('services.bar_code_key') }}"
-                                                        configure.engineLocation="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x/build/"
-                                                        accessCamera="false" visible="false" playSoundOnScan="true"
-                                                        vibrateOnScan="true",
-                                                        scanSettings.enabledSymbologies='["ean8", "ean13", "upca", "upce"]'>
-                                                    </scandit-barcode-picker>
-                                                </div>
-                                            </div>
-                                            <input type="text" name="" value="0" id="data_id" hidden>
-                                            <div class="row">
-                                                <label for="result">{{ __('invoice/invoice.create.labels.code') }}</label>
-                                                <div class="col-md-10">
-                                                    <input class="form-control" id="result" type="text"
-                                                        value="{{ old('code') }}" placeholder="{{ __('invoice/invoice.create.labels.scan_code') }}">
+                                                    <label class="mt-3"
+                                                        for="">{{ __('invoice/invoice.create.labels.quantity') }}</label>
+                                                    <input id="quantity" class="form-control" type="number"
+                                                        value="0" placeholder="" readonly
+                                                        style="text-align: center">
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <input id="getdata" onclick="getItemDetailsByCode()" type="button"
-                                                        class="btn btn-primary" value="{{ __('invoice/invoice.create.labels.check') }}">
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-12 mt-3">
-                                                    <label for="name">
-                                                        {{ __('invoice/invoice.create.labels.element_name') }}</label>
-                                                    <input id="name" value="{{ old('name') }}" type="text"
-                                                        class="form-control" placeholder="{{ __('invoice/invoice.create.labels.enter_element_name') }}">
-                                                </div>
-                                            </div>
-                                            <label for="square-switch1"
-                                                class="mt-3">{{ __('invoice/invoice.create.labels.current_amounts') }}</label>
-                                            <div class="square-switch">
-                                                <input type="checkbox" id="square-switch1" switch="none">
-                                                <label class="form-label" for="square-switch1" data-on-label="On"
-                                                    data-off-label="Off"></label>
-                                            </div>
-
-                                            <div id="description" hidden>
-                                                {{-- fixed values --}}
-                                                <div class="row">
-                                                    <div class="col-md-2">
-                                                        <label class="mt-3"
-                                                            for="">{{ __('invoice/invoice.create.labels.quantity') }}</label>
-                                                        <input id="quantity" class="form-control" type="number"
-                                                            value="0" placeholder="" readonly
-                                                            style="text-align: center">
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <label class="mt-3"
-                                                            for="">{{ __('invoice/invoice.create.labels.price') }}</label>
-                                                        <input id="price" class="form-control" type="number"
-                                                            value="0" placeholder="" readonly
-                                                            style="text-align: center">
-                                                        <div style="text-align: center">
-                                                            <small id="max_price_from_another_merchants" hidden></small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <label class="mt-3"
-                                                            for="">{{ __('invoice/invoice.create.labels.quantity_p') }}</label>
-                                                        <input id="quantityparts" class="form-control" type="number"
-                                                            value="0" placeholder="" readonly
-                                                            style="text-align: center">
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <label class="mt-3"
-                                                            for="">{{ __('invoice/invoice.create.labels.price_p') }}</label>
-                                                        <input id="partprice" class="form-control" type="number"
-                                                            value="0" placeholder="" readonly
-                                                            style="text-align: center">
-                                                        <div style="text-align: center">
-                                                            <small id="max_part_price_from_another_merchants"
-                                                                hidden></small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <label class="mt-3"
-                                                            for="">{{ __('invoice/invoice.create.labels.expiry_date') }}</label>
-                                                        <input id="expiry_date" class="form-control" type="date"
-                                                            value="{{ old('expiry_date') }}" readonly
-                                                            style="text-align: center">
+                                                    <label class="mt-3"
+                                                        for="">{{ __('invoice/invoice.create.labels.price') }}</label>
+                                                    <input id="price" class="form-control" type="number"
+                                                        value="0" placeholder="" readonly
+                                                        style="text-align: center">
+                                                    <div style="text-align: center">
+                                                        <small id="max_price_from_another_merchants" hidden></small>
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            {{-- selected values --}}
-                                            <div class="row mt-4">
+                                                <div class="col-md-2">
+                                                    <label class="mt-3"
+                                                        for="">{{ __('invoice/invoice.create.labels.quantity_p') }}</label>
+                                                    <input id="quantityparts" class="form-control" type="number"
+                                                        value="0" placeholder="" readonly
+                                                        style="text-align: center">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="mt-3"
+                                                        for="">{{ __('invoice/invoice.create.labels.price_p') }}</label>
+                                                    <input id="partprice" class="form-control" type="number"
+                                                        value="0" placeholder="" readonly
+                                                        style="text-align: center">
+                                                    <div style="text-align: center">
+                                                        <small id="max_part_price_from_another_merchants"
+                                                            hidden></small>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-3">
-                                                    <label
-                                                        class="form-label">{{ __('invoice/invoice.create.labels.amounts') }}</label>
-                                                    <div
-                                                        class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
-                                                        <input id="selected_quantity" data-toggle="touchspin"
-                                                            type="text" value="0" class="form-control" required>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-3">
-                                                    <label
-                                                        class="form-label">{{ __('invoice/invoice.create.labels.quantity_parts') }}</label>
-                                                    <div
-                                                        class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
-                                                        <input id="selected_quantityparts" data-toggle="touchspin"
-                                                            type="text" value="0" class="form-control" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row mt-3">
-                                                <div class="col-md-4">
-                                                    <button id="add_table_item" class="btn btn-primary"
-                                                        type="button">{{ __('invoice/invoice.create.labels.add_item') }}</button>
+                                                    <label class="mt-3"
+                                                        for="">{{ __('invoice/invoice.create.labels.expiry_date') }}</label>
+                                                    <input id="expiry_date" class="form-control" type="date"
+                                                        value="{{ old('expiry_date') }}" readonly
+                                                        style="text-align: center">
                                                 </div>
                                             </div>
                                         </div>
 
+                                        {{-- selected values --}}
+                                        <div class="row mt-4">
+                                            <div class="col-md-3">
+                                                <label
+                                                    class="form-label">{{ __('invoice/invoice.create.labels.amounts') }}</label>
+                                                <div
+                                                    class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+                                                    <input id="selected_quantity" data-toggle="touchspin"
+                                                        type="text" value="0" class="form-control" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <label
+                                                    class="form-label">{{ __('invoice/invoice.create.labels.quantity_parts') }}</label>
+                                                <div
+                                                    class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+                                                    <input id="selected_quantityparts" data-toggle="touchspin"
+                                                        type="text" value="0" class="form-control" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-md-4">
+                                                <button id="add_table_item" class="btn btn-primary"
+                                                    type="button">{{ __('invoice/invoice.create.labels.add_item') }}</button>
+                                            </div>
+                                        </div>
+
                                         <div class="row mt-5">
-                                            <div class="col-md-2"></div>
-                                            <div class="col-md-8">
-                                                <h4>{{ __('invoice/invoice.create.labels.items') }}</h4>
-                                                <div class="panel-body table-responsive">
-                                                    <table id="table_data" class="table table-striped" cellspacing="0">
-                                                        <thead>
-                                                            <div class="tr">
-                                                                <th hidden>id</th>
-                                                                <th>{{ __('invoice/invoice.create.labels.code') }}</th>
-                                                                <th>{{ __('invoice/invoice.create.labels.name') }}</th>
-                                                                <th>{{ __('invoice/invoice.create.labels.quantity') }}</th>
-                                                                <th>{{ __('invoice/invoice.create.labels.price') }}</th>
-                                                                <th>{{ __('invoice/invoice.create.labels.quantity_p') }}
-                                                                </th>
-                                                                <th>{{ __('invoice/invoice.create.labels.price_p') }}</th>
-                                                                <th>{{ __('invoice/invoice.create.labels.total') }}</th>
-                                                                <th>{{ __('invoice/invoice.create.labels.action') }}</th>
-                                                            </div>
-                                                        </thead>
-                                                        <tbody id="table_items">
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div class="row mt-3">
-                                                    <div class="col-md-3 mt-4" style="font-weight: 800; font-size: 200%">
-                                                        {{ __('invoice/invoice.create.labels.total') }}:
-                                                    </div>
-
-                                                    <div class="col-md-3 mt-4"
-                                                        style="font-weight: bolder; font-size: 200%">
-                                                        <div id="total_price" style="font-weight: 500;">0
+                                            <h4>{{ __('invoice/invoice.create.labels.items') }}</h4>
+                                            <div class="panel-body table-responsive">
+                                                <table id="table_data" class="table table-striped" cellspacing="0">
+                                                    <thead>
+                                                        <div class="tr">
+                                                            <th hidden>id</th>
+                                                            <th>{{ __('invoice/invoice.create.labels.code') }}</th>
+                                                            <th>{{ __('invoice/invoice.create.labels.name') }}</th>
+                                                            <th>{{ __('invoice/invoice.create.labels.quantity') }}</th>
+                                                            <th>{{ __('invoice/invoice.create.labels.price') }}</th>
+                                                            <th>{{ __('invoice/invoice.create.labels.quantity_p') }}
+                                                            </th>
+                                                            <th>{{ __('invoice/invoice.create.labels.price_p') }}</th>
+                                                            <th>{{ __('invoice/invoice.create.labels.total') }}</th>
+                                                            <th>{{ __('invoice/invoice.create.labels.action') }}</th>
                                                         </div>
-                                                    </div>
+                                                    </thead>
+                                                    <tbody id="table_items">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-md-3 mt-4" style="font-weight: 800; font-size: 200%">
+                                                    {{ __('invoice/invoice.create.labels.total') }}:
                                                 </div>
 
-                                                <label for="invoice_options_checkbox"
-                                                    class="mt-5">{{ __('invoice/invoice.create.labels.invoice_options') }}</label>
-                                                <div class="square-switch">
-                                                    <input type="checkbox" id="invoice_options_checkbox" switch="none">
-                                                    <label class="form-label" for="invoice_options_checkbox"
-                                                        data-on-label="On" data-off-label="Off"></label>
-                                                </div>
-                                                <div id="invoice_options" hidden>
-                                                    <div class="row">
-                                                        <div class="col-md-3">
-                                                            <label for="" class="mt-3"
-                                                                style="font-size: 110%; font-weight: 600">{{ __('invoice/invoice.create.labels.payment_type') }}</label>
-                                                            <select name="payment_type" id="payment_type"
-                                                                class="form-control">
-                                                                <option value="1">
-                                                                    {{ __('invoice/invoice.create.labels.payment_type_cash') }}
-                                                                </option>
-                                                                <option value="2">
-                                                                    {{ __('invoice/invoice.create.labels.payment_type_dept') }}
-                                                                </option>
-                                                                <option value="3">
-                                                                    {{ __('invoice/invoice.create.labels.payment_type_free') }}
-                                                                </option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <label for="" class="mt-3"
-                                                                style="font-size: 110%; font-weight: 600">{{ __('invoice/invoice.create.labels.discount_type') }}</label>
-                                                            <select name="discount_type" id="discount_type"
-                                                                class="form-control">
-                                                                <option value="0"></option>
-                                                                <option value="2">
-                                                                    {{ __('invoice/invoice.create.labels.discount_type_perc') }}
-                                                                </option>
-                                                                <option value="1">
-                                                                    {{ __('invoice/invoice.create.labels.discount_type_val') }}
-                                                                </option>
-                                                            </select>
-                                                        </div>
-                                                        <div id="paid_amount_div" class="col-md-3">
-                                                            <label class="mt-3" for=""
-                                                                style="font-size: 110%; font-weight: 600">{{ __('invoice/invoice.create.labels.value') }}</label>
-                                                            <input id="discount" class="form-control" type="number"
-                                                                value="0" name="discount" style="text-align: center"
-                                                                min="0">
-                                                        </div>
+                                                <div class="col-md-3 mt-4"
+                                                    style="font-weight: bolder; font-size: 200%">
+                                                    <div id="total_price" style="font-weight: 500;">0
                                                     </div>
+                                                </div>
+                                            </div>
 
-                                                    <div class="row mt-5">
-                                                        <div class="col-md-12">
-                                                            <label
-                                                                for="notes">{{ __('invoice/invoice.create.labels.notes') }}</label>
-                                                            <textarea id="notes" class="form-control" name="notes" id="" cols="30" rows="2"></textarea>
-                                                        </div>
+                                            <label for="invoice_options_checkbox"
+                                                class="mt-5">{{ __('invoice/invoice.create.labels.invoice_options') }}</label>
+                                            <div class="square-switch">
+                                                <input type="checkbox" id="invoice_options_checkbox" switch="none">
+                                                <label class="form-label" for="invoice_options_checkbox"
+                                                    data-on-label="On" data-off-label="Off"></label>
+                                            </div>
+                                            <div id="invoice_options" hidden>
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <label for="" class="mt-3"
+                                                            style="font-size: 110%; font-weight: 600">{{ __('invoice/invoice.create.labels.payment_type') }}</label>
+                                                        <select name="payment_type" id="payment_type"
+                                                            class="form-control">
+                                                            <option value="1">
+                                                                {{ __('invoice/invoice.create.labels.payment_type_cash') }}
+                                                            </option>
+                                                            <option value="2">
+                                                                {{ __('invoice/invoice.create.labels.payment_type_dept') }}
+                                                            </option>
+                                                            <option value="3">
+                                                                {{ __('invoice/invoice.create.labels.payment_type_free') }}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label for="" class="mt-3"
+                                                            style="font-size: 110%; font-weight: 600">{{ __('invoice/invoice.create.labels.discount_type') }}</label>
+                                                        <select name="discount_type" id="discount_type"
+                                                            class="form-control">
+                                                            <option value="0"></option>
+                                                            <option value="2">
+                                                                {{ __('invoice/invoice.create.labels.discount_type_perc') }}
+                                                            </option>
+                                                            <option value="1">
+                                                                {{ __('invoice/invoice.create.labels.discount_type_val') }}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div id="paid_amount_div" class="col-md-3">
+                                                        <label class="mt-3" for=""
+                                                            style="font-size: 110%; font-weight: 600">{{ __('invoice/invoice.create.labels.value') }}</label>
+                                                        <input id="discount" class="form-control" type="number"
+                                                            value="0" name="discount" style="text-align: center"
+                                                            min="0">
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mt-5">
+                                                    <div class="col-md-12">
+                                                        <label
+                                                            for="notes">{{ __('invoice/invoice.create.labels.notes') }}</label>
+                                                        <textarea id="notes" class="form-control" name="notes" id="" cols="30" rows="2"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -353,6 +350,7 @@
     </script>
 
     {{-- add item to invoice table --}}
+    <script src="{{ asset('assets/js/custome_validation.js') }}"></script>
     <script>
         $('#add_table_item').click(function(e) {
             e.preventDefault();
@@ -362,39 +360,58 @@
             var name = $('#name').val();
             var amount = $('#selected_quantity').val();
             var part_amount = $('#selected_quantityparts').val();
-            if (dataId != 0 && (amount != 0 || part_amount != 0)) {
-                var price = $('#price').val();
-                var part_price = $('#partprice').val();
-                var total = price * amount + part_amount * part_price;
-                var deleteRow =
-                    "<button class='btn btn-danger btn-sm delete_table_row' type='button'> X </button>";
 
-                var tableitem = "<tr><td hidden>" + dataId + "</td><td>" + code + "</td><td>" + name + "</td><td>" +
-                    amount + "</td><td>" + price + "</td><td>" + part_amount + "</td><td>" + part_price +
-                    "</td><td>" + total + "</td><td> " + deleteRow + " </td></tr>";
-                $('#table_items').append(tableitem);
-
-                $('#data_id').val('0');
-                $('#result').val('');
-                $('#name').val('');
-                $('#quantity').val('0');
-                $('#selected_quantity').val('0');
-                $('#selected_quantity').attr('max', 0);
-                $('#quantityparts').val('0');
-                $('#selected_quantityparts').val('0');
-                $('#selected_quantityparts').attr('max', 0);
-                $('#price').val('0');
-                $('#price').css('color', 'black');
-                $('#partprice').val('0');
-                $('#partprice').css('color', 'black');
-                $('#expiry_date').val('');
-                $('#max_price_from_another_merchants').attr('hidden', true);
-                $('#max_price_from_another_merchants').text('');
-                $('#max_part_price_from_another_merchants').attr('hidden', true);
-                $('#max_part_price_from_another_merchants').text('');
-
-                calcTotalPrice();
+            if (dataId == 0) {
+                showShortMessage('danger', ['{{ __("invoice/invoice.create.labels.you_should_select_product") }}'],
+                    'table_data');
+                return false;
             }
+
+            if (already_found(dataId)) {
+                showShortMessage('danger', [
+                    '{{ __("invoice/invoice.create.labels.you_aleready_add_this_product_to_invoice") }}'
+                ], 'table_data');
+                return false;
+            }
+
+            if (amount == 0 && part_amount == 0) {
+                showShortMessage('danger', [
+                    '{{ __("invoice/invoice.create.labels.you_should_select_amount_or_part_amount") }}'
+                ], 'table_data');
+                return false;
+            }
+
+            var price = $('#price').val();
+            var part_price = $('#partprice').val();
+            var total = price * amount + part_amount * part_price;
+            var deleteRow =
+                "<button class='btn btn-danger btn-sm delete_table_row' type='button'> X </button>";
+
+            var tableitem = "<tr><td hidden>" + dataId + "</td><td>" + code + "</td><td>" + name + "</td><td>" +
+                amount + "</td><td>" + price + "</td><td>" + part_amount + "</td><td>" + part_price +
+                "</td><td>" + total + "</td><td> " + deleteRow + " </td></tr>";
+            $('#table_items').append(tableitem);
+
+            $('#data_id').val('0');
+            $('#result').val('');
+            $('#name').val('');
+            $('#quantity').val('0');
+            $('#selected_quantity').val('0');
+            $('#selected_quantity').attr('max', 0);
+            $('#quantityparts').val('0');
+            $('#selected_quantityparts').val('0');
+            $('#selected_quantityparts').attr('max', 0);
+            $('#price').val('0');
+            $('#price').css('color', 'black');
+            $('#partprice').val('0');
+            $('#partprice').css('color', 'black');
+            $('#expiry_date').val('');
+            $('#max_price_from_another_merchants').attr('hidden', true);
+            $('#max_price_from_another_merchants').text('');
+            $('#max_part_price_from_another_merchants').attr('hidden', true);
+            $('#max_part_price_from_another_merchants').text('');
+
+            calcTotalPrice();
         });
 
         function calcTotalPrice() {
@@ -407,7 +424,18 @@
                 var priceP = self.find("td:eq(6)").text().trim();
                 total += quantity * price + quantityP * priceP;
             });
-            $('#total_price').text(total + ' ' + '{{ __("invoice/invoice.create.labels.currency") }}');
+            $('#total_price').text(total + ' ' + '{{ __('invoice/invoice.create.labels.currency') }}');
+        }
+
+        function already_found(item) {
+            var result = false;
+            $("#table_data  > tbody  > tr").each(function() {
+                var self = $(this);
+                var data_id = self.find("td:eq(0)").text().trim();
+                if (item == data_id)
+                    result = true;
+            });
+            return result;
         }
     </script>
 

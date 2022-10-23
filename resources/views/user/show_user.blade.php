@@ -174,11 +174,11 @@
                                             <select name="merchant_type" id="merchant_type" class="form-select">
                                                 @if ($user->merchant_type == 1)
                                                     <option value="1">
-                                                        {{ __('user/create_user.merchant_type_market') }}
+                                                        {{ __('user/create_user.merchant_type_pharmacy') }}
                                                     </option>
                                                 @elseif ($user->merchant_type == 2)
                                                     <option value="2">
-                                                        {{ __('user/create_user.merchant_type_pharmacy') }}
+                                                        {{ __('user/create_user.merchant_type_market') }}
                                                     </option>
                                                 @endif
                                             </select>
@@ -219,7 +219,8 @@
                                     <div class="row mt-4">
                                         <div class="col-md-12 text-center">
                                             <br />
-                                            <button class="btn btn-primary" onclick="location.href='{{ route('list-users') }}'"
+                                            <button class="btn btn-primary"
+                                                onclick="location.href='{{ route('list-users') }}'"
                                                 type="button">{{ __('user/show_user.back_btn') }}</button>
                                         </div>
                                     </div>

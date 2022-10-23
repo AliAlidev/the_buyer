@@ -73,7 +73,7 @@ function clearValidation(element) {
     });
     element.parent().find(".invalid-feedback").hide();
     element.parent().find(".invalid-feedback").empty();
-    element.removeClass('is-valid');
+    element.removeClass("is-valid");
 }
 
 function showMessage(result, form_id) {
@@ -93,7 +93,7 @@ function showMessage(result, form_id) {
         $("#respone_message").append(response);
         $("#respone_message").removeAttr("hidden");
         setTimeout(() => {
-            if($("#respone_message").hasClass('alert alert-success')){
+            if ($("#respone_message").hasClass("alert alert-success")) {
                 $("#respone_message").empty();
                 $("#respone_message").removeClass("alert alert-success");
                 $("#respone_message").removeClass("alert alert-danger");
@@ -115,7 +115,7 @@ function showMessage(result, form_id) {
         $("#respone_message").append("</ul>");
         $("#respone_message").removeAttr("hidden");
         setTimeout(() => {
-            if($("#respone_message").hasClass('alert alert-danger')){
+            if ($("#respone_message").hasClass("alert alert-danger")) {
                 $("#respone_message").empty();
                 $("#respone_message").removeClass("alert alert-success");
                 $("#respone_message").removeClass("alert alert-danger");
@@ -123,5 +123,37 @@ function showMessage(result, form_id) {
             }
         }, 5000);
     }
+}
 
+function showShortMessage(type, message, element_id) {
+    $('<div id="respone_message"></div>').insertBefore("#" + element_id);
+    if (type == "success") {
+        $("#respone_message").empty();
+        $("#respone_message").removeClass("alert alert-danger");
+        $("#respone_message").addClass("alert alert-success");
+        $("#respone_message").addClass("d-flex justify-content-start");
+        $("#respone_message").append(message);
+        $("#respone_message").removeAttr("hidden");
+    } else {
+        $("#respone_message").empty();
+        $("#respone_message").removeClass("alert alert-success");
+        $("#respone_message").addClass("alert alert-danger");
+        $("#respone_message").addClass("d-flex justify-content-start");
+
+        $("#respone_message").append("<ul>");
+        message.forEach((element) => {
+            $("#respone_message").append("<li>");
+            $("#respone_message").append(element);
+            $("#respone_message").append("</li>");
+        });
+        $("#respone_message").append("</ul>");
+        $("#respone_message").removeAttr("hidden");
+    }
+
+    setTimeout(() => {
+        $("#respone_message").empty();
+        $("#respone_message").removeClass("alert alert-success");
+        $("#respone_message").removeClass("alert alert-danger");
+        $("#respone_message").attr("hidden", true);
+    }, 5000);
 }

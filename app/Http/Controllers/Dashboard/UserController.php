@@ -10,11 +10,13 @@ use App\Models\Province;
 use App\Models\Shape;
 use App\Models\User;
 use App\Models\UserData;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use DataTables;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -27,7 +29,8 @@ class UserController extends Controller
                 'name' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|gt:5',
-                'password_confirm' => 'same:password'
+                'password_confirm' => 'same:password',
+                'phone' => 'required'
             ], [
                 'name.required' => __('user/create_user.name_required'),
                 'email.required' => __('user/create_user.email_required'),
@@ -35,17 +38,19 @@ class UserController extends Controller
                 'email.email' => __('user/create_user.email_email'),
                 'password.required' => __('user/create_user.password_required'),
                 'password.gt' => __('user/create_user.password_gt'),
-                'password_confirm.same' => __('user/create_user.password_confirm_same')
+                'password_confirm.same' => __('user/create_user.password_confirm_same'),
+                'phone.required' => __('user/create_user.phone_required'),
             ]);
             if ($validator->fails()) {
                 return $this->sendErrorResponse('Validation error', $validator->getMessageBag());
             }
+            DB::beginTransaction();
 
-            User::create([
+            $merchantId = 0;
+            $user = DB::table('users')->insertGetId([
                 "name" => $request->name,
                 "email" => $request->email,
                 "password" => Hash::make($request->password),
-                "merchant_id" => $request->merchant_id,
                 "role" => $request->role,
                 "phone" => $request->phone,
                 "tel_phone" => $request->tel_phone,
@@ -55,8 +60,21 @@ class UserController extends Controller
                 "address" => $request->address,
                 "merchant_type" => $request->merchant_type,
                 "notes" => $request->notes,
-                "language" => $request->language
+                "language" => $request->language,
+                'created_at' => Carbon::now()->toDateTimeString(),
+                'updated_at' => Carbon::now()->toDateTimeString()
             ]);
+
+            if ($request->role == 1) {
+                $merchantId = $user;
+            } else {
+                $merchantId = $request->merchant_id;
+            }
+
+            DB::table('users')->where('id', $user)->update([
+                'merchant_id' => $merchantId
+            ]);
+            DB::commit();
 
             session()->put('success', __('user/create_user.user_created_successfully'));
             return $this->sendResponse(__('user/create_user.user_created_successfully'));
@@ -150,14 +168,15 @@ class UserController extends Controller
     public function list_assigned_products(Request $request, $id)
     {
         if ($request->ajax()) {
-            $exp = 'select `data`.*, `companies`.`ar_comp_name`, `shapes`.`ar_shape_name` from `data` left join `companies` on `companies`.`comp_id` = `data`.`comp_id` left join `shapes` on `shapes`.`shape_id` = `data`.`shape_id` where data.id in (select data_id from user_data where merchant_id=' . $id . ')';
+            $assigned_data = Auth::guard('web')->user()->assigned_data->pluck('id');
+            $data = Data::with(['shapes', 'companies'])->whereIn('data.id', $assigned_data);
+            
             if ($request->comp_id) {
-                $exp .= ' and data.comp_id=' . $request->comp_id;
+                $data = $data->where('data.comp_id', $request->comp_id);
             }
             if ($request->shape_id) {
-                $exp .= ' and data.shape_id=' . $request->shape_id;
+                $data = $data->where('data.shape_id', $request->shape_id);
             }
-            $data = DB::select(DB::raw($exp));
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('merchant_type', function ($row) {
@@ -165,6 +184,18 @@ class UserController extends Controller
                         return __('product/create_product.merchant_type_pharmacy');
                     else  if ($row->merchant_type == 2)
                         return __('product/create_product.merchant_type_market');
+                })
+                ->editColumn('ar_shape_name', function ($row) {
+                    if ($row->shape_id)
+                        return $row->shapes->ar_shape_name;
+                    else 
+                        return '';
+                })
+                ->editColumn('ar_comp_name', function ($row) {
+                    if ($row->comp_id)
+                        return $row->companies->ar_comp_name;
+                    else 
+                        return '';
                 })
                 ->addColumn('action', function ($row) {
                     if ($this->getCurrentLanguage() == "en") {
@@ -270,40 +301,23 @@ class UserController extends Controller
     public function products_assign(Request $request)
     {
         if ($request->ajax()) {
-            $exp = 'select `data`.*, `companies`.`ar_comp_name`, `shapes`.`ar_shape_name` from `data` left join `companies` on `companies`.`comp_id` = `data`.`comp_id` left join `shapes` on `shapes`.`shape_id` = `data`.`shape_id` where 1';
+            if ($request->merchant_id) {
+                $assigned_data = Auth::guard('web')->user()->assigned_data->pluck('id');
+                $data = Data::with(['shapes', 'companies'])->whereNotIn('data.id', $assigned_data);
+            }else{
+                $data = Data::with(['shapes', 'companies']);
+            }
+
             if ($request->comp_id) {
-                $exp .= ' and data.comp_id=' . $request->comp_id;
+                $data = $data->where('data.comp_id', $request->comp_id);
             }
             if ($request->shape_id) {
-                $exp .= ' and data.shape_id=' . $request->shape_id;
+                $data = $data->where('data.shape_id', $request->shape_id);
             }
             if ($request->merchant_type) {
-                $exp .= ' and data.merchant_type=' . $request->merchant_type;
+                $data = $data->where('data.merchant_type', $request->merchant_type);
             }
 
-            if ($request->merchant_id) {
-                $merchant = User::find($request->merchant_id);
-                $exp .= ' and data.merchant_type=' . $merchant->merchant_type;
-                $merchantData = $merchant->data()->pluck('data.id')->toArray();
-                if (count($merchantData) > 0)
-                    $exp .= ' and data.id not in (' . implode(',', $merchantData) . ')';
-            }
-            $data = DB::select(DB::raw($exp));
-
-            // $data = DB::table('data')->leftJoin('companies', 'companies.comp_id', '=', 'data.comp_id')->leftJoin('shapes', 'shapes.shape_id', '=', 'data.shape_id')->select('data.*', 'companies.ar_comp_name', 'shapes.ar_shape_name');
-            // if ($request->comp_id) {
-            //     $data = $data->where('data.comp_id', $request->comp_id);
-            // }
-            // if ($request->shape_id) {
-            //     $data = $data->where('data.shape_id', $request->shape_id);
-            // }
-            // if ($request->merchant_type) {
-            //     $data = $data->where('data.merchant_type', $request->merchant_type);
-            // }
-            // if ($request->merchant_id) {
-            //     $userData = $merchant->data()->pluck('data.id')->toArray();
-            //     $data = $data->whereNotIn('data.id', $userData);
-            // }
             return DataTables::of($data)
                 ->addColumn('check', function () {
                 })
@@ -312,6 +326,18 @@ class UserController extends Controller
                         return __('product/create_product.merchant_type_pharmacy');
                     else  if ($row->merchant_type == 2)
                         return __('product/create_product.merchant_type_market');
+                })
+                ->editColumn('ar_shape_name', function ($row) {
+                    if ($row->shape_id)
+                        return $row->shapes->ar_shape_name;
+                    else 
+                        return '';
+                })
+                ->editColumn('ar_comp_name', function ($row) {
+                    if ($row->comp_id)
+                        return $row->companies->ar_comp_name;
+                    else 
+                        return '';
                 })
                 ->rawColumns(['check'])
                 ->make(true);
@@ -329,15 +355,20 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'assign_type' => 'required',
             'merchant_id' => 'required'
+        ],[
+           'assign_type.required' => __('user/assign_products.yous_should_select_assign_type'),
+           'merchant_id.required' => __('user/assign_products.yous_should_select_merchant_id'),
         ]);
         if ($validator->fails())
-            return $this->sendErrorResponse('Validation error', $validator->getMessageBag());
-
+        return $this->sendErrorResponse('Validation error', $validator->getMessageBag());
+        
         $assign_type = $request->assign_type;
         $merchant_id = $request->merchant_id;
-        $data = json_decode($request->data);
-        if (count($data) == 0)
-            return $this->sendErrorResponse("Validation errors", [__('user/assign_products.no_data_to_assign')]);
+        if($assign_type == 4){
+            $data = json_decode($request->data);
+            if (count($data) == 0)
+                return $this->sendErrorResponse("Validation errors", [__('user/assign_products.no_data_to_assign')]);
+        }
 
         $merchant = User::find($merchant_id);
         if ($assign_type == 1) {

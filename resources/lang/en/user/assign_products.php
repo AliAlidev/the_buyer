@@ -9,8 +9,8 @@ return [
     'role' => 'Role',
     'role_merchant' => 'Merchant',
     'role_employee' => 'Employee',
-    'phone' => 'Phone',
-    'tel_phone' => 'Mobile',
+    'phone' => 'Mobile',
+    'tel_phone' => 'Phone',
     'province' => 'Province',
     'city' => 'City',
     'address' => 'Address',
@@ -29,5 +29,7 @@ return [
     'product_type_market' => 'All Market Products',
     'product_type_custome' => 'Custome',
     'products_assigned_successfully' => 'Products assigned successfully',
-    'no_data_to_assign' => 'No products to assign'
+    'no_data_to_assign' => 'No products to assign',
+    'yous_should_select_assign_type' => 'You should select assign type',
+    'yous_should_select_merchant_id' => 'You should select merchant email'
 ];

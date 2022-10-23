@@ -35,4 +35,14 @@ class Data extends Model
         return $this->belongsToMany(EffMaterial::class, 'data_effmaterials', 'data_id', 'effict_matterials_id', 'id', 'id');
     }
 
+    public function shapes()
+    {
+        return $this->belongsTo(Shape::class, 'shape_id', 'shape_id');
+    }
+
+    public function companies()
+    {
+        return $this->belongsTo(Company::class, 'comp_id', 'comp_id');
+    }
+
 }

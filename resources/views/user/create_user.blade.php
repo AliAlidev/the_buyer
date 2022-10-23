@@ -159,10 +159,10 @@
                                             <label for="merchant_type">{{ __('user/create_user.merchant_type') }}</label>
                                             <select name="merchant_type" id="merchant_type" class="form-select">
                                                 <option value="1">
-                                                    {{ __('user/create_user.merchant_type_market') }}
+                                                    {{ __('user/create_user.merchant_type_pharmacy') }}
                                                 </option>
                                                 <option value="2">
-                                                    {{ __('user/create_user.merchant_type_pharmacy') }}
+                                                    {{ __('user/create_user.merchant_type_market') }}
                                                 </option>
                                             </select>
                                         </div>

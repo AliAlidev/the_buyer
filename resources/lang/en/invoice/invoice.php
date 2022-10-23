@@ -4,8 +4,8 @@ return [
     'create' => [
         'labels' => [
             'create_sell_invoice' => 'Create Sell Invoice',
-            'start_cam'=>'Start Cam',
-            'check'=>'Check',
+            'start_cam' => 'Start Cam',
+            'check' => 'Check',
             'scan_code' => 'Scan code',
             'enter_element_name' => 'Enter element name',
             'customer_name' => 'Customer Name',
@@ -46,7 +46,25 @@ return [
             'you_should_add_element_parts_count_for_item' => 'You should add element parts count for item :item',
             'amounts_not_enough_for_item' => 'Amounts not enough for item :item',
             'invoice_created_successfully' => 'Invoice created successfully',
-            'currency' => 'sp'
+            'currency' => 'sp',
+            'create_buy_invoice' => 'Create buy invoice',
+            'real_price' => 'Real Price',
+            'start_date' => 'Start Date',
+            'expiry_type' => 'Expiry Type',
+            'expiry_type_normal' => 'Default',
+            'expiry_type_months' => 'Months',
+            'expiry_type_end_date' => 'Expiry Date',
+            'expiry_value' => 'Expiry Value',
+            'store_name' => 'Store Name',
+            'you_should_select_product' => 'You should select product',
+            'you_aleready_add_this_product_to_invoice' => 'You aleready add this product to invoice',
+            'you_should_select_real_price' => 'You should select real price',
+            'you_should_select_amount_or_part_amount' => 'You should select amount or part amount',
+            'buy' => 'Buy',
+            'you_should_select_product_name' => 'You should select product name',
+            'you_should_select_real_price' => 'You should select price',
+            'you_should_select_numeric_real_price' => 'You should select valid numeric price',
+            'you_should_select_gt_real_price' => 'Price should be greater than 0',
         ]
     ],
     'list' => [

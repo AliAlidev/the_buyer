@@ -79,10 +79,10 @@
                                         <label for="type">{{ __('product/create_product.merchant_type') }}</label>
                                         <select name="type" id="type" class="form-select">
                                             <option value="1">
-                                                {{ __('product/create_product.merchant_type_market') }}
+                                                {{ __('product/create_product.merchant_type_pharmacy') }}
                                             </option>
                                             <option value="2">
-                                                {{ __('product/create_product.merchant_type_pharmacy') }}
+                                                {{ __('product/create_product.merchant_type_market') }}
                                             </option>
                                         </select>
                                     </div>
@@ -478,12 +478,12 @@
         });
 
         function merchantType(merchant) {
-            if (merchant == 1) {
+            if (merchant == 2) {
                 $('#pharmacy_section').attr('hidden', 'hidden');
                 $('#market_section').removeAttr('hidden');
                 $('.shape').select2();
                 $('.company').select2();
-            } else if (merchant == 2) {
+            } else if (merchant == 1) {
                 $('#pharmacy_section').removeAttr('hidden');
                 $('#market_section').attr('hidden', 'hidden');
                 $('.shape').select2();

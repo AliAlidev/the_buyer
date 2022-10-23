@@ -6,7 +6,8 @@
             font-size: 16px;
             font-weight: 900;
         }
-        .dt-buttons{
+
+        .dt-buttons {
             margin-left: 15%;
             margin-right: 15%;
         }
@@ -57,32 +58,34 @@
                                 {{ session()->get('success') }}
                             </div>
                             <div class="row mb-5">
-                                <div class="col-md-3">
-                                    <label for="merchant_type">{{ __('product/list_products.merchant_type') }}</label>
-                                    <select name="merchant_type" id="merchant_type" class="form-select">
-                                        <option value=""></option>
-                                        <option value="1">{{ __('product/list_products.merchant_type_pharmacy') }}
-                                        </option>
-                                        <option value="2">{{ __('product/list_products.merchant_type_market') }}
-                                        </option>
-                                    </select>
-                                </div>
+                                @if (Auth::user()->isAdmin())
+                                    <div class="col-md-3">
+                                        <label for="merchant_type">{{ __('product/list_products.merchant_type') }}</label>
+                                        <select name="merchant_type" id="merchant_type" class="form-select">
+                                            <option value=""></option>
+                                            <option value="1">{{ __('product/list_products.merchant_type_pharmacy') }}
+                                            </option>
+                                            <option value="2">{{ __('product/list_products.merchant_type_market') }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                @endif
                                 <div class="col-md-3">
                                     <label for="shape_id">{{ __('product/list_products.shape') }}</label>
                                     <select name="shape_id" id="shape_id" class="form-select">
-                                        <option value=""></option>
+                                        {{-- <option value=""></option>
                                         @foreach ($shapes as $shape)
                                             <option value="{{ $shape->id }}">{{ $shape->ar_shape_name }}</option>
-                                        @endforeach
+                                        @endforeach --}}
                                     </select>
                                 </div>
                                 <div class="col-md-3">
                                     <label for="company_id">{{ __('product/list_products.company') }}</label>
                                     <select name="company_id" id="company_id" class="form-select">
-                                        <option value=""></option>
+                                        {{-- <option value=""></option>
                                         @foreach ($companies as $company)
                                             <option value="{{ $company->id }}">{{ $company->ar_comp_name }}</option>
-                                        @endforeach
+                                        @endforeach --}}
                                     </select>
                                 </div>
                             </div>
@@ -153,6 +156,48 @@
         }
     </script>
     <script type="text/javascript">
+        $(document).ready(function() {
+            if ('{{ Auth::user()->isAdmin() }}' == false) {
+                // fill companies
+                $('#company_id').empty();
+                url = "{{ route('get-companies', '#id') }}";
+                url = url.replace('#id', "{{ Auth::user()->merchant_type }}");
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    complete: function(data) {
+                        data = data.responseJSON;
+                        var empty = '<option value=""></option>';
+                        $('#company_id').append(empty);
+                        data.forEach((item) => {
+                            var option = '<option value=' + item.comp_id + '>' + item
+                                .ar_comp_name + '</option>';
+                            $('#company_id').append(option);
+                        });
+                    }
+                });
+
+                // fill shapes
+                $('#shape_id').empty();
+                url = "{{ route('get-shapes', '#id') }}";
+                url = url.replace('#id', "{{ Auth::user()->merchant_type }}");
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    complete: function(data) {
+                        data = data.responseJSON;
+                        var empty = '<option value=""></option>';
+                        $('#shape_id').append(empty);
+                        data.forEach((item) => {
+                            var option = '<option value=' + item.shape_id + '>' + item
+                                .ar_shape_name + '</option>';
+                            $('#shape_id').append(option);
+                        });
+                    }
+                });
+            }
+        });
+
         var table;
         $(function() {
             var langOptions = getCurrentLanguage();
@@ -292,17 +337,51 @@
 
         });
 
-        $('#company_id').change(function() {
-            table.draw();
-        });
-
-        $('#shape_id').change(function() {
+        $('#company_id, #shape_id, #merchant_type').change(function() {
             table.draw();
         });
 
         $('#merchant_type').change(function() {
-            table.draw();
-        });
+            if ($(this).val() != 0) {
+                // fill companies
+                $('#company_id').empty();
+                url = "{{ route('get-companies', '#id') }}";
+                url = url.replace('#id', $(this).val());
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    complete: function(data) {
+                        data = data.responseJSON;
+                        var empty = '<option value=""></option>';
+                        $('#company_id').append(empty);
+                        data.forEach((item) => {
+                            var option = '<option value=' + item.comp_id + '>' + item
+                                .ar_comp_name + '</option>';
+                            $('#company_id').append(option);
+                        });
+                    }
+                });
+
+                // fill shapes
+                $('#shape_id').empty();
+                url = "{{ route('get-shapes', '#id') }}";
+                url = url.replace('#id', $(this).val());
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    complete: function(data) {
+                        data = data.responseJSON;
+                        var empty = '<option value=""></option>';
+                        $('#shape_id').append(empty);
+                        data.forEach((item) => {
+                            var option = '<option value=' + item.shape_id + '>' + item
+                                .ar_shape_name + '</option>';
+                            $('#shape_id').append(option);
+                        });
+                    }
+                });
+            }
+        })
 
         $('body').on('click', '.delete', function() {
             var title = '';

@@ -29,8 +29,7 @@ class UsersSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'email' => 'admin@buyer.com',
-                'role' => '1',  // merchant
-                'merchant_type' => '2',  // market
+                'role' => '0',  // admin
                 'password' => Hash::make('12345678'),
                 "phone" => "+963936566977",
                 "tel_phone" => "0431234567",

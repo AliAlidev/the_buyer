@@ -6,7 +6,8 @@
             font-size: 16px;
             font-weight: 900;
         }
-        .dt-buttons{
+
+        .dt-buttons {
             margin-left: 15%;
             margin-right: 15%;
         }

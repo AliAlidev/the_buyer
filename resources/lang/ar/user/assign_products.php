@@ -9,8 +9,8 @@ return [
     'role' => 'الصفة',
     'role_merchant' => 'تاجر',
     'role_employee' => 'موظف',
-    'phone' => 'رقم الهاتف',
-    'tel_phone' => 'رقم موبايل',
+    'phone' => 'رقم الموبايل',
+    'tel_phone' => 'رقم الهاتف',
     'province' => 'المحافظة',
     'city' => 'المدينة',
     'address' => 'العنوان',
@@ -29,5 +29,7 @@ return [
     'product_type_market' => 'جميع مواد الماركت',
     'product_type_custome' => 'مخصص',
     'products_assigned_successfully' => 'تم تخصيص المواد بنجاح',
-    'no_data_to_assign' => 'لايوجد مواد لتخصيصها'
+    'no_data_to_assign' => 'لايوجد مواد لتخصيصها',
+    'yous_should_select_assign_type' => 'يجب اختيار نوع التخصيص',
+    'yous_should_select_merchant_id' => 'يجب اختيار إيميل التاجر'
 ];

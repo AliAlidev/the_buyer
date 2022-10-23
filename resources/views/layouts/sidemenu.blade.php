@@ -34,79 +34,81 @@
          </li>
 
          {{-- Companies management --}}
-         <li>
-             <a href="javascript: void(0);" class="has-arrow waves-effect">
-                 <i class="mdi mdi-office-building"></i></i>
-                 <span>{{ __('layout/side_bar.company_management') }}</span>
-             </a>
-             <ul class="sub-menu" aria-expanded="false">
-                 <li>
-                     <a href="{{ route('list-companies') }}" class="waves-effect">
-                         <i class="fas fa-list"></i><span class="badge bg-primary float-end"></span>
-                         <span>{{ __('layout/side_bar.list_companies') }}</span>
-                     </a>
-                 </li>
-                 <li>
-                     <a href="{{ route('company-create') }}" class="waves-effect">
-                         <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
-                         <span>{{ __('layout/side_bar.create_company') }}</span>
-                     </a>
-                 </li>
-             </ul>
-         </li>
+         @if (Auth::user()->isAdmin())
+             <li>
+                 <a href="javascript: void(0);" class="has-arrow waves-effect">
+                     <i class="mdi mdi-office-building"></i></i>
+                     <span>{{ __('layout/side_bar.company_management') }}</span>
+                 </a>
+                 <ul class="sub-menu" aria-expanded="false">
+                     <li>
+                         <a href="{{ route('list-companies') }}" class="waves-effect">
+                             <i class="fas fa-list"></i><span class="badge bg-primary float-end"></span>
+                             <span>{{ __('layout/side_bar.list_companies') }}</span>
+                         </a>
+                     </li>
+                     <li>
+                         <a href="{{ route('company-create') }}" class="waves-effect">
+                             <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
+                             <span>{{ __('layout/side_bar.create_company') }}</span>
+                         </a>
+                     </li>
+                 </ul>
+             </li>
 
-         {{-- Shapes Management --}}
-         <li>
-             <a href="javascript: void(0);" class="has-arrow waves-effect">
-                 <i class="mdi mdi-shape"></i>
-                 <span>{{ __('layout/side_bar.shape_management') }}</span>
-             </a>
-             <ul class="sub-menu" aria-expanded="false">
-                 <li>
-                     <a href="{{ route('list-shapes') }}" class="waves-effect">
-                         <i class="fas fa-list"></i><span class="badge bg-primary float-end"></span>
-                         <span>{{ __('layout/side_bar.list_shapes') }}</span>
-                     </a>
-                 </li>
-                 <li>
-                     <a href="{{ route('shape-create') }}" class="waves-effect">
-                         <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
-                         <span>{{ __('layout/side_bar.create_shape') }}</span>
+             {{-- Shapes Management --}}
+             <li>
+                 <a href="javascript: void(0);" class="has-arrow waves-effect">
+                     <i class="mdi mdi-shape"></i>
+                     <span>{{ __('layout/side_bar.shape_management') }}</span>
+                 </a>
+                 <ul class="sub-menu" aria-expanded="false">
+                     <li>
+                         <a href="{{ route('list-shapes') }}" class="waves-effect">
+                             <i class="fas fa-list"></i><span class="badge bg-primary float-end"></span>
+                             <span>{{ __('layout/side_bar.list_shapes') }}</span>
+                         </a>
+                     </li>
+                     <li>
+                         <a href="{{ route('shape-create') }}" class="waves-effect">
+                             <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
+                             <span>{{ __('layout/side_bar.create_shape') }}</span>
 
-                     </a>
-                 </li>
-             </ul>
-         </li>
+                         </a>
+                     </li>
+                 </ul>
+             </li>
 
-         {{-- Users Management --}}
-         <li>
-             <a href="javascript: void(0);" class="has-arrow waves-effect">
-                 <i class="fas fa-user-friends"></i>
-                 <span>{{ __('layout/side_bar.user_management') }}</span>
-             </a>
-             <ul class="sub-menu" aria-expanded="false">
-                 <li>
-                     <a href="{{ route('list-users') }}" class="waves-effect">
-                         <i class="fas fa-list"></i><span class="badge bg-primary float-end"></span>
-                         <span>{{ __('layout/side_bar.list_users') }}</span>
-                     </a>
-                 </li>
-                 <li>
-                     <a href="{{ route('user-create') }}" class="waves-effect">
-                         <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
-                         <span>{{ __('layout/side_bar.create_user') }}</span>
+             {{-- Users Management --}}
+             <li>
+                 <a href="javascript: void(0);" class="has-arrow waves-effect">
+                     <i class="fas fa-user-friends"></i>
+                     <span>{{ __('layout/side_bar.user_management') }}</span>
+                 </a>
+                 <ul class="sub-menu" aria-expanded="false">
+                     <li>
+                         <a href="{{ route('list-users') }}" class="waves-effect">
+                             <i class="fas fa-list"></i><span class="badge bg-primary float-end"></span>
+                             <span>{{ __('layout/side_bar.list_users') }}</span>
+                         </a>
+                     </li>
+                     <li>
+                         <a href="{{ route('user-create') }}" class="waves-effect">
+                             <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
+                             <span>{{ __('layout/side_bar.create_user') }}</span>
 
-                     </a>
-                 </li>
-                 <li>
-                     <a href="{{ route('products-assign') }}" class="waves-effect">
-                         <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
-                         <span>{{ __('layout/side_bar.assign_products') }}</span>
+                         </a>
+                     </li>
+                     <li>
+                         <a href="{{ route('products-assign') }}" class="waves-effect">
+                             <i class="fas fa-plus-circle"></i><span class="badge bg-primary float-end"></span>
+                             <span>{{ __('layout/side_bar.assign_products') }}</span>
 
-                     </a>
-                 </li>
-             </ul>
-         </li>
+                         </a>
+                     </li>
+                 </ul>
+             </li>
+         @endif
 
          {{-- Invoice Management --}}
          <li>

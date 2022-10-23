@@ -191,10 +191,10 @@
                                             <label for="merchant_type">{{ __('user/update_user.merchant_type') }}</label>
                                             <select name="merchant_type" id="merchant_type" class="form-select">
                                                 <option {{ $user->merchant_type == 1 ? 'selected' : '' }} value="1">
-                                                    {{ __('user/update_user.merchant_type_market') }}
+                                                    {{ __('user/update_user.merchant_type_pharmacy') }}
                                                 </option>
                                                 <option {{ $user->merchant_type == 2 ? 'selected' : '' }} value="2">
-                                                    {{ __('user/update_user.merchant_type_pharmacy') }}
+                                                    {{ __('user/update_user.merchant_type_market') }}
                                                 </option>
                                             </select>
                                         </div>

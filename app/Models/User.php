@@ -46,11 +46,32 @@ class User extends Authenticatable
         // return $this->belongsToMany(Data::class, UserData::class, "merchant_id", "data_id", "merchant_id", "id")->wherePivot('merchant_id', Auth::guard('api')->user()->merchant_id);
     }
 
+    public function assigned_data()
+    {
+        // return $this->belongsToMany(Data::class, UserData::class, "merchant_id", "data_id", "merchant_id", "id");
+        return $this->belongsToMany(Data::class, UserData::class, "merchant_id", "data_id", "merchant_id", "id")->wherePivot('merchant_id', Auth::guard('web')->user()->merchant_id);
+    }
+
     public function is_en()
     {
         if (Auth::user()->language == 'en')
             return true;
         else
             return false;
+    }
+
+    public function isAdmin()
+    {
+        return Auth::user()->role == '0' ? true : false;
+    }
+
+    public function isMerchant()
+    {
+        return Auth::user()->role == '1' ? true : false;
+    }
+
+    public function isEmployee()
+    {
+        return Auth::user()->role == '2' ? true : false;
     }
 }

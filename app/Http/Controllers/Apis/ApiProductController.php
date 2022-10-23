@@ -122,7 +122,7 @@ class ApiProductController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $source='api')
     {
         try {
             if ($request->code != null) {
@@ -140,35 +140,35 @@ class ApiProductController extends Controller
                 return $this->sendErrorResponse('Validation errors', $validator->getMessageBag());
             }
 
-            if ($request->quantity == 0 && $request->quantityparts == 0)
-                return $this->sendErrorResponse('Validation error', ['amount' => 'You should enter amounts']);
+            // if ($request->quantity == 0 && $request->quantityparts == 0)
+            //     return $this->sendErrorResponse('Validation error', ['amount' => 'You should enter amounts']);
 
-            if ($request->quantity != 0 && $request->price == 0)
-                return $this->sendErrorResponse('Validation error', ['amount' => 'You should enter price']);
+            // if ($request->quantity != 0 && $request->price == 0)
+            //     return $this->sendErrorResponse('Validation error', ['amount' => 'You should enter price']);
 
-            if ($request->quantity == 0 && $request->price != 0)
-                return $this->sendErrorResponse('Validation error', ['amount' => 'You should enter amount']);
+            // if ($request->quantity == 0 && $request->price != 0)
+            //     return $this->sendErrorResponse('Validation error', ['amount' => 'You should enter amount']);
 
-            if ($request->quantityparts != 0 && $request->partprice == 0)
-                return $this->sendErrorResponse('Validation error', ['amount' => 'You should enter part price']);
+            // if ($request->quantityparts != 0 && $request->partprice == 0)
+            //     return $this->sendErrorResponse('Validation error', ['amount' => 'You should enter part price']);
 
-            if ($request->quantityparts == 0 && $request->partprice != 0)
-                return $this->sendErrorResponse('Validation error', ['amount' => 'You should enter part part amount']);
+            // if ($request->quantityparts == 0 && $request->partprice != 0)
+            //     return $this->sendErrorResponse('Validation error', ['amount' => 'You should enter part part amount']);
 
-            if ($request->start_date != null && $request->duration_value != null) {
-                if ($request->duration_type == "Date") {
-                    $expiry_date = $request->duration_value;
-                    if (Carbon::parse($request->start_date)->greaterThan(Carbon::parse($expiry_date)))
-                        return $this->sendErrorResponse('Validation error', ['price' => 'Expiry date should be greater than start date']);
-                } else if ($request->duration_type == "Months") {
-                }
-            }
+            // if ($request->start_date != null && $request->duration_value != null) {
+            //     if ($request->duration_type == "Date") {
+            //         $expiry_date = $request->duration_value;
+            //         if (Carbon::parse($request->start_date)->greaterThan(Carbon::parse($expiry_date)))
+            //             return $this->sendErrorResponse('Validation error', ['price' => 'Expiry date should be greater than start date']);
+            //     } else if ($request->duration_type == "Months") {
+            //     }
+            // }
 
             if (isset($request->hasparts) && $request->numofparts == 0) {
                 return $this->sendErrorResponse('Validation error', ['amount' => 'You should enter the number of parts for this item']);
             }
 
-            $user = Auth::guard('api')->user();
+            $user = Auth::guard($source)->user();
             //////////////////////////////////////////////////////  Pharmacist  //////////////////////////////////////////////////////
             if ($user->merchant_type == 1) {
                 $has_parts = isset($request->hasparts) ? 1 : 0;
@@ -196,7 +196,7 @@ class ApiProductController extends Controller
                     'side_effects' => $request->side_effects,
                     'treatement_group' => $request->treatement_group,
                     'merchant_type' => $user->merchant_type,
-                    'created_by' => Auth::guard('api')->user()->id,
+                    'created_by' => Auth::guard($source)->user()->id,
                     'created_at' => now()->toDateTimeString(),
                     'updated_at' => now()->toDateTimeString(),
                     'status' => '2' // inactive
@@ -269,7 +269,7 @@ class ApiProductController extends Controller
                     'description' => $request->description,
                     'minimum_amount' => $minimum_amount,
                     'maximum_amount' => $maximum_amount,
-                    'created_by' => Auth::guard('api')->user()->id,
+                    'created_by' => Auth::guard($source)->user()->id,
                     'status' => '1'  // active
                 ]);
 

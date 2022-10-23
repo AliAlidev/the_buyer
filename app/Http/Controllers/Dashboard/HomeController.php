@@ -153,7 +153,13 @@ class HomeController extends Controller
     public function listProducts(Request $request)
     {
         if ($request->ajax()) {
-            $data = DB::table('data')->leftJoin('companies', 'companies.comp_id', '=', 'data.comp_id')->leftJoin('shapes', 'shapes.shape_id', '=', 'data.shape_id')->select('data.*', 'companies.ar_comp_name', 'shapes.ar_shape_name');
+            if(Auth::user()->isAdmin()){
+                $data = Data::with(['shapes', 'companies']);
+            }else{
+                $assigned_data = Auth::user()->assigned_data->pluck('id');
+                $data = Data::with(['shapes', 'companies'])->whereIn('data.id',$assigned_data);
+            }
+
             if ($request->comp_id) {
                 $data = $data->where('data.comp_id', $request->comp_id);
             }
@@ -171,15 +177,35 @@ class HomeController extends Controller
                     else  if ($row->merchant_type == 2)
                         return __('product/create_product.merchant_type_market');
                 })
+                ->editColumn('ar_shape_name', function ($row) {
+                    if ($row->shape_id)
+                        return $row->shapes->ar_shape_name;
+                    else
+                        return '';
+                })
+                ->editColumn('ar_comp_name', function ($row) {
+                    if ($row->comp_id)
+                        return $row->companies->ar_comp_name;
+                    else
+                        return '';
+                })
                 ->addColumn('action', function ($row) {
-                    if ($this->getCurrentLanguage() == "en") {
-                        $btn = '<a href=' . route('edit-product', $row->id) . ' class="edit btn btn-primary btn-sm mt-2 ml-3 mr-3"><i class="mdi mdi-square-edit-outline"></i></a>';
-                        $btn .= '<a id=' . $row->id . ' class="delete btn btn-danger btn-sm mt-2" style="margin-left:4%"><i class="mdi mdi-delete"></i></a>';
-                        $btn .= '<a href=' . route('show-product', $row->id) . ' class="btn btn-info btn-sm mt-2" style="margin-left:4%"><i class="far fa-eye"></i></a>';
-                    } else if ($this->getCurrentLanguage() == "ar") {
-                        $btn = '<a href=' . route('edit-product', $row->id) . ' class="edit btn btn-primary waves-effect waves-light btn-sm mt-2 ml-3 mr-3"><i class="mdi mdi-square-edit-outline"></i></a>';
-                        $btn .= '<a id=' . $row->id . ' class="delete btn btn-danger waves-effect waves-light btn-sm mt-2" style="margin-right:4%"><i class="mdi mdi-delete"></i></a>';
-                        $btn .= '<a href=' . route('show-product', $row->id) . ' class="btn btn-info btn-sm mt-2" style="margin-right:4%"><i class="far fa-eye"></i></a>';
+                    if(Auth::user()->isAdmin()){
+                        if ($this->getCurrentLanguage() == "en") {
+                            $btn = '<a href=' . route('edit-product', $row->id) . ' class="edit btn btn-primary btn-sm mt-2 ml-3 mr-3"><i class="mdi mdi-square-edit-outline"></i></a>';
+                            $btn .= '<a id=' . $row->id . ' class="delete btn btn-danger btn-sm mt-2" style="margin-left:4%"><i class="mdi mdi-delete"></i></a>';
+                            $btn .= '<a href=' . route('show-product', $row->id) . ' class="btn btn-info btn-sm mt-2" style="margin-left:4%"><i class="far fa-eye"></i></a>';
+                        } else if ($this->getCurrentLanguage() == "ar") {
+                            $btn = '<a href=' . route('edit-product', $row->id) . ' class="edit btn btn-primary waves-effect waves-light btn-sm mt-2 ml-3 mr-3"><i class="mdi mdi-square-edit-outline"></i></a>';
+                            $btn .= '<a id=' . $row->id . ' class="delete btn btn-danger waves-effect waves-light btn-sm mt-2" style="margin-right:4%"><i class="mdi mdi-delete"></i></a>';
+                            $btn .= '<a href=' . route('show-product', $row->id) . ' class="btn btn-info btn-sm mt-2" style="margin-right:4%"><i class="far fa-eye"></i></a>';
+                        }
+                    }else{
+                        if ($this->getCurrentLanguage() == "en") {
+                            $btn = '<a href=' . route('show-product', $row->id) . ' class="btn btn-info btn-sm mt-2" style="margin-left:4%"><i class="far fa-eye"></i></a>';
+                        } else if ($this->getCurrentLanguage() == "ar") {
+                            $btn = '<a href=' . route('show-product', $row->id) . ' class="btn btn-info btn-sm mt-2" style="margin-right:4%"><i class="far fa-eye"></i></a>';
+                        }
                     }
                     return $btn;
                 })
@@ -291,6 +317,18 @@ class HomeController extends Controller
         $eff_mat = EffMaterial::get();
         $productEffMat = DB::table('data_effmaterials')->leftJoin('effict_matterials', 'effict_matterials.eff_mat_id', '=', 'data_effmaterials.effict_matterials_id')->where('data_id', $id)->get();
         return view('product.update_product', ['productEffMat' => $productEffMat, 'product' => $data, 'shapes_market' => $shapes_market, 'shapes_pharmacy' => $shapes_pharmacy, 'companies_pharmacy' => $companies_pharmacy, 'companies_market' => $companies_market, 'treatement_groups' => $treatement_groups, 'eff_materials' => $eff_mat]);
+    }
+
+    public function get_companies($merchant_type)
+    {
+        $companies = Company::where('merchant_type', $merchant_type)->get();
+        return $companies;
+    }
+
+    public function get_shapes($merchant_type)
+    {
+        $shapes = Shape::where('merchant_type', $merchant_type)->get();
+        return $shapes;
     }
 
     // public function importDataWithShapesAndCompanies()
