@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Dashboard\CompanyController;
 use App\Http\Controllers\Dashboard\HomeController;
+use App\Http\Controllers\Dashboard\InventoryController;
 use App\Http\Controllers\Dashboard\InvoiceController;
 use App\Http\Controllers\Dashboard\ShapeController;
 use App\Http\Controllers\Dashboard\UserController;
@@ -35,29 +36,30 @@ Route::get('recover-password/{token}/{user_id}', [HomeController::class, 'recove
 //     Route::get('logout', [LoginController::class, 'logout']);
 
 //     Route::get('/', [HomeController::class, 'listitems'])->name('home1');
-//     Route::group(['prefix' => 'inventory'], function () {
-//         Route::get('getCurrentPrice/{id}/{merchantId}', [HomeController::class, 'getCurrentPriceForElement'])->name('get-current-price-for-element');
-//         Route::get('getCurrentPartPrice/{id}/{merchantId}', [HomeController::class, 'getCurrentPartPriceForElement'])->name('get-current-part-price-for-element');
-//         Route::get('getMaxPrice/{id}', [HomeController::class, 'getMaxPriceForElement'])->name('get-max-price-for-element');
-//         Route::get('getMaxPartPrice/{id}', [HomeController::class, 'getMaxPartPriceForElement'])->name('get-max-part-price-for-element');
-//         Route::get('get_itms_na', [HomeController::class, 'getItemsName'])->name('get-items-name');
-//         Route::get('list_itm', [HomeController::class, 'listitems'])->name('list-items');
-//         Route::get('fast_inventory_list', [HomeController::class, 'fastinventorylist'])->name('fast-inventory-list');
-//         Route::post('store_fast_inventory_list', [HomeController::class, 'storefastinventorylist'])->name('store-fast-inventory-list');
-//         Route::get('list_invitem_amnt', [HomeController::class, 'listinventoryitemamounts'])->name('list-inventory-item-amounts');
-//         Route::get('create_itm', [HomeController::class, 'createitemindex'])->name('create-item-index');
-//         Route::get('add_inv_item_amnt/{id}', [HomeController::class, 'createinventoryitemamountindex'])->name('create-inventory-item-amount-index');
-//         Route::post('add_inv_item_amnt', [HomeController::class, 'createinventoryitemamount'])->name('create-inventory-item-amount');
-//         Route::get('edit_itm/{id}', [HomeController::class, 'edititemindex'])->name('edit-item-index');
-//         Route::get('view_itm/{id}', [HomeController::class, 'viewitemindex'])->name('view-item-index');
-//         Route::post('delte_itm', [HomeController::class, 'deleteitem'])->name('delete-item');
-//         Route::post('delte_itm_amnt', [HomeController::class, 'deleteitemamount'])->name('delete-item-amount');
-//         Route::post('edit_itm/{id}', [HomeController::class, 'edititem'])->name('edit-item');
-//         Route::post('create_itm', [HomeController::class, 'createitem'])->name('create-item');
-//         Route::post('add_dat', [HomeController::class, 'store'])->name('add-data');
-//         Route::post('get_dat_ser', [HomeController::class, 'findBySerialCode'])->name('get-data-by-serial');
-//         Route::post('get_dat_name', [HomeController::class, 'findByItemName'])->name('get-data-by-name');
-//     });
+Route::group(['prefix' => 'inventory'], function () {
+    //         Route::get('getCurrentPrice/{id}/{merchantId}', [HomeController::class, 'getCurrentPriceForElement'])->name('get-current-price-for-element');
+    //         Route::get('getCurrentPartPrice/{id}/{merchantId}', [HomeController::class, 'getCurrentPartPriceForElement'])->name('get-current-part-price-for-element');
+    //         Route::get('getMaxPrice/{id}', [HomeController::class, 'getMaxPriceForElement'])->name('get-max-price-for-element');
+    //         Route::get('getMaxPartPrice/{id}', [HomeController::class, 'getMaxPartPriceForElement'])->name('get-max-part-price-for-element');
+    //         Route::get('get_itms_na', [HomeController::class, 'getItemsName'])->name('get-items-name');
+    //         Route::get('list_itm', [HomeController::class, 'listitems'])->name('list-items');
+    Route::match(['get', 'post'], 'fast_initilize_store', [InventoryController::class, 'fast_initilize_store'])->name('fast-initilize-store');
+    Route::post('save_item_fast_store', [InventoryController::class, 'save_item_in_fast_initilize_store'])->name('save-item-in-fast-initilize-store');
+    Route::post('edit_item_fast_store/{id}', [InventoryController::class, 'edit_item_in_fast_initilize_store'])->name('edit-item-in-fast-initilize-store');
+    // Route::get('list_invitem_amnt', [HomeController::class, 'listinventoryitemamounts'])->name('list-inventory-item-amounts');
+    // Route::get('create_itm', [HomeController::class, 'createitemindex'])->name('create-item-index');
+    Route::get('add_inv_item_amnt/{id}', [HomeController::class, 'createinventoryitemamountindex'])->name('create-inventory-item-amount-index');
+    Route::post('add_inv_item_amnt', [HomeController::class, 'createinventoryitemamount'])->name('create-inventory-item-amount');
+    //         Route::get('edit_itm/{id}', [HomeController::class, 'edititemindex'])->name('edit-item-index');
+    //         Route::get('view_itm/{id}', [HomeController::class, 'viewitemindex'])->name('view-item-index');
+    Route::post('delte_itm', [HomeController::class, 'deleteitem'])->name('delete-item');
+    //         Route::post('delte_itm_amnt', [HomeController::class, 'deleteitemamount'])->name('delete-item-amount');
+    //         Route::post('edit_itm/{id}', [HomeController::class, 'edititem'])->name('edit-item');
+    //         Route::post('create_itm', [HomeController::class, 'createitem'])->name('create-item');
+    //         Route::post('add_dat', [HomeController::class, 'store'])->name('add-data');
+    //         Route::post('get_dat_ser', [HomeController::class, 'findBySerialCode'])->name('get-data-by-serial');
+    //         Route::post('get_dat_name', [HomeController::class, 'findByItemName'])->name('get-data-by-name');
+});
 
 ////////////////////////////////////////// invoices
 Route::group(['prefix' => 'invoice'], function () {

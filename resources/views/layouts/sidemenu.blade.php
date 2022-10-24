@@ -140,6 +140,22 @@
              </ul>
          </li>
 
+         {{-- Store Management --}}
+         <li>
+             <a href="javascript: void(0);" class="has-arrow waves-effect">
+                 <i class="fas fa-file-invoice"></i>
+                 <span>{{ __('layout/side_bar.store_management') }}</span>
+             </a>
+             <ul class="sub-menu" aria-expanded="false">
+                 <li>
+                     <a href="{{ route('fast-initilize-store') }}" class="waves-effect">
+                         <i class="fas fa-list"></i><span class="badge bg-primary float-end"></span>
+                         <span>{{ __('layout/side_bar.fast_initilize_store') }}</span>
+                     </a>
+                 </li>
+             </ul>
+         </li>
+
      </ul>
  </div>
  <!-- Sidebar -->

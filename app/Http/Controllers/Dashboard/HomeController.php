@@ -529,39 +529,7 @@ class HomeController extends Controller
     //     }
     // }
 
-    // public function fastinventorylist(Request $request)
-    // {
-    //     try {
-    //         if ($request->ajax()) {
-    //             $data = Data::get();
 
-    //             return Datatables::of($data)
-    //                 ->addIndexColumn()
-    //                 ->addColumn('amount', function ($row) {
-    //                     return '<input type="number" class="form-control  w-100" value=0>';
-    //                 })
-    //                 ->addColumn('partamount', function ($row) {
-    //                     return '<input type="number" class="form-control  w-100" value=0>';
-    //                 })
-    //                 ->addColumn('price', function ($row) {
-    //                     return '<input type="number" class="form-control  w-100" value=0>';
-    //                 })
-    //                 ->addColumn('part_price', function ($row) {
-    //                     return '<input type="number" class="form-control  w-100" value=0>';
-    //                 })
-    //                 ->addColumn('action', function ($row) {
-    //                     $btn = '<a href="' . route('store-fast-inventory-list') . '" class="btn btn-info btn-sm mt-2 btn_add">Add</a> &nbsp';
-
-    //                     return $btn;
-    //                 })
-    //                 ->rawColumns(['action', 'price', 'part_price', 'amount', 'partamount'])
-    //                 ->make(true);
-    //         }
-    //         return view('inventory.fast_inventory_list');
-    //     } catch (Exception $th) {
-    //         return $this->errors("HomeController@listitems", $th->getMessage());
-    //     }
-    // }
 
     // public function storefastinventorylist(Request $request)
     // {

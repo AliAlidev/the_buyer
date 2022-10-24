@@ -20,9 +20,9 @@ class Data extends Model
 
     public function amountsForUser($user_id)
     {
-        $amounts = Amount::where('data_id', $this->id)->where('merchant_id', $user_id);
-        return $amounts;
-        // return $this->hasMany(Amount::class, "id","data_id")->where('merchant_id', $user_id);
+        // $amounts = Amount::where('data_id', $this->id)->where('merchant_id', $user_id);
+        // return $amounts;
+        return $this->hasMany(Amount::class, "data_id","id")->where('merchant_id', $user_id);
     }
 
     public function User()

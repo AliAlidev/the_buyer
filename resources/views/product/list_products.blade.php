@@ -326,7 +326,6 @@
                 ],
                 "language": langOptions,
                 "dom": 'lBfrtipr'
-
             });
             $("div.dataTables_filter input").unbind();
             $("div.dataTables_filter input").keyup(function(

@@ -74,4 +74,9 @@ class User extends Authenticatable
     {
         return Auth::user()->role == '2' ? true : false;
     }
+
+    public function amounts()
+    {
+        return $this->hasMany(Amount::class, 'merchant_id', 'merchant_id');
+    }
 }

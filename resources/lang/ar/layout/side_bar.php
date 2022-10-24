@@ -18,4 +18,6 @@ return [
     'create_sell_invoice' => 'إضافة فاتورة مبيع',
     'create_buy_invoice' => 'إضافة فاتورة شراء',
     'list_invoice' => 'عرض الفواتير',
+    'store_management' => 'إدارة المخازن',
+    'fast_initilize_store' => 'جرد سريع'
 ];

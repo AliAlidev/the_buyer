@@ -18,4 +18,6 @@ return [
     'create_sell_invoice' => 'Create Sell Invoice',
     'create_buy_invoice' => 'Create Buy Invoice',
     'list_invoice' => 'List Invoices',
+    'store_management' => 'Stores Management',
+    'fast_initilize_store' => 'Fast Initilization'
 ];
