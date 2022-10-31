@@ -71,6 +71,7 @@ Route::group(['prefix' => 'invoice'], function () {
     Route::post('create_buy_inv', [InvoiceController::class, 'buy'])->name('store-buy-invoice');
     Route::match(['get', 'post'], 'list_invoices', [InvoiceController::class, 'list_invoices'])->name('list-invoices');
     Route::match(['get', 'post'], 'details/{order_number}', [InvoiceController::class, 'invoice_details'])->name('invoice-details');
+    Route::get('generate_invoice/{order_number}', [InvoiceController::class, 'generate_invoice'])->name('generate_invoice');
 });
 
 //     ////////////////////////////////////////// buy invoices

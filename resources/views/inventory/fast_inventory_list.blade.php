@@ -6,6 +6,45 @@
             margin-left: 15%;
             margin-right: 15%;
         }
+
+        .overlay {
+            margin: auto;
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            bottom: 50px;
+            right: 50px;
+            z-index: 100000;
+        }
+
+        .disabledDiv {
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .add_button {
+            background-color: #1b82ec;
+            border-color: #1b82ec;
+            color: white;
+        }
+
+        .add_button:hover {
+            background-color: #0080ff;
+            border-color: #0080ff;
+            border: solid 1px white;
+        }
+
+        .edti_button {
+            background-color: #f5b225;
+            border-color: #f5b225;
+            color: whitesmoke;
+        }
+
+        .edti_button:hover {
+            background-color: #fcad02;
+            border-color: #fcad02;
+            border: solid 1px white;
+        }
     </style>
 @endpush
 
@@ -54,22 +93,37 @@
                                         </div>
                                     </div>
                                 @endif
-                                <table class="table table-bordered data-table mt-5" style="width: 100%">
-                                    <thead>
-                                        <tr>
-                                            <th style="text-align: center; width: 10%">No</th>
-                                            <th style="text-align: center; width: 15%">Code</th>
-                                            <th style="text-align: center; width: 20%">Name</th>
-                                            <th style="text-align: center; width: 10%">Quantity</th>
-                                            <th style="text-align: center; width: 10%">Price</th>
-                                            <th style="text-align: center; width: 10%">QuantityP</th>
-                                            <th style="text-align: center; width: 10%">PartP</th>
-                                            <th style="text-align: center; width: 10%">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody style="text-align: center">
-                                    </tbody>
-                                </table>
+
+                                <div id="table_data">
+                                    <table class="table table-bordered data-table mt-5" style="width: 100%">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align: center; width: 10%">
+                                                    {{ __('inventory/inventory.labels.table_header_id') }}</th>
+                                                <th style="text-align: center; width: 15%">
+                                                    {{ __('inventory/inventory.labels.code') }}</th>
+                                                <th style="text-align: center; width: 20%">
+                                                    {{ __('inventory/inventory.labels.name') }}</th>
+                                                <th style="text-align: center; width: 10%">
+                                                    {{ __('inventory/inventory.labels.quantity') }}</th>
+                                                <th style="text-align: center; width: 10%">
+                                                    {{ __('inventory/inventory.labels.price') }}</th>
+                                                <th style="text-align: center; width: 10%">
+                                                    {{ __('inventory/inventory.labels.quantity_p') }}</th>
+                                                <th style="text-align: center; width: 10%">
+                                                    {{ __('inventory/inventory.labels.price_p') }}</th>
+                                                <th style="text-align: center; width: 10%">
+                                                    {{ __('inventory/inventory.labels.action') }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="8" style="text-align: center"><small>Please select
+                                                        merchant</small></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
 
                             </div>
 
@@ -95,97 +149,98 @@
     </script>
 
     <script src="{{ asset('assets/js/custome_validation.js') }}"></script>
+
     <script type="text/javascript">
-        $(function() {
-            var langOptions = getCurrentLanguage();
-            if (langOptions == 'ar')
-                langOptions = {
-                    "searchPlaceholder": "اكتب النص ومن ثم اضغط انتر",
-                    "loadingRecords": "الرجاء الانتظار - جار التحميل...",
-                    "sProcessing": "جارٍ التحميل...",
-                    "sLengthMenu": "أظهر _MENU_ مدخلات",
-                    "sZeroRecords": "لم يعثر على أية سجلات",
-                    "sInfo": "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
-                    "sInfoEmpty": "يعرض 0 إلى 0 من أصل 0 سجل",
-                    "sInfoFiltered": "(منتقاة من مجموع _MAX_ مُدخل)",
-                    "sInfoPostFix": "",
-                    "sSearch": "ابحث:",
-                    "sUrl": "",
-                    "oPaginate": {
-                        "sFirst": "الأول",
-                        "sPrevious": "السابق",
-                        "sNext": "التالي",
-                        "sLast": "الأخير"
-                    }
-                };
+        // $(function() {
+        //     var langOptions = getCurrentLanguage();
+        //     if (langOptions == 'ar')
+        //         langOptions = {
+        //             "searchPlaceholder": "اكتب النص ومن ثم اضغط انتر",
+        //             "loadingRecords": "الرجاء الانتظار - جار التحميل...",
+        //             "sProcessing": "جارٍ التحميل...",
+        //             "sLengthMenu": "أظهر _MENU_ مدخلات",
+        //             "sZeroRecords": "لم يعثر على أية سجلات",
+        //             "sInfo": "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
+        //             "sInfoEmpty": "يعرض 0 إلى 0 من أصل 0 سجل",
+        //             "sInfoFiltered": "(منتقاة من مجموع _MAX_ مُدخل)",
+        //             "sInfoPostFix": "",
+        //             "sSearch": "ابحث:",
+        //             "sUrl": "",
+        //             "oPaginate": {
+        //                 "sFirst": "الأول",
+        //                 "sPrevious": "السابق",
+        //                 "sNext": "التالي",
+        //                 "sLast": "الأخير"
+        //             }
+        //         };
 
-            var table = $('.data-table').DataTable({
-                processing: true,
-                serverSide: true,
-                scrollY: 500,
-                scrollX: true,
-                "pageLength": 50,
-                "deferRender": true,
-                "paging": true,
-                "pagingType": "full_numbers",
-                "autoWidth": false,
-                ajax: {
-                    url: "{{ route('fast-initilize-store') }}",
-                    data: function(d) {
-                        d.merchant_id = $('#merchant_email').val();
-                    }
-                },
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'code',
-                        name: 'code',
-                    },
-                    {
-                        data: 'name',
-                        name: 'name',
-                    },
-                    {
-                        data: 'amount',
-                        name: 'amount',
-                    },
-                    {
-                        data: 'price',
-                        name: 'price',
-                    },
-                    {
-                        data: 'partamount',
-                        name: 'partamount',
-                    },
-                    {
-                        data: 'part_price',
-                        name: 'part_price',
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                    },
-                ],
-                "lengthMenu": [
-                    [50, 100, 500, 1000, 2000, 5000, 10000],
-                    [50, 100, 500, 1000, 2000, 5000, 10000]
-                ],
-                "language": langOptions,
-                "dom": 'lBfrtipr'
-            });
-            $("div.dataTables_filter input").unbind();
-            $("div.dataTables_filter input").keyup(function(
-                e) {
-                if (e.keyCode == 13) {
-                    table.search(this.value).draw();
-                }
-            });
+        //     var table = $('.data-table').DataTable({
+        //         processing: true,
+        //         serverSide: true,
+        //         scrollY: 500,
+        //         scrollX: true,
+        //         "pageLength": 50,
+        //         "deferRender": true,
+        //         "paging": true,
+        //         "pagingType": "full_numbers",
+        //         "autoWidth": false,
+        //         ajax: {
+        //             url: "{{ route('fast-initilize-store') }}",
+        //             data: function(d) {
+        //                 d.merchant_id = $('#merchant_email').val();
+        //             }
+        //         },
+        //         columns: [{
+        //                 data: 'DT_RowIndex',
+        //                 name: 'DT_RowIndex',
+        //                 orderable: false,
+        //                 searchable: false
+        //             },
+        //             {
+        //                 data: 'code',
+        //                 name: 'code',
+        //             },
+        //             {
+        //                 data: 'name',
+        //                 name: 'name',
+        //             },
+        //             {
+        //                 data: 'amount',
+        //                 name: 'amount',
+        //             },
+        //             {
+        //                 data: 'price',
+        //                 name: 'price',
+        //             },
+        //             {
+        //                 data: 'partamount',
+        //                 name: 'partamount',
+        //             },
+        //             {
+        //                 data: 'part_price',
+        //                 name: 'part_price',
+        //             },
+        //             {
+        //                 data: 'action',
+        //                 name: 'action',
+        //             },
+        //         ],
+        //         "lengthMenu": [
+        //             [50, 100, 500, 1000, 2000, 5000, 10000],
+        //             [50, 100, 500, 1000, 2000, 5000, 10000]
+        //         ],
+        //         "language": langOptions,
+        //         "dom": 'lBfrtipr'
+        //     });
+        //     $("div.dataTables_filter input").unbind();
+        //     $("div.dataTables_filter input").keyup(function(
+        //         e) {
+        //         if (e.keyCode == 13) {
+        //             table.search(this.value).draw();
+        //         }
+        //     });
 
-        });
+        // });
 
         $('body').on('click', '.btn_add', function(e) {
             e.preventDefault();
@@ -210,6 +265,8 @@
             formData.append('quantityP', quantityP.val());
             formData.append('priceP', priceP.val());
 
+            var btn = $(this).closest("tr").find('td:eq(7)').find('a');
+
             if ('{{ Auth::user()->isAdmin() }}' == true) {
                 formData.append('merchant_id', $('#merchant_email').val());
             }
@@ -230,7 +287,12 @@
                     showMessage(result, 'data_table');
 
                     if (result.success) {
-                        $('.data-table').DataTable().draw();
+                        $(btn).text("{{ __('inventory/inventory.labels.edit') }}");
+                        var inventoryAmount = $(btn).attr('inventoryAmount');
+                        var eidtUrl = "{{ route('edit-item-in-fast-initilize-store', '#id') }}";
+                        eidtUrl = eidtUrl.replace('#id', result.data.amount_id);
+                        $(btn).attr('href', eidtUrl);
+                        $(btn).addClass('edti_button');
                     }
                 },
                 error: function(erorr) {
@@ -278,18 +340,62 @@
                     showMessage(result, 'data_table');
 
                     if (result.success) {
-                        $('.data-table').DataTable().draw();
+                        // $('#load').addClass('disabledDiv');
+                        // $('#load').append(
+                        //     '<img class="overlay" src="{{ asset('assets/images/loading.gif') }}" />'
+                        // );
+                        var url = window.location.href;
+                        $.ajax({
+                            url: url,
+                            data: {
+                                'merchant_id': $('#merchant_email').val()
+                            },
+                            success: function(result) {
+                                // $('#table_data').html(result);
+                                window.history.pushState("", "", url);
+                            }
+                        });
                     }
                 },
-                error: function(erorr) {
-                    console.log(erorr);
-                }
+                error: function(erorr) {}
             });
         });
 
         $(document).ready(function() {
+
+            if ('{{ Auth::user()->isMerchant() }}' == true) {
+                $('#load').addClass('disabledDiv');
+                $('#load').append(
+                    '<img class="overlay" src="{{ asset('assets/images/loading.gif') }}" />'
+                );
+                var url = "{{ route('fast-initilize-store') }}";
+                $.ajax({
+                    url: url,
+                    success: function(result) {
+                        $('#table_data').empty();
+                        $('#table_data').html(result);
+                        window.history.pushState("", "", url);
+                    }
+                });
+            }
+
             $('#merchant_email').change(function() {
-                $('.data-table').DataTable().draw();
+                $('#load').addClass('disabledDiv');
+                $('#load').append(
+                    '<img class="overlay" src="{{ asset('assets/images/loading.gif') }}" />'
+                );
+                var url = "{{ route('fast-initilize-store') }}";
+                $.ajax({
+                    url: url,
+                    data: {
+                        'merchant_id': $('#merchant_email').val()
+                    },
+                    success: function(result) {
+                        $('#table_data').empty();
+                        $('#table_data').html(result);
+                        window.history.pushState("", "", url);
+                    }
+                });
             });
         });
 

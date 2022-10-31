@@ -82,7 +82,8 @@ return [
             'notes' => 'Notes',
             'payment_type' => 'Payment type',
             'store_name' => 'Store name',
-            'customer_name' => 'Customer name'
+            'customer_name' => 'Customer name',
+            'order_number' => 'Order number'
         ]
     ]
 ];

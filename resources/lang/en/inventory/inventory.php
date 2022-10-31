@@ -9,5 +9,16 @@ return [
         'yous_should_select_parts_quantity_and_prices' =>'Yous should select parts quantity and prices',
         'merchant_name' => 'Merchant Name',
         'data_updated_successfully' => 'Data updated successfully',
+        'table_header_id' => 'id',
+        'code' => 'Code', 
+        'name' => 'Name', 
+        'quantity' => 'Quantity', 
+        'price' => 'Price', 
+        'quantity_p' => 'Quantity P', 
+        'price_p' => 'Price P', 
+        'action' => 'Action',
+        'input_value_and_press_enter' => 'Input value and press enter',
+        'add' => 'Add',
+        'edit' => 'Edit',
     ]
 ];

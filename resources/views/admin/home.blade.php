@@ -32,18 +32,18 @@
     <div class="page-content-wrapper">
         <div class="row">
             <div class="col-xl-3 col-md-6">
-                <div class="card bg-info mini-stat position-relative">
+                <div class="card bg-info mini-stat position-relative" style="height: 80%">
                     <div class="card-body">
                         <div class="mini-stat-desc">
-                            <h5 class="text-uppercase verti-label font-size-16 text-white-50">Orders
+                            <h5 class="text-uppercase verti-label font-size-16 text-white-50">{{ __('home/home.orders') }}
                             </h5>
                             <div class="text-white">
-                                <h5 class="text-uppercase font-size-16 text-white-50">Orders</h5>
-                                <h3 class="mb-3 text-white">1,587</h3>
-                                <div class="">
-                                    <span class="badge bg-light text-info"> +11% </span> <span class="ms-2">From previous
-                                        period</span>
-                                </div>
+                                <h5 class="text-uppercase font-size-16 text-white-50">{{ __('home/home.orders_count') }}</h5>
+                                <h3 class="mb-3 text-white">{{ $orders }}</h3>
+                            </div>
+                            <div class="text-white">
+                                <h5 class="text-uppercase font-size-16 text-white-50">{{ __('home/home.orders_amount') }}</h5>
+                                <h3 class="mb-3 text-white">{{ $total_paid }}</h3>
                             </div>
                             <div class="mini-stat-icon">
                                 <i class="mdi mdi-cube-outline display-2"></i>
@@ -55,18 +55,18 @@
             <!-- End Col -->
 
             <div class="col-xl-3 col-md-6">
-                <div class="card bg-primary mini-stat position-relative">
+                <div class="card bg-primary mini-stat position-relative" style="height: 80%">
                     <div class="card-body">
                         <div class="mini-stat-desc">
-                            <h5 class="text-uppercase font-size-16 verti-label text-white-50">Revenue
+                            <h5 class="text-uppercase font-size-16 verti-label text-white-50">{{ __('home/home.sell_orders') }}
                             </h5>
                             <div class="text-white">
-                                <h5 class="text-uppercase font-size-16 text-white-50">Revenue</h5>
-                                <h3 class="mb-3 text-white">$46,785</h3>
-                                <div class="">
-                                    <span class="badge bg-light text-danger"> -29% </span> <span class="ms-2">From
-                                        previous period</span>
-                                </div>
+                                <h5 class="text-uppercase font-size-16 text-white-50">{{ __('home/home.sell_orders_count') }}</h5>
+                                <h3 class="mb-3 text-white">{{ $sell_orders }}</h3>
+                            </div>
+                            <div class="text-white">
+                                <h5 class="text-uppercase font-size-16 text-white-50">{{ __('home/home.sell_orders_amount') }}</h5>
+                                <h3 class="mb-3 text-white">{{ $sell_orders_amount }}</h3>
                             </div>
                             <div class="mini-stat-icon">
                                 <i class="mdi mdi-buffer display-2"></i>
@@ -78,20 +78,18 @@
             <!-- End Col -->
 
             <div class="col-xl-3 col-md-6">
-                <div class="card bg-warning mini-stat position-relative">
+                <div class="card bg-warning mini-stat position-relative" style="height: 80%">
                     <div class="card-body">
                         <div class="mini-stat-desc">
-                            <h5 class="text-uppercase verti-label font-size-16  text-white-50">Av.
-                                Price
+                            <h5 class="text-uppercase verti-label font-size-16  text-white-50">{{ __('home/home.buy_orders') }}
                             </h5>
                             <div class="text-white">
-                                <h5 class="text-uppercase font-size-16  text-white-50">Average
-                                    Price</h5>
-                                <h3 class="mb-3 text-white">15.9</h3>
-                                <div class="">
-                                    <span class="badge bg-light text-primary"> 0% </span> <span class="ms-2">From previous
-                                        period</span>
-                                </div>
+                                <h5 class="text-uppercase font-size-16  text-white-50">{{ __('home/home.buy_orders_count') }}</h5>
+                                <h3 class="mb-3 text-white">{{ $buy_orders }}</h3>
+                            </div>
+                            <div class="text-white">
+                                <h5 class="text-uppercase font-size-16  text-white-50">{{ __('home/home.buy_orders_amount') }}</h5>
+                                <h3 class="mb-3 text-white">{{ $buy_orders_amount }}</h3>
                             </div>
                             <div class="mini-stat-icon">
                                 <i class="mdi mdi-tag-text-outline display-2"></i>
@@ -102,7 +100,7 @@
             </div>
             <!-- End Col -->
 
-            <div class="col-xl-3 col-md-6">
+            {{-- <div class="col-xl-3 col-md-6">
                 <div class="card bg-success mini-stat position-relative">
                     <div class="card-body">
                         <div class="mini-stat-desc">
@@ -123,7 +121,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <!-- End Col -->
         </div>
         <!-- End Row -->

@@ -12,6 +12,8 @@ use Exception;
 use DataTables;
 use Illuminate\Support\Facades\Auth;
 
+use function GuzzleHttp\Promise\all;
+
 class InventoryController extends Controller
 {
 
@@ -19,69 +21,45 @@ class InventoryController extends Controller
     {
         try {
             if ($request->ajax()) {
+                $length = $request->length_select != null ? $request->length_select : 25;
                 $data = [];
                 $merchant_id = null;
                 if (Auth::user()->isMerchant()) {
                     $merchant_id = Auth::user()->id;
-                    $data = Auth::user()->data;
+                    if ($request->search_input) {
+                        $data = User::where('id', $merchant_id)->first()->with(['data', 'data.amountsForUser' => function ($query) use ($merchant_id) {
+                            $query->where('user_id', $merchant_id);
+                        }])->where('id', $merchant_id)->first()->data()->groupBy('data.id')->where('name', 'like', '%' . $request->search_input . '%')->orWhere('code', 'like', '%' . $request->search_input . '%')->paginate($length);
+                    } else {
+                        $data = User::where('id', $merchant_id)->first()->with(['data', 'data.amountsForUser' => function ($query) use ($merchant_id) {
+                            $query->where('user_id', $merchant_id);
+                        }])->where('id', $merchant_id)->first()->data()->groupBy('data.id')->paginate($length);
+                    }
+                    return view('inventory.fast_inventory_table', ['data' => $data])->render();
                 } else if (Auth::user()->isEmployee()) {
                     $merchant_id = Auth::user()->merchant_id;
                     $data = User::where('id', Auth::user()->merchant_id)->first()->data;
                 } else if (Auth::user()->isAdmin()) {
                     // check if admin select merchant_id
-                    if ($request->merchant_id){
+                    if ($request->merchant_id) {
                         $merchant_id = $request->merchant_id;
-                        $data = User::where('id', $merchant_id)->first()->data;
+                        if ($request->search_input) {
+                            $data = User::where('id', $merchant_id)->first()->with(['data', 'data.amountsForUser' => function ($query) use ($merchant_id) {
+                                $query->where('user_id', $merchant_id);
+                            }])->where('id', $merchant_id)->first()->data()->groupBy('data.id')->where('name', 'like', '%' . $request->search_input . '%')->orWhere('code', 'like', '%' . $request->search_input . '%')->paginate($length);
+                        } else {
+                            $data = User::where('id', $merchant_id)->first()->with(['data', 'data.amountsForUser' => function ($query) use ($merchant_id) {
+                                $query->where('user_id', $merchant_id);
+                            }])->where('id', $merchant_id)->first()->data()->groupBy('data.id')->paginate($length);
+                        }
+                        return view('inventory.fast_inventory_table', ['data' => $data])->render();
                     }
                     // else
                     //     return $this->sendErrorResponse("validation error", [__("you_should_select_merchant")]);
                 }
 
-                return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('amount', function ($row) use ($merchant_id) {
-                        $inentory_amount = $row->amountsForUser($merchant_id)->where('amount_type', '0')->first();
-                        if ($inentory_amount != null) {
-                            return '<input type="number" class="form-control  w-100" value=' . $inentory_amount->amount . '>';
-                        } else {
-                            return '<input type="number" class="form-control  w-100" value=0>';
-                        }
-                    })
-                    ->addColumn('partamount', function ($row) use ($merchant_id) {
-                        $inentory_amount = $row->amountsForUser($merchant_id)->where('amount_type', '0')->first();
-                        if ($inentory_amount != null) {
-                            return '<input type="number" class="form-control  w-100" value=' . $inentory_amount->amount_part . '>';
-                        } else {
-                            return '<input type="number" class="form-control  w-100" value=0>';
-                        }
-                    })
-                    ->addColumn('price', function ($row) use ($merchant_id) {
-                        $inentory_amount = $row->amountsForUser($merchant_id)->where('amount_type', '0')->first();
-                        if ($inentory_amount != null) {
-                            return '<input type="number" class="form-control  w-100" value=' . $inentory_amount->price . '>';
-                        } else {
-                            return '<input type="number" class="form-control  w-100" value=0>';
-                        }
-                    })
-                    ->addColumn('part_price', function ($row) use ($merchant_id) {
-                        $inentory_amount = $row->amountsForUser($merchant_id)->where('amount_type', '0')->first();
-                        if ($inentory_amount != null) {
-                            return '<input type="number" class="form-control  w-100" value=' . $inentory_amount->price_part . '>';
-                        } else {
-                            return '<input type="number" class="form-control  w-100" value=0>';
-                        }
-                    })
-                    ->addColumn('action', function ($row) use ($merchant_id){
-                        $inentory_amount = $row->amountsForUser($merchant_id)->where('amount_type', '0')->first();
-                        if ($inentory_amount != null) {
-                            $btn = '<a href="' . route('edit-item-in-fast-initilize-store', $inentory_amount->id) . '" class="btn btn-info btn-sm mt-2 btn_edit">Edit</a> &nbsp';
-                        } else {
-                            $btn = '<a href="' . route('save-item-in-fast-initilize-store') . '" class="btn btn-info btn-sm mt-2 btn_add">Add</a> &nbsp';
-                        }
-                        return $btn;
-                    })
-                    ->rawColumns(['action', 'price', 'part_price', 'amount', 'partamount'])
-                    ->make(true);
+                if (is_array($data) && count($data) > 0) {
+                }
             }
 
             $merchants = User::where('role', 1)->get();
@@ -90,6 +68,86 @@ class InventoryController extends Controller
             return $this->errors("HomeController@listitems", $th->getMessage());
         }
     }
+
+    // public function fast_initilize_store(Request $request)
+    // {
+    //     try {
+    //         if ($request->ajax()) {
+    //             $data = [];
+    //             $merchant_id = null;
+    //             if (Auth::user()->isMerchant()) {
+    //                 $merchant_id = Auth::user()->id;
+    //                 $data = Auth::user()->data;
+    //             } else if (Auth::user()->isEmployee()) {
+    //                 $merchant_id = Auth::user()->merchant_id;
+    //                 $data = User::where('id', Auth::user()->merchant_id)->first()->data;
+    //             } else if (Auth::user()->isAdmin()) {
+    //                 // check if admin select merchant_id
+    //                 if ($request->merchant_id) {
+    //                     $merchant_id = $request->merchant_id;
+    //                     $data = User::where('id', $merchant_id)->first()->with(['data','data.amountsForUser' => function ($query) use ($merchant_id) {
+    //                         $query->where('user_id', $merchant_id);
+    //                     }])->where('id', $merchant_id);
+    //                 }
+    //                 // else
+    //                 //     return $this->sendErrorResponse("validation error", [__("you_should_select_merchant")]);
+    //             }
+    //             $data = $data->first()->data;
+
+    //             return $data;
+    //             // return DataTables::of($data)
+    //             //     ->addIndexColumn()
+    //             //     ->addColumn('amount', function ($row) {
+    //             //         $inentory_amount = $row->amountsForUser()->where('amount_type', '0')->first();
+    //             //         if ($inentory_amount != null) {
+    //             //             return '<input type="number" class="form-control  w-100" value=' . $inentory_amount->amount . '>';
+    //             //         } else {
+    //             //             return '<input type="number" class="form-control  w-100" value=0>';
+    //             //         }
+    //             //     })
+    //             //     ->addColumn('partamount', function ($row) {
+    //             //         $inentory_amount = $row->amountsForUser()->where('amount_type', '0')->first();
+    //             //         if ($inentory_amount != null) {
+    //             //             return '<input type="number" class="form-control  w-100" value=' . $inentory_amount->amount_part . '>';
+    //             //         } else {
+    //             //             return '<input type="number" class="form-control  w-100" value=0>';
+    //             //         }
+    //             //     })
+    //             //     ->addColumn('price', function ($row) {
+    //             //         $inentory_amount = $row->amountsForUser()->where('amount_type', '0')->first();
+    //             //         if ($inentory_amount != null) {
+    //             //             return '<input type="number" class="form-control  w-100" value=' . $inentory_amount->price . '>';
+    //             //         } else {
+    //             //             return '<input type="number" class="form-control  w-100" value=0>';
+    //             //         }
+    //             //     })
+    //             //     ->addColumn('part_price', function ($row) {
+    //             //         $inentory_amount = $row->amountsForUser()->where('amount_type', '0')->first();
+    //             //         if ($inentory_amount != null) {
+    //             //             return '<input type="number" class="form-control  w-100" value=' . $inentory_amount->price_part . '>';
+    //             //         } else {
+    //             //             return '<input type="number" class="form-control  w-100" value=0>';
+    //             //         }
+    //             //     })
+    //             //     ->addColumn('action', function ($row) {
+    //             //         $inentory_amount = $row->amountsForUser()->where('amount_type', '0')->first();
+    //             //         if ($inentory_amount != null) {
+    //             //             $btn = '<a href="' . route('edit-item-in-fast-initilize-store', $inentory_amount->id) . '" class="btn btn-info btn-sm mt-2 btn_edit">Edit</a> &nbsp';
+    //             //         } else {
+    //             //             $btn = '<a href="' . route('save-item-in-fast-initilize-store') . '" class="btn btn-info btn-sm mt-2 btn_add">Add</a> &nbsp';
+    //             //         }
+    //             //         return $btn;
+    //             //     })
+    //             //     ->rawColumns(['action', 'price', 'part_price', 'amount', 'partamount'])
+    //             //     ->make(true);
+    //         }
+
+    //         $merchants = User::where('role', 1)->get();
+    //         return view('inventory.fast_inventory_list', ['merchants' => $merchants]);
+    //     } catch (Exception $th) {
+    //         return $this->errors("HomeController@listitems", $th->getMessage());
+    //     }
+    // }
 
     public function save_item_in_fast_initilize_store(Request $request)
     {
@@ -125,7 +183,7 @@ class InventoryController extends Controller
         }
         $data = Data::where('name', $request->name)->First();
         if ($data) {
-            Amount::create([
+            $amount = Amount::create([
                 'data_id' => $data->id,
                 'amount' => $request->quantity != null ? $request->quantity : 0,
                 'amount_part' => $request->quantityP != null ? $request->quantityP : 0,
@@ -135,7 +193,8 @@ class InventoryController extends Controller
                 'merchant_id' => $merchant_id,
                 'amount_type' => '0'
             ]);
-            return response()->json(['success' => true, 'message' => [__('inventory/inventory.labels.data_added_successfully')]]);
+            return $this->sendResponse([__('inventory/inventory.labels.data_added_successfully')], ['amount_id' => $amount->id]);
+            // return response()->json(['success' => true, 'message' => [__('inventory/inventory.labels.data_added_successfully')]]);
         }
     }
 

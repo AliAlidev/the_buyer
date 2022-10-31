@@ -51,6 +51,9 @@ class InvoiceController extends Controller
             // }
             return DataTables::of($invoices)
                 ->addIndexColumn()
+                ->editColumn('order_number', function ($row) {
+                    return '<a target="_blank" href=' . route('view.invoice', $row->order_number) . '>' . $row->order_number . '</a>';
+                })
                 ->editColumn('merchant_name', function ($row) {
                     return $row->merchant != null ? $row->merchant->name : '';
                 })
@@ -71,7 +74,7 @@ class InvoiceController extends Controller
                     }
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'order_number'])
                 ->make(true);
         }
         return view('Invoice.list_invoices');
@@ -131,6 +134,20 @@ class InvoiceController extends Controller
     {
         $result = app()->call('App\Http\Controllers\Apis\ApiOrderController@sell', ['source' => 'web']);
         return json_decode($result->content(), true);
+    }
+
+    public function generate_invoice_pdf($order_number)
+    {
+        $invoice = Invoice::where('order_number', $order_number)->first();
+        $invoice_type = $invoice->invoice_type == 1 ? 'BUY' : ($invoice->invoice_type == 2 ? 'SELL' : '');
+        $from = $invoice->merchant->name;
+        $customer = $invoice->Store->name;
+        $pdf = PDF::loadView('Invoice.invoice', ['invoice' => $invoice, 'invoice_type' => $invoice_type, 'from' => $from, 'customer' => $customer]);
+        $user = Auth::guard('web')->user();
+        $invoiceName = 'Invoice_' . $user->id . '.pdf';
+        /** Here you can use the path you want to save */
+        $pdf->save(public_path('uploads/invoices/' . $invoiceName));
+        return asset('uploads/invoices/' . $invoiceName);
     }
 
     public function buy_index()

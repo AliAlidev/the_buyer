@@ -74,7 +74,7 @@ return [
             'list_invoices' => 'عرض الفواتير',
             'table_header_id' => 'م',
             'merchant_name' => 'اسم التاجر',
-            'user_name' => 'لسم الموظف',
+            'user_name' => 'اسم الموظف',
             'total_amount' => 'القيمة الإجمالية',
             'discount' => 'قيمة الخصم',
             'paid_amount' => 'المبلغ المدفوع',
@@ -82,7 +82,8 @@ return [
             'notes' => 'ملاحظات',
             'payment_type' => 'نوع الدفع',
             'store_name' => 'اسم المستودع',
-            'customer_name' => 'اسم الموظف'
+            'customer_name' => 'اسم الموظف',
+            'order_number' => 'رقم الفاتورة'
         ]
     ]
 ];

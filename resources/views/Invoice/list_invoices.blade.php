@@ -108,18 +108,31 @@
                             <table class="table table-bordered data-table" style="width: 200%">
                                 <thead style="background-color: #1b82ec; color: white">
                                     <tr>
-                                        <th style="text-align: center;">{{ __('invoice/invoice.list.labels.table_header_id') }}</th>
-                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.merchant_name') }}</th>
-                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.user_name') }}</th>
-                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.total_amount') }}</th>
-                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.discount') }}</th>
-                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.paid_amount') }}</th>
-                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.invoice_type') }}</th>
-                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.payment_type') }}</th>
-                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.store_name') }}</th>
-                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.customer_name') }}</th>
+                                        <th style="text-align: center;">
+                                            {{ __('invoice/invoice.list.labels.table_header_id') }}</th>
+                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.order_number') }}
+                                        </th>
+                                        <th style="text-align: center">
+                                            {{ __('invoice/invoice.list.labels.merchant_name') }}</th>
+                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.user_name') }}
+                                        </th>
+                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.total_amount') }}
+                                        </th>
+                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.discount') }}
+                                        </th>
+                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.paid_amount') }}
+                                        </th>
+                                        <th style="text-align: center">
+                                            {{ __('invoice/invoice.list.labels.invoice_type') }}</th>
+                                        <th style="text-align: center">
+                                            {{ __('invoice/invoice.list.labels.payment_type') }}</th>
+                                        <th style="text-align: center"> {{ __('invoice/invoice.list.labels.store_name') }}
+                                        </th>
+                                        <th style="text-align: center">
+                                            {{ __('invoice/invoice.list.labels.customer_name') }}</th>
                                         <th style="text-align: center"> {{ __('invoice/invoice.list.labels.notes') }}</th>
-                                        <th style="text-align: center"> {{ __('invoice/invoice.create.labels.invoice_details') }}</th>
+                                        <th style="text-align: center">
+                                            {{ __('invoice/invoice.create.labels.invoice_details') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody style="text-align: center">
@@ -214,6 +227,12 @@
                         orderable: false,
                         searchable: false,
                         "width": "4%"
+                    },
+                    {
+                        data: 'order_number',
+                        name: 'order_number',
+                        orderable: false,
+                        width: '8%'
                     },
                     {
                         data: 'merchant_name',

@@ -31,7 +31,29 @@ class HomeController extends Controller
 
     public function index()
     {
-        return view('admin.home');
+        if (Auth::user()->isAdmin()) {
+            $orders = Invoice::count();
+            $sell_orders = Invoice::where('invoice_type', '2')->count();
+            $buy_orders = Invoice::where('invoice_type', '1')->count();
+            $total_paid = Invoice::sum('paid_amount');
+            $sell_orders_amount = Invoice::where('invoice_type', '2')->sum('paid_amount');
+            $buy_orders_amount = Invoice::where('invoice_type', '1')->sum('paid_amount');
+        } else if (Auth::user()->isMerchant()) {
+            $orders = Invoice::where('merchant_id', Auth::user()->id)->count();
+            $sell_orders = Invoice::where('merchant_id', Auth::user()->id)->where('invoice_type', '2')->count();
+            $buy_orders = Invoice::where('merchant_id', Auth::user()->id)->where('invoice_type', '1')->count();
+            $total_paid = Invoice::where('merchant_id', Auth::user()->id)->sum('paid_amount');
+            $sell_orders_amount = Invoice::where('merchant_id', Auth::user()->id)->where('invoice_type', '2')->sum('paid_amount');
+            $buy_orders_amount = Invoice::where('merchant_id', Auth::user()->id)->where('invoice_type', '1')->sum('paid_amount');
+        } else if (Auth::user()->isEmployee()) {
+            $orders = Invoice::where('merchant_id', Auth::user()->merchant_id)->count();
+            $sell_orders = Invoice::where('merchant_id', Auth::user()->merchant_id)->where('invoice_type', '2')->count();
+            $buy_orders = Invoice::where('merchant_id', Auth::user()->merchant_id)->where('invoice_type', '1')->count();
+            $total_paid = Invoice::where('merchant_id', Auth::user()->merchant_id)->sum('paid_amount');
+            $sell_orders_amount = Invoice::where('merchant_id', Auth::user()->merchant_id)->where('invoice_type', '2')->sum('paid_amount');
+            $buy_orders_amount = Invoice::where('merchant_id', Auth::user()->merchant_id)->where('invoice_type', '1')->sum('paid_amount');
+        }
+        return view('admin.home', ['orders' => $orders, 'total_paid' => $total_paid, 'sell_orders' => $sell_orders, 'sell_orders_amount' => $sell_orders_amount, 'buy_orders' => $buy_orders, 'buy_orders_amount' => $buy_orders_amount]);
     }
 
     public function create(Request $request)
