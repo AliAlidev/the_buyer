@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\Data;
 use App\Models\EffMaterial;
 use App\Models\Invoice;
+use App\Models\InvoiceItems;
 use App\Models\Shape;
 use App\Models\TreatementGroup;
 use App\Models\User;
@@ -38,6 +39,27 @@ class HomeController extends Controller
             $total_paid = Invoice::sum('paid_amount');
             $sell_orders_amount = Invoice::where('invoice_type', '2')->sum('paid_amount');
             $buy_orders_amount = Invoice::where('invoice_type', '1')->sum('paid_amount');
+
+            // monthly sales report
+            $monthly_invoices = Invoice::select(
+                DB::raw("DATE_FORMAT(created_at,'%Y-%m') as months"),
+                DB::raw('sum(paid_amount) as total_paid')
+            )->whereYear('created_at', Carbon::now()->year)->groupBy('months')->orderBy('created_at')->get('months', 'total_paid');
+            $monthly_invoices = json_encode($monthly_invoices);
+
+            // monthly reports
+            $monthly_invoices_tabs = Invoice::select(
+                DB::raw("DATE_FORMAT(created_at,'%M') as months"),
+                DB::raw('sum(paid_amount) as total_paid')
+            )->whereYear('created_at', Carbon::now()->year)->groupBy('months')->orderBy('created_at')->get('months', 'total_paid');
+
+            $cash_sell_orders = Invoice::where('invoice_type', '2')->where('payment_type', '1')->sum('paid_amount');
+            $debt_sell_orders = Invoice::where('invoice_type', '2')->where('payment_type', '2')->sum('paid_amount');
+            $free_sell_orders = Invoice::where('invoice_type', '2')->where('payment_type', '3')->sum('paid_amount');
+
+            $top_products_sales = InvoiceItems::leftJoin('data', 'data.id', '=', 'invoice_items.data_id')->leftJoin('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')->where('invoices.invoice_type', '2')->select(DB::raw('data.name'), DB::raw("count(*) as count"))->groupBy('data_id')->orderBy('count', 'desc')->limit(6)->get();
+            $total_sales_count = InvoiceItems::leftJoin('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')->where('invoices.invoice_type', '2')->count();
+        
         } else if (Auth::user()->isMerchant()) {
             $orders = Invoice::where('merchant_id', Auth::user()->id)->count();
             $sell_orders = Invoice::where('merchant_id', Auth::user()->id)->where('invoice_type', '2')->count();
@@ -53,13 +75,30 @@ class HomeController extends Controller
             $sell_orders_amount = Invoice::where('merchant_id', Auth::user()->merchant_id)->where('invoice_type', '2')->sum('paid_amount');
             $buy_orders_amount = Invoice::where('merchant_id', Auth::user()->merchant_id)->where('invoice_type', '1')->sum('paid_amount');
         }
-        return view('admin.home', ['orders' => $orders, 'total_paid' => $total_paid, 'sell_orders' => $sell_orders, 'sell_orders_amount' => $sell_orders_amount, 'buy_orders' => $buy_orders, 'buy_orders_amount' => $buy_orders_amount]);
+        return view('admin.home', [
+            'orders' => $orders,
+            'total_paid' => $total_paid,
+            'sell_orders' => $sell_orders,
+            'sell_orders_amount' => $sell_orders_amount,
+            'buy_orders' => $buy_orders,
+            'buy_orders_amount' => $buy_orders_amount,
+            'monthly_invoices' => $monthly_invoices,
+            'monthly_invoices_tabs' => $monthly_invoices_tabs,
+            'cash_sell_orders' => $cash_sell_orders,
+            'debt_sell_orders' => $debt_sell_orders,
+            'free_sell_orders' => $free_sell_orders,
+            'top_products_sales' => $top_products_sales,
+            'total_sales_count' => $total_sales_count
+        ]);
     }
 
     public function create(Request $request)
     {
         if ($request->ajax()) {
-            $result = app()->call('App\Http\Controllers\Apis\ApiProductController@store', ['source' => 'web', 'request' => $request]);
+            $result = app()->call(
+                'App\Http\Controllers\Apis\ApiProductController@store',
+                ['source' => 'web', 'request' => $request]
+            );
             $result = $result->content();
             $data = json_decode($result);
             if ($data->success) {

@@ -21,7 +21,7 @@
 
 <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
 
-<script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
+{{-- <script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script> --}}
 
 <!-- App js -->
 <script src="{{ asset('assets/js/app.js') }}"></script>

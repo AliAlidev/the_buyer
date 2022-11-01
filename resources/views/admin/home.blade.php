@@ -38,11 +38,13 @@
                             <h5 class="text-uppercase verti-label font-size-16 text-white-50">{{ __('home/home.orders') }}
                             </h5>
                             <div class="text-white">
-                                <h5 class="text-uppercase font-size-16 text-white-50">{{ __('home/home.orders_count') }}</h5>
+                                <h5 class="text-uppercase font-size-16 text-white-50">{{ __('home/home.orders_count') }}
+                                </h5>
                                 <h3 class="mb-3 text-white">{{ $orders }}</h3>
                             </div>
                             <div class="text-white">
-                                <h5 class="text-uppercase font-size-16 text-white-50">{{ __('home/home.orders_amount') }}</h5>
+                                <h5 class="text-uppercase font-size-16 text-white-50">{{ __('home/home.orders_amount') }}
+                                </h5>
                                 <h3 class="mb-3 text-white">{{ $total_paid }}</h3>
                             </div>
                             <div class="mini-stat-icon">
@@ -58,14 +60,17 @@
                 <div class="card bg-primary mini-stat position-relative" style="height: 80%">
                     <div class="card-body">
                         <div class="mini-stat-desc">
-                            <h5 class="text-uppercase font-size-16 verti-label text-white-50">{{ __('home/home.sell_orders') }}
+                            <h5 class="text-uppercase font-size-16 verti-label text-white-50">
+                                {{ __('home/home.sell_orders') }}
                             </h5>
                             <div class="text-white">
-                                <h5 class="text-uppercase font-size-16 text-white-50">{{ __('home/home.sell_orders_count') }}</h5>
+                                <h5 class="text-uppercase font-size-16 text-white-50">
+                                    {{ __('home/home.sell_orders_count') }}</h5>
                                 <h3 class="mb-3 text-white">{{ $sell_orders }}</h3>
                             </div>
                             <div class="text-white">
-                                <h5 class="text-uppercase font-size-16 text-white-50">{{ __('home/home.sell_orders_amount') }}</h5>
+                                <h5 class="text-uppercase font-size-16 text-white-50">
+                                    {{ __('home/home.sell_orders_amount') }}</h5>
                                 <h3 class="mb-3 text-white">{{ $sell_orders_amount }}</h3>
                             </div>
                             <div class="mini-stat-icon">
@@ -81,14 +86,17 @@
                 <div class="card bg-warning mini-stat position-relative" style="height: 80%">
                     <div class="card-body">
                         <div class="mini-stat-desc">
-                            <h5 class="text-uppercase verti-label font-size-16  text-white-50">{{ __('home/home.buy_orders') }}
+                            <h5 class="text-uppercase verti-label font-size-16  text-white-50">
+                                {{ __('home/home.buy_orders') }}
                             </h5>
                             <div class="text-white">
-                                <h5 class="text-uppercase font-size-16  text-white-50">{{ __('home/home.buy_orders_count') }}</h5>
+                                <h5 class="text-uppercase font-size-16  text-white-50">
+                                    {{ __('home/home.buy_orders_count') }}</h5>
                                 <h3 class="mb-3 text-white">{{ $buy_orders }}</h3>
                             </div>
                             <div class="text-white">
-                                <h5 class="text-uppercase font-size-16  text-white-50">{{ __('home/home.buy_orders_amount') }}</h5>
+                                <h5 class="text-uppercase font-size-16  text-white-50">
+                                    {{ __('home/home.buy_orders_amount') }}</h5>
                                 <h3 class="mb-3 text-white">{{ $buy_orders_amount }}</h3>
                             </div>
                             <div class="mini-stat-icon">
@@ -131,68 +139,36 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-xl-8 border-end">
-                                <h4 class="card-title mb-4">Sales Report</h4>
+                            <div class="col-xl-12 border-end">
+                                <h4 class="card-title mb-4">{{ __('home/home.sale_report') }}</h4>
                                 <div id="morris-area-example" class="dashboard-charts morris-charts">
                                 </div>
                             </div>
                             <!-- End Col -->
 
-                            <div class="col-xl-4">
-                                <h4 class="card-title mb-4">Yearly Sales Report</h4>
+                            <div class="col-xl-12">
+                                <h4 class="card-title">{{ __('home/home.monthly_sales_report') }}</h4>
                                 <div class="p-3">
                                     <ul class="nav nav-pills nav-justified mb-3" role="tablist">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" id="pills-first-tab" data-bs-toggle="pill"
-                                                href="#pills-first" role="tab" aria-controls="pills-first"
-                                                aria-selected="true">2015</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="pills-second-tab" data-bs-toggle="pill"
-                                                href="#pills-second" role="tab" aria-controls="pills-second"
-                                                aria-selected="false">2016</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="pills-third-tab" data-bs-toggle="pill"
-                                                href="#pills-third" role="tab" aria-controls="pills-third"
-                                                aria-selected="false">2017</a>
-                                        </li>
+                                        @foreach ($monthly_invoices_tabs as $key => $item)
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="pills-{{ $key }}-tab"
+                                                    data-bs-toggle="pill" href="#pills-{{ $key }}" role="tab"
+                                                    aria-controls="pills-{{ $key }}"
+                                                    aria-selected="true">{{ $item->months }}</a>
+                                            </li>
+                                        @endforeach
                                     </ul>
 
                                     <div class="tab-content">
-                                        <div class="tab-pane show active" id="pills-first" role="tabpanel"
-                                            aria-labelledby="pills-first-tab">
-                                            <div class="p-3">
-                                                <h2>$17562</h2>
-                                                <p class="text-muted">Maecenas nec odio et ante
-                                                    tincidunt tempus. Donec vitae sapien ut libero
-                                                    venenatis faucibus Nullam quis ante.</p>
-                                                <a href="#" class="text-primary">Read
-                                                    more...</a>
+                                        @foreach ($monthly_invoices_tabs as $key => $item)
+                                            <div class="tab-pane" id="pills-{{ $key }}" role="tabpanel"
+                                                aria-labelledby="pills-{{ $key }}-tab">
+                                                <div class="p-3">
+                                                    <h2>{{ $item->total_paid }} sp</h2>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="tab-pane" id="pills-second" role="tabpanel"
-                                            aria-labelledby="pills-second-tab">
-                                            <div class="p-3">
-                                                <h2>$18614</h2>
-                                                <p class="text-muted">Maecenas nec odio et ante
-                                                    tincidunt tempus. Donec vitae sapien ut libero
-                                                    venenatis faucibus Nullam quis ante.</p>
-                                                <a href="#" class="text-primary">Read
-                                                    more...</a>
-                                            </div>
-                                        </div>
-                                        <div class="tab-pane" id="pills-third" role="tabpanel"
-                                            aria-labelledby="pills-third-tab">
-                                            <div class="p-3">
-                                                <h2>$19752</h2>
-                                                <p class="text-muted">Maecenas nec odio et ante
-                                                    tincidunt tempus. Donec vitae sapien ut libero
-                                                    venenatis faucibus Nullam quis ante.</p>
-                                                <a href="#" class="text-primary">Read
-                                                    more...</a>
-                                            </div>
-                                        </div>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
@@ -207,7 +183,7 @@
             <div class="col-xl-3">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Sales Analytics</h4>
+                        <h4 class="card-title mb-4">{{ __('home/home.sales_analytics') }}</h4>
                         <div id="morris-donut-example" class="dashboard-charts morris-charts"></div>
                     </div>
                 </div>
@@ -387,76 +363,28 @@
             <div class="col-xl-4">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Top product sales</h4>
+                        <h4 class="card-title mb-4">{{ __('home/home.top_product_sales') }}</h4>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <tbody>
-                                    <tr>
-                                        <td>
-                                            <h5 class="font-size-16">Computers</h5>
-                                            <p class="text-muted mb-0">The languages only differ</p>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <span class="peity-pie" data-peity='{ "fill": ["#1b82ec", "#f2f2f2"]}'
-                                                    data-width="54" data-height="54">70/100</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <h5 class="font-size-16">70%</h5>
-                                            <p class="text-muted mb-0">Sales</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h5 class="font-size-16">Laptops</h5>
-                                            <p class="text-muted mb-0">Maecenas tempus tellus</p>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <span class="peity-donut"
-                                                    data-peity='{ "fill": ["#f5b225", "#f2f2f2"], "innerRadius": 20, "radius": 32 }'
-                                                    data-width="54" data-height="54">9,4</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <h5 class="font-size-16">84%</h5>
-                                            <p class="text-muted mb-0">Sales</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h5 class="font-size-16">Ipad</h5>
-                                            <p class="text-muted mb-0">Donec pede justo</p>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <span class="peity-pie" data-peity='{ "fill": ["#1b82ec", "#f2f2f2"]}'
-                                                    data-width="54" data-height="54">62/100</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <h5 class="font-size-16">62%</h5>
-                                            <p class="text-muted mb-0">Sales</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h5 class="font-size-16">Mobile</h5>
-                                            <p class="text-muted mb-0">Aenean leo ligula</p>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <span class="peity-donut"
-                                                    data-peity='{ "fill": ["#f5b225", "#f2f2f2"], "innerRadius": 20, "radius": 32 }'
-                                                    data-width="54" data-height="54">20,4</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <h5 class="font-size-16">89%</h5>
-                                            <p class="text-muted mb-0">Sales</p>
-                                        </td>
-                                    </tr>
+                                    @foreach ($top_products_sales as $item)
+                                        <tr>
+                                            <td>
+                                                <h5 class="font-size-16">{{ $item->name }}</h5>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <span class="peity-pie" data-peity='{ "fill": ["#1b82ec", "#f2f2f2"]}'
+                                                        data-width="54"
+                                                        data-height="54">{{ $item->count }}/ {{ $total_sales_count }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <h5 class="font-size-16">{{ $item->count / $total_sales_count * 100 }}%</h5>
+                                                <p class="text-muted mb-0">{{ __('home/home.sales') }}</p>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -721,3 +649,82 @@
     </div>
     <!-- end page-content-wrapper-->
 @endsection
+
+@push('scripts')
+    {{-- area chart --}}
+    <script>
+        $(document).ready(function() {
+            var data = JSON.parse("{{ $monthly_invoices }}".replace(/&quot;/g, '"'));
+            console.log(data);
+            // createAreaChart(element, pointSize, lineWidth, data, xkey, ykeys, labels, resize, gridLineColor, hideHover, lineColors, fillOpacity, behaveLikeLine)
+            createAreaChart(
+                "morris-area-example",
+                0,
+                0,
+                data,
+                "months",
+                ["total_paid"],
+                ["Series A"],
+                ["#f5b225"]
+            );
+        });
+        var months = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+
+        function createAreaChart(e, t, a, i, r, o, n, c) {
+            Morris.Area({
+                element: e,
+                pointSize: 0,
+                lineWidth: 0,
+                data: i,
+                xkey: r,
+                ykeys: o,
+                labels: n,
+                xLabelFormat: function(x) { // <--- x.getMonth() returns valid index
+                    var month = months[x.getMonth()];
+                    return month;
+                },
+                dateFormat: function(x) {
+                    var month = months[new Date(x).getMonth()];
+                    return month;
+                },
+                resize: !0,
+                gridLineColor: "#eeee",
+                hideHover: "auto",
+                lineColors: c,
+                fillOpacity: 0.7,
+                behaveLikeLine: !0,
+            });
+        }
+    </script>
+
+    {{-- donat chart --}}
+    <script>
+        function createDonutChart(e, t, a) {
+            Morris.Donut({
+                element: e,
+                data: t,
+                resize: !0,
+                colors: a
+            });
+        }
+        $(document).ready(function() {
+            createDonutChart(
+                "morris-donut-example",
+                [{
+                        label: "{{ __('home/home.cash_sales') }}",
+                        value: "{{ $cash_sell_orders }}"
+                    },
+                    {
+                        label: "{{ __('home/home.dept_sales') }}",
+                        value: "{{ $debt_sell_orders }}"
+                    },
+                    {
+                        label: "{{ __('home/home.free_sales') }}",
+                        value: "{{ $free_sell_orders }}"
+                    }
+                ],
+                ["#f5b225", "#f0f1f4", "#1b82ec"]
+            );
+        });
+    </script>
+@endpush
