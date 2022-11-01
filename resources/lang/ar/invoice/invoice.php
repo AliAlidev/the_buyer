@@ -66,7 +66,8 @@ return [
             'you_should_select_numeric_real_price' => 'يجب اختيار قيمة عددية صحيحة للسعر الحقيقي',
             'you_should_select_gt_real_price' => 'قيمة السعر الحقيقي يجب ان تكون اكبر من صفر',
             'part_price' => 'سعر الجزء',
-            'invoice_details' => 'تفاصيل الفاتورة'
+            'invoice_details' => 'تفاصيل الفاتورة',
+            'you_should_select_customer_name' => 'يجب ادخال اسم الزبون'
         ]
     ],
     'list' => [

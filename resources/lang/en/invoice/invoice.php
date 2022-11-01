@@ -66,7 +66,8 @@ return [
             'you_should_select_numeric_real_price' => 'You should select valid numeric price',
             'you_should_select_gt_real_price' => 'Price should be greater than 0',
             'part_price' => 'Part price',
-            'invoice_details' => 'Invoice details'
+            'invoice_details' => 'Invoice details',
+            'you_should_select_customer_name' => 'You should select customer name'
         ]
     ],
     'list' => [

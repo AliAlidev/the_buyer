@@ -235,7 +235,7 @@ class ApiOrderController extends Controller
         }
     }
 
-    public static function saveBuyInvoice($order_number, $source='api')
+    public static function saveBuyInvoice($order_number, $source = 'api')
     {
         $invoice = Invoice::where('order_number', $order_number)->first();
         if ($invoice) {
@@ -264,6 +264,10 @@ class ApiOrderController extends Controller
             return $this->sendErrorResponse("Validation error", [__('invoice/invoice.create.labels.you_should_add_order_items')]);
         }
 
+        if($request->payment_type == 2 && $request->customer_name == null){
+            return $this->sendErrorResponse("Validation error", [__('invoice/invoice.create.labels.you_should_select_customer_name')]);
+        }
+
         $user = Auth::guard($source)->user();
 
         $total_invoice = 0;
@@ -284,6 +288,7 @@ class ApiOrderController extends Controller
             'updated_at' => now()->toDateTimeString()
         ]);
 
+        $invoice_product_earning = 0;
         foreach ($items as $key => $item) {
 
             $validator = Validator::make($item, [
@@ -334,6 +339,9 @@ class ApiOrderController extends Controller
             $total_price = $total_quantity_price + $total_parts_price;
             $total_invoice += $total_price;
 
+            $real_price_obj = app()->call('App\Http\Controllers\Apis\ApiProductController@getRealPriceForElement', ['dataId' => $item['data_id'], 'source' => 'web']);
+
+            $product_earning = ($item['price'] - $real_price_obj['real_price']) * $item['amount'];
             DB::table('invoice_items')->insert([
                 'invoice_id' => $invoiceId,
                 'data_id' => $item['data_id'],
@@ -344,22 +352,26 @@ class ApiOrderController extends Controller
                 'total_quantity_price' => $total_quantity_price,
                 'total_parts_price' =>  $total_parts_price,
                 'total_price' => $total_price,
+                'earnings' => $request->payment_type != 3 ? $product_earning : 0,
                 'created_at' => now()->toDateTimeString(),
                 'updated_at' => now()->toDateTimeString()
             ]);
+            $invoice_product_earning += $product_earning;
         }
 
         $paid_amount = 0;
         if ($request->discount_type == 1) {
             $paid_amount = $total_invoice - $request->discount;
+            $invoice_product_earning = $invoice_product_earning - $request->discount;
         } else if ($request->discount_type == 2) {
             $paid_amount = $total_invoice - $total_invoice * $request->discount / 100;
+            $invoice_product_earning  = $invoice_product_earning  - ($invoice_product_earning * $request->discount / 100);
         } else {
             $paid_amount = $total_invoice;
         }
 
-        dB::table('invoices')->where('id', $invoiceId)->update(['total_amount' => $total_invoice, 'paid_amount' => $paid_amount]);
-        DB::commit();
+        dB::table('invoices')->where('id', $invoiceId)->update(['total_amount' => $total_invoice, 'paid_amount' => $paid_amount, 'earnings' => $request->payment_type != 3 ? $invoice_product_earning : 0]);
+        DB::commit(); 
 
         return $this->sendResponse(__('invoice/invoice.create.labels.invoice_created_successfully'), [
             'order_number' => $order_number,

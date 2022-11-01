@@ -32,6 +32,7 @@ class HomeController extends Controller
 
     public function index()
     {
+        $month_values = [__('home/home.january'), __('home/home.february'), __('home/home.march'), __('home/home.april'), __('home/home.may'), __('home/home.june'), __('home/home.july'), __('home/home.august'), __('home/home.september'), __('home/home.october'), __('home/home.november'), __('home/home.december')];
         if (Auth::user()->isAdmin()) {
             $orders = Invoice::count();
             $sell_orders = Invoice::where('invoice_type', '2')->count();
@@ -59,7 +60,7 @@ class HomeController extends Controller
 
             $top_products_sales = InvoiceItems::leftJoin('data', 'data.id', '=', 'invoice_items.data_id')->leftJoin('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')->where('invoices.invoice_type', '2')->select(DB::raw('data.name'), DB::raw("count(*) as count"))->groupBy('data_id')->orderBy('count', 'desc')->limit(6)->get();
             $total_sales_count = InvoiceItems::leftJoin('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')->where('invoices.invoice_type', '2')->count();
-        
+            $git_last_orders = Invoice::orderBy('created_at', 'desc')->limit(10)->get();
         } else if (Auth::user()->isMerchant()) {
             $orders = Invoice::where('merchant_id', Auth::user()->id)->count();
             $sell_orders = Invoice::where('merchant_id', Auth::user()->id)->where('invoice_type', '2')->count();
@@ -67,6 +68,28 @@ class HomeController extends Controller
             $total_paid = Invoice::where('merchant_id', Auth::user()->id)->sum('paid_amount');
             $sell_orders_amount = Invoice::where('merchant_id', Auth::user()->id)->where('invoice_type', '2')->sum('paid_amount');
             $buy_orders_amount = Invoice::where('merchant_id', Auth::user()->id)->where('invoice_type', '1')->sum('paid_amount');
+
+            // monthly sales report
+            $monthly_invoices = Invoice::where('merchant_id', Auth::user()->id)->select(
+                DB::raw("DATE_FORMAT(created_at,'%Y-%m') as months"),
+                DB::raw('sum(paid_amount) as total_paid')
+            )->whereYear('created_at', Carbon::now()->year)->groupBy('months')->orderBy('created_at')->get('months', 'total_paid');
+            $monthly_invoices = json_encode($monthly_invoices);
+
+            // monthly reports
+            $monthly_invoices_tabs = Invoice::where('merchant_id', Auth::user()->id)->select(
+                DB::raw("DATE_FORMAT(created_at,'%m') as months"),
+                DB::raw('sum(paid_amount) as total_paid')
+            )->whereYear('created_at', Carbon::now()->year)->groupBy('months')->orderBy('created_at')->get('months', 'total_paid');
+
+            $cash_sell_orders = Invoice::where('merchant_id', Auth::user()->id)->where('invoice_type', '2')->where('payment_type', '1')->sum('paid_amount');
+            $debt_sell_orders = Invoice::where('merchant_id', Auth::user()->id)->where('invoice_type', '2')->where('payment_type', '2')->sum('paid_amount');
+            $free_sell_orders = Invoice::where('merchant_id', Auth::user()->id)->where('invoice_type', '2')->where('payment_type', '3')->sum('paid_amount');
+
+            $top_products_sales = InvoiceItems::leftJoin('data', 'data.id', '=', 'invoice_items.data_id')->leftJoin('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')->where('merchant_id', Auth::user()->id)->where('invoices.invoice_type', '2')->select(DB::raw('data.name'), DB::raw("count(*) as count"))->groupBy('data_id')->orderBy('count', 'desc')->limit(6)->get();
+            $total_sales_count = InvoiceItems::leftJoin('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')->where('merchant_id', Auth::user()->id)->where('invoices.invoice_type', '2')->count();
+
+            $git_last_orders = Invoice::where('merchant_id', Auth::user()->id)->orderBy('created_at', 'desc')->limit(10)->get();
         } else if (Auth::user()->isEmployee()) {
             $orders = Invoice::where('merchant_id', Auth::user()->merchant_id)->count();
             $sell_orders = Invoice::where('merchant_id', Auth::user()->merchant_id)->where('invoice_type', '2')->count();
@@ -74,6 +97,27 @@ class HomeController extends Controller
             $total_paid = Invoice::where('merchant_id', Auth::user()->merchant_id)->sum('paid_amount');
             $sell_orders_amount = Invoice::where('merchant_id', Auth::user()->merchant_id)->where('invoice_type', '2')->sum('paid_amount');
             $buy_orders_amount = Invoice::where('merchant_id', Auth::user()->merchant_id)->where('invoice_type', '1')->sum('paid_amount');
+
+            // monthly sales report
+            $monthly_invoices = Invoice::where('merchant_id', Auth::user()->merchant_id)->select(
+                DB::raw("DATE_FORMAT(created_at,'%Y-%m') as months"),
+                DB::raw('sum(paid_amount) as total_paid')
+            )->whereYear('created_at', Carbon::now()->year)->groupBy('months')->orderBy('created_at')->get('months', 'total_paid');
+            $monthly_invoices = json_encode($monthly_invoices);
+
+            // monthly reports
+            $monthly_invoices_tabs = Invoice::where('merchant_id', Auth::user()->merchant_id)->select(
+                DB::raw("DATE_FORMAT(created_at,'%M') as months"),
+                DB::raw('sum(paid_amount) as total_paid')
+            )->whereYear('created_at', Carbon::now()->year)->groupBy('months')->orderBy('created_at')->get('months', 'total_paid');
+
+            $cash_sell_orders = Invoice::where('merchant_id', Auth::user()->merchant_id)->where('invoice_type', '2')->where('payment_type', '1')->sum('paid_amount');
+            $debt_sell_orders = Invoice::where('merchant_id', Auth::user()->merchant_id)->where('invoice_type', '2')->where('payment_type', '2')->sum('paid_amount');
+            $free_sell_orders = Invoice::where('merchant_id', Auth::user()->merchant_id)->where('invoice_type', '2')->where('payment_type', '3')->sum('paid_amount');
+
+            $top_products_sales = InvoiceItems::leftJoin('data', 'data.id', '=', 'invoice_items.data_id')->leftJoin('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')->where('merchant_id', Auth::user()->merchant_id)->where('invoices.invoice_type', '2')->select(DB::raw('data.name'), DB::raw("count(*) as count"))->groupBy('data_id')->orderBy('count', 'desc')->limit(6)->get();
+            $total_sales_count = InvoiceItems::leftJoin('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')->where('merchant_id', Auth::user()->merchant_id)->where('invoices.invoice_type', '2')->count();
+            $git_last_orders = Invoice::where('merchant_id', Auth::user()->merchant_id)->orderBy('created_at', 'desc')->limit(10)->get();
         }
         return view('admin.home', [
             'orders' => $orders,
@@ -88,7 +132,9 @@ class HomeController extends Controller
             'debt_sell_orders' => $debt_sell_orders,
             'free_sell_orders' => $free_sell_orders,
             'top_products_sales' => $top_products_sales,
-            'total_sales_count' => $total_sales_count
+            'total_sales_count' => $total_sales_count,
+            'month_values' => $month_values,
+            'git_last_orders' => $git_last_orders
         ]);
     }
 

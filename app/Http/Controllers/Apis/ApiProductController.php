@@ -10,6 +10,7 @@ use App\Http\Resources\ShapeResource;
 use App\Http\Resources\TreatementGroupResource;
 use App\Models\Amount;
 use App\Models\Company;
+use App\Models\Configuration;
 use App\Models\Data;
 use App\Models\EffMaterial;
 use App\Models\Invoice;
@@ -549,6 +550,36 @@ class ApiProductController extends Controller
             else
                 return ['price' => 0, 'part_price' => 0];
         }
+    }
+
+    public function getRealPriceForElement($dataId, $merchant_id = null, $source = 'api')
+    {
+        if (!$merchant_id)
+            $merchant_id = Auth::guard($source)->user()->merchant_id;
+        // get max price for product
+        $real_price_obj = Amount::where('data_id', $dataId)->where('merchant_id', $merchant_id)->where('amount_type', '1')->orderBy('created_at', 'desc')->first();
+        if ($real_price_obj != null) {
+            return ['real_price' => $real_price_obj->real_price, 'real_part_price' => $real_price_obj->real_part_price];
+        } else {
+            $real_price_obj = Amount::where('data_id', $dataId)->where('merchant_id', $merchant_id)->where('amount_type', '0')->orderBy('created_at', 'desc')->first();
+            if ($real_price_obj != null)
+                return ['real_price' => $real_price_obj->real_price, 'real_part_price' => $real_price_obj->real_part_price];
+            else
+            {
+                $val0 = $real_price_obj->price - ($real_price_obj->price * $this->getErningPercentage() / 100);
+                $val1 = $real_price_obj->part_price - ($real_price_obj->part_price * $this->getErningPercentage() / 100);
+                return ['real_price' => ($val0), 'real_part_price' => $val1];
+            }
+        }
+    }
+
+    public function getErningPercentage()
+    {
+        $config = Configuration::where('merchant_id', Auth::user()->merchant_id)->first();
+        if ($config) {
+            return $config->earning_percentage;
+        } else
+            return 10;
     }
 
     public function getMaxPriceForElement($dataId, $merchant_id = null, $source = 'api')
