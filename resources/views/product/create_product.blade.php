@@ -463,7 +463,7 @@
                 </div>
             </div>
             <div id="app">
-                <StreamBarcodeReader @decode="onDecode" @loaded="onLoaded"/>
+                <barcode @decode="onDecode" @loaded="onLoaded"/>
             </div>
         </div>
         <!-- end page content-->
