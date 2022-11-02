@@ -462,6 +462,9 @@
                     </div>
                 </div>
             </div>
+            <div id="app">
+                <StreamBarcodeReader @decode="onDecode" @loaded="onLoaded"/>
+            </div>
         </div>
         <!-- end page content-->
 
@@ -469,6 +472,8 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ mix('/js/app.js') }}"></script>
+
     <script>
         $('#type').change(function() {
             merchantType($(this).val());
@@ -726,9 +731,9 @@
                 });
 
             }
-            
+
         });
-        
+
         $('input').on('keyup', function() {
             clearValidation($(this));
         });

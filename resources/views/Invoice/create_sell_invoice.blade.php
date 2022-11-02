@@ -49,7 +49,8 @@
                         <div class="card-body">
                             <!-- Demo purpose only -->
                             <div style="min-height: 300px;">
-                                <form id="main_form" method="POST" action="{{ route('store-sell-invoice') }}" style="margin: 5%">
+                                <form id="main_form" method="POST" action="{{ route('store-sell-invoice') }}"
+                                    style="margin: 5%">
                                     @csrf
 
                                     <div class="row">
@@ -57,8 +58,7 @@
                                             <div class="col-md-2">
                                                 <input id="start_cam" type="button"
                                                     value="{{ __('invoice/invoice.create.labels.start_cam') }}"
-                                                    data-id="1" onclick="startBarcodePicker()"
-                                                    class="btn btn-primary">
+                                                    data-id="1" onclick="startBarcodePicker()" class="btn btn-primary">
                                             </div>
                                             <div class="col-md-6"></div>
                                             <div class="col-md-4">
@@ -119,9 +119,8 @@
                                                 <div class="col-md-2">
                                                     <label class="mt-3"
                                                         for="">{{ __('invoice/invoice.create.labels.quantity') }}</label>
-                                                    <input id="quantity" class="form-control" type="number"
-                                                        value="0" placeholder="" readonly
-                                                        style="text-align: center">
+                                                    <input id="quantity" class="form-control" type="number" value="0"
+                                                        placeholder="" readonly style="text-align: center">
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label class="mt-3"
@@ -147,8 +146,7 @@
                                                         value="0" placeholder="" readonly
                                                         style="text-align: center">
                                                     <div style="text-align: center">
-                                                        <small id="max_part_price_from_another_merchants"
-                                                            hidden></small>
+                                                        <small id="max_part_price_from_another_merchants" hidden></small>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
@@ -166,18 +164,16 @@
                                             <div class="col-md-3">
                                                 <label
                                                     class="form-label">{{ __('invoice/invoice.create.labels.amounts') }}</label>
-                                                <div
-                                                    class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
-                                                    <input id="selected_quantity" data-toggle="touchspin"
-                                                        type="text" value="0" class="form-control" required>
+                                                <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+                                                    <input id="selected_quantity" data-toggle="touchspin" type="text"
+                                                        value="0" class="form-control" required>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-3">
                                                 <label
                                                     class="form-label">{{ __('invoice/invoice.create.labels.quantity_parts') }}</label>
-                                                <div
-                                                    class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+                                                <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
                                                     <input id="selected_quantityparts" data-toggle="touchspin"
                                                         type="text" value="0" class="form-control" required>
                                                 </div>
@@ -217,8 +213,7 @@
                                                     {{ __('invoice/invoice.create.labels.total') }}:
                                                 </div>
 
-                                                <div class="col-md-3 mt-4"
-                                                    style="font-weight: bolder; font-size: 200%">
+                                                <div class="col-md-3 mt-4" style="font-weight: bolder; font-size: 200%">
                                                     <div id="total_price" style="font-weight: 500;">0
                                                     </div>
                                                 </div>
@@ -331,7 +326,7 @@
                 url: $(this).attr('action'),
                 type: $(this).attr('method'),
                 data: formData,
-                dataType:"json",
+                dataType: "json",
                 success: function(data) {
                     showInvoiceMessage(data, 'main_form');
                     if (data.success) {
@@ -364,21 +359,21 @@
             var part_amount = $('#selected_quantityparts').val();
 
             if (dataId == 0) {
-                showShortMessage('danger', ['{{ __("invoice/invoice.create.labels.you_should_select_product") }}'],
+                showShortMessage('danger', ['{{ __('invoice/invoice.create.labels.you_should_select_product') }}'],
                     'table_data');
                 return false;
             }
 
             if (already_found(dataId)) {
                 showShortMessage('danger', [
-                    '{{ __("invoice/invoice.create.labels.you_aleready_add_this_product_to_invoice") }}'
+                    '{{ __('invoice/invoice.create.labels.you_aleready_add_this_product_to_invoice') }}'
                 ], 'table_data');
                 return false;
             }
 
             if (amount == 0 && part_amount == 0) {
                 showShortMessage('danger', [
-                    '{{ __("invoice/invoice.create.labels.you_should_select_amount_or_part_amount") }}'
+                    '{{ __('invoice/invoice.create.labels.you_should_select_amount_or_part_amount') }}'
                 ], 'table_data');
                 return false;
             }
