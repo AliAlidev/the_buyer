@@ -32,7 +32,7 @@
             font-weight: 900;
         }
 
-        .laser{
+        .laser {
             margin-right: 20%;
         }
     </style>
@@ -466,11 +466,13 @@
                     </div>
                 </div>
             </div>
+
             <div id="app">
+                
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
-                        <barcode @decode="onDecode" @loaded="onLoaded"></barcode>
+                        <codereader/>
                     </div>
                     <div class="col-md-3"></div>
                 </div>
@@ -482,7 +484,7 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ mix('/js/app.js') }}"></script>
+    <script src="{{ mix('js/app.js') }}"></script>
 
     <script>
         $('#type').change(function() {
