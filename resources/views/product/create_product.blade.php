@@ -31,6 +31,10 @@
             font-size: 16px;
             font-weight: 900;
         }
+
+        .laser{
+            margin-right: 20%;
+        }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/scandit-sdk@5.x"></script>
@@ -463,7 +467,13 @@
                 </div>
             </div>
             <div id="app">
-                <barcode @decode="onDecode" @loaded="onLoaded"/>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                        <barcode @decode="onDecode" @loaded="onLoaded"></barcode>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
             </div>
         </div>
         <!-- end page content-->

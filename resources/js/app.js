@@ -7,10 +7,11 @@ import { ImageBarcodeReader } from "vue-barcode-reader";
 const app = createApp({
     methods: {
         onDecode(result) {
+            alert(result);
             console.log(result);
         },
-        onLoaded(result) {
-            console.log(result);
+        onLoaded() {
+            console.log('starting');
         },
     },
 });
